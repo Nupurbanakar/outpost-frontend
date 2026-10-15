@@ -1,5 +1,5 @@
-/* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+/* Google Fonts - Inter for clean modern look */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,8 +7,8 @@
 
 @layer base {
   body {
-    @apply bg-[#f7f4ec] text-[#202c3d] antialiased;
-    font-family: 'DM Sans', sans-serif;
+    @apply bg-white text-slate-900 antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
   h1,
@@ -17,7 +17,39 @@
   h4,
   h5,
   h6 {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer utilities {
+  /* Floating animation for hero cards */
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  @keyframes float-delayed {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-15px);
+    }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float-delayed 8s ease-in-out infinite;
+    animation-delay: 1s;
   }
 }
 
