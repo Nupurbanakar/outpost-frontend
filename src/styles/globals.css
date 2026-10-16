@@ -1,0 +1,228 @@
+/* Google Fonts - Outpost Design System */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-paper text-ink antialiased;
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Manrope', sans-serif;
+  }
+}
+
+@layer utilities {
+  /* Floating animation for hero cards */
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  @keyframes float-delayed {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-15px);
+    }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float-delayed 8s ease-in-out infinite;
+    animation-delay: 1s;
+  }
+
+  /* Rise in animation for staggered entry */
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .rise-in {
+    animation: rise-in 0.55s cubic-bezier(0.2, 0.75, 0.25, 1) both;
+  }
+
+  .rise-delay-1 {
+    animation-delay: 0.08s;
+  }
+  .rise-delay-2 {
+    animation-delay: 0.16s;
+  }
+  .rise-delay-3 {
+    animation-delay: 0.24s;
+  }
+
+  /* Skeleton pulse */
+  @keyframes pulse {
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .skeleton {
+    animation: pulse 1.4s infinite ease-in-out;
+  }
+}
+
+@layer components {
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-5 font-semibold transition-all duration-200;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2;
+    @apply disabled:pointer-events-none disabled:opacity-50;
+    font-size: 13px;
+    min-height: 48px;
+    padding: 0 20px;
+  }
+
+  .btn-primary {
+    @apply btn bg-ink text-paper-light border border-ink;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    background: #304258;
+  }
+
+  .btn-secondary {
+    @apply btn bg-transparent text-ink;
+    border: 1px solid #bfb7a9;
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    background: #eee9de;
+    border-color: var(--tw-colors-ink);
+  }
+
+  /* Input fields */
+  .input {
+    @apply block w-full px-3 py-2;
+    height: 46px;
+    background: #fffdf8;
+    border: 1px solid #ddd6c9;
+    font-size: 12px;
+  }
+
+  .input:focus {
+    border-color: #b58c4f;
+    box-shadow: 0 0 0 2px rgba(214, 155, 66, 0.12);
+    outline: none;
+  }
+
+  .input:disabled {
+    @apply bg-gray-100 cursor-not-allowed;
+  }
+
+  .input::placeholder {
+    color: #9a9b97;
+  }
+
+  /* Labels */
+  .label {
+    @apply block text-sm font-medium text-ink mb-1;
+  }
+
+  /* Cards */
+  .card {
+    min-height: 273px;
+    display: flex;
+    flex-direction: column;
+    padding: 19px;
+    border: 1px solid #ded8cc;
+    background: #fffdf8;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: #c7b89c;
+    box-shadow: 0 8px 22px rgba(32, 44, 61, 0.06);
+  }
+
+  /* Badges */
+  .category-pill {
+    @apply inline-flex items-center;
+    padding: 5px 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+
+  .category-grant {
+    color: #80591f;
+    background: #f1e6d2;
+  }
+
+  .category-challenge {
+    color: #376b58;
+    background: #e2ece5;
+  }
+
+  .category-mentor {
+    color: #925651;
+    background: #f0e2df;
+  }
+
+  /* Mono label utility */
+  .mono-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-3px);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

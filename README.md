@@ -16,7 +16,7 @@ React + TypeScript frontend for the Outpost platform - T-Hub's founder community
 
 ### Prerequisites
 
-- Node.js 18+ and npm
+- Node.js 18+ and npm (⚠️ **Required**: Node 14 is not supported)
 - Backend API running at `http://localhost:8080`
 
 ### Installation
