@@ -6,6 +6,13 @@ export interface ApiError {
   detail: string;
   instance: string;
   code?: string;
+  message?: string;
+  errors?: FieldError[];
+}
+
+export interface FieldError {
+  field: string;
+  message: string;
 }
 
 export interface PaginatedResponse<T> {
@@ -54,6 +61,7 @@ export interface SignupRequest {
 }
 
 export interface AuthResponse {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
   user: User;
 }
