@@ -10,7 +10,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import VerifyPage from './pages/VerifyPage';
-import OnboardingPage from './pages/OnboardingPage';
+import OnboardingPage from './pages/OnboardingPageMultiStep';
 import DiscoverPage from './pages/DiscoverPage';
 
 function App() {
