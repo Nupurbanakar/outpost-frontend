@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts';
+import { authApi } from '@/api';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { ApiErrorDisplay } from '@/components/ApiErrorDisplay';
@@ -57,10 +58,11 @@ export default function SignupPage() {
     setIsLoading(true);
 
     try {
-      await signup({ email, password });
-      toast.success('Account created successfully!');
-      // After signup, user needs to complete onboarding
-      navigate('/onboarding');
+      // Call API directly instead of using context's signup (which tries to fetch /me)
+      await authApi.signup({ email, password });
+      toast.success('Account created! Please check your email to verify your account.');
+      // Redirect to verify-email page with email in state
+      navigate('/verify-email', { state: { email } });
     } catch (error) {
       // Handle EMAIL_TAKEN specifically
       if (isErrorCode(error, 'EMAIL_TAKEN')) {
