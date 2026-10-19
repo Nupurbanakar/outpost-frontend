@@ -13,6 +13,7 @@ import VerifyPage from './pages/VerifyPage';
 import OnboardingPage from './pages/OnboardingPageMultiStep';
 import DiscoverPage from './pages/DiscoverPage';
 import GrantsPage from './pages/GrantsPage';
+import GrantDetailPage from './pages/GrantDetailPage';
 
 function App() {
   return (
@@ -75,6 +76,16 @@ function App() {
         element={
           <ProtectedRoute>
             <GrantsPage />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Grant detail */}
+      <Route
+        path="/grants/:id"
+        element={
+          <ProtectedRoute>
+            <GrantDetailPage />
           </ProtectedRoute>
         }
       />
