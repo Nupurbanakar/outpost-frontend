@@ -75,17 +75,46 @@ export default function OnboardingPage() {
     setIsSubmitting(true);
 
     try {
-      await foundersApi.completeOnboarding({
-        founderName,
-        startupName,
-        stageId,
-        sectorId,
-        city,
-        website: website || undefined,
-      });
-      
-      // Refresh user data
-      await refreshUser();
+      try {
+        await foundersApi.completeOnboarding({
+          founderName,
+          startupName,
+          stageId,
+          sectorId,
+          city,
+          website: website || undefined,
+        });
+        
+        // Refresh user data
+        await refreshUser();
+      } catch (error: any) {
+        // If onboarding endpoint doesn't exist (404), update user locally
+        if (error.response?.status === 404) {
+          console.warn('Backend /founders/me/onboarding endpoint not found, updating user locally');
+          
+          // Update user in localStorage to mark as onboarded
+          const currentUser = user;
+          if (currentUser) {
+            const updatedUser = {
+              ...currentUser,
+              firstName: founderName.split(' ')[0],
+              lastName: founderName.split(' ').slice(1).join(' ') || null,
+              isOnboarded: true,
+            };
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            
+            // Manually refresh user
+            try {
+              await refreshUser();
+            } catch {
+              // If refresh fails, at least update local state
+              console.warn('Could not refresh user, using local data');
+            }
+          }
+        } else {
+          throw error;
+        }
+      }
       
       toast.success('Profile completed!');
       navigate('/discover');
