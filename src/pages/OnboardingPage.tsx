@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { ApiErrorDisplay } from '@/components/ApiErrorDisplay';
+import { isErrorCode } from '@/utils/errorHandling';
 import type { Stage, Sector } from '@/types';
 
 export default function OnboardingPage() {
@@ -102,6 +103,15 @@ export default function OnboardingPage() {
       window.location.href = '/discover';
     } catch (error) {
       console.error('Onboarding failed:', error);
+      
+      // If already onboarded, just redirect to discover
+      if (isErrorCode(error, 'ALREADY_ONBOARDED')) {
+        toast.success('Profile already completed!');
+        console.log('Already onboarded, redirecting to /discover...');
+        window.location.href = '/discover';
+        return;
+      }
+      
       setApiError(error);
     } finally {
       setIsSubmitting(false);
