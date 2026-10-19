@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { MapPin, Globe, Linkedin, Twitter, Building2, TrendingUp } from 'lucide-react';
+import { MapPin, Globe, TrendingUp, Building2, Link as LinkIcon, User } from 'lucide-react';
 import { AppLayout } from '../components/AppLayout';
 import { getPublicFounderProfile, PublicFounderProfile } from '../api/endpoints/publicProfile';
 
@@ -114,7 +114,7 @@ export default function PublicFounderProfilePage() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-700"
               >
-                <Linkedin className="h-4 w-4" />
+                <LinkIcon className="h-4 w-4" />
                 LinkedIn
               </a>
             )}
@@ -125,7 +125,7 @@ export default function PublicFounderProfilePage() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-700"
               >
-                <Twitter className="h-4 w-4" />
+                <User className="h-4 w-4" />
                 Twitter
               </a>
             )}

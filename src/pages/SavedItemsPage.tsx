@@ -25,7 +25,6 @@ interface Challenge {
 }
 
 export default function SavedItemsPage() {
-  const [bookmarkedItems, setBookmarkedItems] = useState<BookmarkedItem[]>([]);
   const [grants, setGrants] = useState<Grant[]>([]);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -37,7 +36,6 @@ export default function SavedItemsPage() {
   const loadBookmarkedItems = async () => {
     setIsLoading(true);
     const bookmarks = getBookmarks();
-    setBookmarkedItems(bookmarks);
 
     // Fetch full details for each bookmarked item
     const grantIds = bookmarks.filter(b => b.type === 'grant').map(b => b.id);
