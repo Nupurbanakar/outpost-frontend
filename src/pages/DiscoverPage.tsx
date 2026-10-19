@@ -274,8 +274,6 @@ function OpportunitiesSection() {
               />
             );
           })}
-            />
-          ))}
         </div>
       )}
 
