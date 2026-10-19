@@ -15,6 +15,7 @@ import DiscoverPage from './pages/DiscoverPage';
 import GrantsPage from './pages/GrantsPage';
 import GrantDetailPage from './pages/GrantDetailPage';
 import ChallengesPage from './pages/ChallengesPage';
+import ChallengeDetailPage from './pages/ChallengeDetailPage';
 import SecuritySettingsPage from './pages/SecuritySettingsPage';
 
 function App() {
@@ -108,6 +109,16 @@ function App() {
         element={
           <ProtectedRoute>
             <ChallengesPage />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Challenge detail */}
+      <Route
+        path="/challenges/:id"
+        element={
+          <ProtectedRoute>
+            <ChallengeDetailPage />
           </ProtectedRoute>
         }
       />
