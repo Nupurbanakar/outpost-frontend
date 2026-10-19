@@ -48,11 +48,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = useCallback(async (credentials: LoginRequest) => {
+    console.log('Attempting login with email:', credentials.email);
+    
     await authApi.login(credentials);
+    console.log('Login API call successful, tokens stored');
     
     // Try to fetch user profile after successful login
     try {
+      console.log('Fetching user profile from /founders/me');
       const userData = await foundersApi.getMe();
+      console.log('User data fetched successfully:', userData);
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
     } catch (error: any) {
@@ -73,6 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(basicUser as any);
         localStorage.setItem('user', JSON.stringify(basicUser));
       } else {
+        console.error('Failed to fetch user profile:', error);
         throw error;
       }
     }
