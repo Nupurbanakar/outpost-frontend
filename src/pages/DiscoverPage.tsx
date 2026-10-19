@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { AppLayout } from '@/components/AppLayout';
 import { OpportunityCard } from '@/components/OpportunityCard';
 import { MentorCard } from '@/components/MentorCard';
+import { SpotlightSection } from '@/components/discover/SpotlightSection';
 import { grantsApi } from '@/api/endpoints/grants';
 import { challengesApi } from '@/api/endpoints/challenges';
 import { mentorsApi } from '@/api/endpoints/mentors';
@@ -138,6 +139,9 @@ export default function DiscoverPage() {
 
         {/* Section Divider */}
         <div className="border-t border-line mb-12" />
+
+        {/* Spotlight Section (FE-039) */}
+        <SpotlightSection />
 
         {/* Opportunities Section (FE-017) */}
         <OpportunitiesSection />
