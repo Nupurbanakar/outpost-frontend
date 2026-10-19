@@ -49,10 +49,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async (credentials: LoginRequest) => {
     await authApi.login(credentials);
-    // Fetch user profile after successful login
-    const userData = await foundersApi.getMe();
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+    
+    // Try to fetch user profile after successful login
+    try {
+      const userData = await foundersApi.getMe();
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+    } catch (error: any) {
+      // If /founders/me endpoint doesn't exist (404), create a basic user object
+      if (error.response?.status === 404) {
+        console.warn('Backend /founders/me endpoint not found, using basic user data');
+        const basicUser = {
+          id: 0,
+          email: credentials.email,
+          firstName: null,
+          lastName: null,
+          role: 'founder',
+          isVerified: true,
+          isOnboarded: false,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        setUser(basicUser as any);
+        localStorage.setItem('user', JSON.stringify(basicUser));
+      } else {
+        throw error;
+      }
+    }
   }, []);
 
   const signup = useCallback(async (data: SignupRequest) => {
