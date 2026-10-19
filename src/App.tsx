@@ -14,6 +14,7 @@ import OnboardingPage from './pages/OnboardingPageMultiStep';
 import DiscoverPage from './pages/DiscoverPage';
 import GrantsPage from './pages/GrantsPage';
 import GrantDetailPage from './pages/GrantDetailPage';
+import ChallengesPage from './pages/ChallengesPage';
 import SecuritySettingsPage from './pages/SecuritySettingsPage';
 
 function App() {
@@ -97,6 +98,16 @@ function App() {
         element={
           <ProtectedRoute>
             <SecuritySettingsPage />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Challenges listing */}
+      <Route
+        path="/challenges"
+        element={
+          <ProtectedRoute>
+            <ChallengesPage />
           </ProtectedRoute>
         }
       />

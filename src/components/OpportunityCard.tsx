@@ -1,60 +1,61 @@
 import { Link } from 'react-router-dom';
-import { Bookmark, IndianRupee, Calendar, Sparkles } from 'lucide-react';
-import { Grant } from '@/api/endpoints/grants';
-import { Challenge } from '@/api/endpoints/challenges';
+import { Bookmark, IndianRupee, Calendar, Sparkles, Building2 } from 'lucide-react';
 import { formatDate } from '@/utils/dateUtils';
-import { formatAmount } from '@/utils/formatters';
 
 type OpportunityType = 'GRANT' | 'CHALLENGE';
 
 interface OpportunityCardProps {
-  opportunity: Grant | Challenge;
   type: OpportunityType;
+  id: string;
+  title: string;
+  organization: string;
+  logo?: string;
+  description?: string;
+  sector?: string;
+  amount?: string;
+  deadline?: string;
+  status?: string;
+  aiReason?: string;
   onBookmark?: (id: string) => void;
   isBookmarked?: boolean;
 }
 
-export function OpportunityCard({ opportunity, type, onBookmark, isBookmarked = false }: OpportunityCardProps) {
+export function OpportunityCard({
+  type,
+  id,
+  title,
+  organization,
+  logo,
+  description,
+  sector,
+  amount,
+  deadline,
+  status,
+  aiReason,
+  onBookmark,
+  isBookmarked = false,
+}: OpportunityCardProps) {
   const isGrant = type === 'GRANT';
-  const grant = isGrant ? (opportunity as Grant) : null;
-  const challenge = !isGrant ? (opportunity as Challenge) : null;
-
-  const expired = isGrant 
-    ? grant?.status === 'EXPIRED'
-    : challenge?.status === 'CLOSED';
-
-  const link = isGrant ? `/grants/${opportunity.id}` : `/challenges/${opportunity.id}`;
-
-  // Get card details based on type
-  const title = opportunity.title;
-  const organization = isGrant ? grant?.issuingBody : challenge?.corporateName;
-  const description = isGrant ? grant?.summary : challenge?.theme || '';
-  const deadline = isGrant ? grant?.deadline : challenge?.deadline;
-  
-  // Amount/prize
-  const amount = isGrant 
-    ? (grant?.amountMin && grant?.amountMax 
-        ? `₹${formatAmount(grant.amountMin)} - ₹${formatAmount(grant.amountMax)}`
-        : grant?.amountMin 
-          ? `Up to ₹${formatAmount(grant.amountMin)}`
-          : 'Undisclosed')
-    : challenge?.problemStatement 
-      ? 'Pilot/POC opportunity'
-      : 'See details';
+  const expired = status === 'EXPIRED' || status === 'CLOSED';
+  const link = isGrant ? `/grants/${id}` : `/challenges/${id}`;
 
   return (
-    <div className={`group relative bg-paper-light border border-line hover:shadow-lg transition-all duration-200 flex flex-col h-full ${
-      expired ? 'opacity-60' : ''
-    }`}>
+    <div
+      className={`group relative bg-paper-light border border-line hover:shadow-lg transition-all duration-200 flex flex-col h-full ${
+        expired ? 'opacity-60' : ''
+      }`}
+    >
       {/* Header */}
       <div className="p-6 pb-0">
         <div className="flex items-start justify-between mb-4">
           {/* Category Badge */}
-          <span className={`inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wide border ${
-            isGrant
-              ? 'bg-[#f0f9f4] text-[#2d6a4f] border-[#95d5b2]'
-              : 'bg-[#fef3e2] text-[#b58c4f] border-[#f4d8a8]'
-          }`}>
+          <span
+            className={`inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wide border ${
+              isGrant
+                ? 'bg-[#f0f9f4] text-[#2d6a4f] border-[#95d5b2]'
+                : 'bg-[#fef3e2] text-[#b58c4f] border-[#f4d8a8]'
+            }`}
+          >
             {isGrant ? 'Grant' : 'Challenge'}
           </span>
 
@@ -63,32 +64,45 @@ export function OpportunityCard({ opportunity, type, onBookmark, isBookmarked = 
             <button
               onClick={(e) => {
                 e.preventDefault();
-                onBookmark(opportunity.id);
+                onBookmark(id);
               }}
               className="p-2 hover:bg-[#f5f3ed] rounded transition-colors"
               aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
             >
-              <Bookmark 
-                className={`w-4 h-4 ${isBookmarked ? 'fill-[#b58c4f] text-[#b58c4f]' : 'text-muted-text'}`}
+              <Bookmark
+                className={`w-4 h-4 ${
+                  isBookmarked ? 'fill-[#b58c4f] text-[#b58c4f]' : 'text-muted-text'
+                }`}
               />
             </button>
           )}
         </div>
 
-        {/* Organization */}
-        <p className="text-xs font-medium text-muted-text uppercase tracking-wide mb-2">
-          {organization}
-        </p>
+        {/* Logo and Organization */}
+        <div className="flex items-center gap-3 mb-3">
+          {logo ? (
+            <img src={logo} alt={organization} className="w-10 h-10 object-contain" />
+          ) : (
+            <div className="w-10 h-10 bg-[#f5f3ed] flex items-center justify-center">
+              <Building2 className="w-5 h-5 text-muted-text" />
+            </div>
+          )}
+          <p className="text-xs font-medium text-muted-text uppercase tracking-wide">
+            {organization}
+          </p>
+        </div>
 
         {/* Title */}
         <h3 className="text-xl font-serif font-bold text-ink mb-3 group-hover:text-[#b58c4f] transition-colors line-clamp-2">
           {title}
         </h3>
 
-        {/* Description */}
-        <p className="text-sm text-muted-text line-clamp-3 mb-4">
-          {description}
-        </p>
+        {/* Description or Sector */}
+        {(description || sector) && (
+          <p className="text-sm text-muted-text line-clamp-2 mb-4">
+            {description || sector}
+          </p>
+        )}
       </div>
 
       {/* Footer */}
@@ -97,17 +111,13 @@ export function OpportunityCard({ opportunity, type, onBookmark, isBookmarked = 
         <div className="flex items-center justify-between mb-4 text-sm">
           <div className="flex items-center gap-1.5 text-ink font-medium">
             <IndianRupee className="w-4 h-4 text-[#b58c4f]" />
-            <span>{amount}</span>
+            <span>{amount || 'See details'}</span>
           </div>
-          
+
           <div className="flex items-center gap-1.5 text-muted-text">
             <Calendar className="w-4 h-4" />
             <span>
-              {deadline ? (
-                expired ? 'Expired' : formatDate(deadline)
-              ) : (
-                'Rolling'
-              )}
+              {deadline ? (expired ? 'Expired' : formatDate(deadline)) : 'Rolling'}
             </span>
           </div>
         </div>
@@ -122,21 +132,21 @@ export function OpportunityCard({ opportunity, type, onBookmark, isBookmarked = 
       </div>
 
       {/* AI Reason (if present) */}
-      {opportunity.aiReason && (
+      {aiReason && (
         <div className="mx-6 mb-6 mt-2 p-3 bg-[#f0f9f4] border border-[#95d5b2] rounded">
           <div className="flex items-start gap-2">
             <Sparkles className="w-4 h-4 text-[#2d6a4f] flex-shrink-0 mt-0.5" />
             <p className="text-xs text-[#2d6a4f]">
-              <span className="font-semibold">Why this matches:</span> {opportunity.aiReason}
+              <span className="font-semibold">Why this matches:</span> {aiReason}
             </p>
           </div>
         </div>
       )}
 
-      {/* Expired Banner */}
+      {/* Expired/Closed Banner */}
       {expired && (
         <div className="absolute top-0 left-0 right-0 bg-rose-500 text-white text-xs font-semibold text-center py-1">
-          EXPIRED
+          {status === 'CLOSED' ? 'CLOSED' : 'EXPIRED'}
         </div>
       )}
     </div>

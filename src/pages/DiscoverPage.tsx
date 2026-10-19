@@ -8,6 +8,7 @@ import { challengesApi } from '@/api/endpoints/challenges';
 import { mentorsApi } from '@/api/endpoints/mentors';
 import { Sparkles, TrendingUp, Users, Clock } from 'lucide-react';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { formatAmount } from '@/utils/formatters';
 
 interface Stats {
   openCalls: number;
@@ -243,11 +244,32 @@ function OpportunitiesSection() {
       ) : (
         /* Opportunities Grid */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {filteredOpportunities.map((opp) => (
-            <OpportunityCard
-              key={opp.id}
-              opportunity={opp}
-              type={opp.opportunityType}
+          {filteredOpportunities.map((opp) => {
+            const isGrant = opp.opportunityType === 'GRANT';
+            return (
+              <OpportunityCard
+                key={opp.id}
+                type={opp.opportunityType}
+                id={opp.id}
+                title={opp.title}
+                organization={isGrant ? opp.issuingBody : opp.corporateName}
+                logo={isGrant ? undefined : opp.corporateLogo}
+                description={isGrant ? opp.summary : opp.theme}
+                sector={isGrant ? opp.eligibleSectors?.[0]?.name : opp.sector?.name}
+                amount={
+                  isGrant
+                    ? opp.amountMin && opp.amountMax
+                      ? `₹${formatAmount(opp.amountMin)} - ₹${formatAmount(opp.amountMax)}`
+                      : opp.amountMin
+                      ? `Up to ₹${formatAmount(opp.amountMin)}`
+                      : 'Undisclosed'
+                    : 'See details'
+                }
+                deadline={opp.deadline}
+                status={opp.status}
+              />
+            );
+          })}
             />
           ))}
         </div>
