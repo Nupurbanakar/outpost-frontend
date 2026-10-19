@@ -155,8 +155,14 @@ export default function GrantsPage() {
               {grants.map((grant) => (
                 <OpportunityCard
                   key={grant.id}
-                  opportunity={grant}
                   type="GRANT"
+                  id={grant.id}
+                  title={grant.title}
+                  organization={grant.issuingBody}
+                  description={grant.summary}
+                  deadline={grant.deadline}
+                  status={grant.status}
+                  aiReason={grant.aiReason}
                 />
               ))}
             </div>

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Bookmark, IndianRupee, Calendar, Sparkles, Building2 } from 'lucide-react';
 import { formatDate } from '@/utils/dateUtils';
+import { useBookmark } from '@/hooks/useBookmark';
 
 type OpportunityType = 'GRANT' | 'CHALLENGE';
 
@@ -38,6 +39,14 @@ export function OpportunityCard({
   const isGrant = type === 'GRANT';
   const expired = status === 'EXPIRED' || status === 'CLOSED';
   const link = isGrant ? `/grants/${id}` : `/challenges/${id}`;
+  
+  // Use bookmark hook
+  const bookmarkType = isGrant ? 'grant' : 'challenge';
+  const { bookmarked, toggle: toggleBookmark } = useBookmark(id, bookmarkType);
+  
+  // Use prop if provided, otherwise use hook state
+  const isBookmarkedFinal = onBookmark ? isBookmarked : bookmarked;
+  const handleBookmark = onBookmark || toggleBookmark;
 
   return (
     <div
@@ -60,22 +69,20 @@ export function OpportunityCard({
           </span>
 
           {/* Bookmark Button */}
-          {onBookmark && (
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                onBookmark(id);
-              }}
-              className="p-2 hover:bg-[#f5f3ed] rounded transition-colors"
-              aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
-            >
-              <Bookmark
-                className={`w-4 h-4 ${
-                  isBookmarked ? 'fill-[#b58c4f] text-[#b58c4f]' : 'text-muted-text'
-                }`}
-              />
-            </button>
-          )}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              handleBookmark(id);
+            }}
+            className="p-2 hover:bg-[#f5f3ed] rounded transition-colors"
+            aria-label={isBookmarkedFinal ? 'Remove bookmark' : 'Bookmark'}
+          >
+            <Bookmark
+              className={`w-4 h-4 ${
+                isBookmarkedFinal ? 'fill-[#b58c4f] text-[#b58c4f]' : 'text-muted-text'
+              }`}
+            />
+          </button>
         </div>
 
         {/* Logo and Organization */}
