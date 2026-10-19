@@ -66,4 +66,18 @@ export const authApi = {
     const response = await apiClient.get('/founders/me');
     return response.data;
   },
+
+  /**
+   * Verify email with token
+   */
+  verifyEmail: async (token: string): Promise<void> => {
+    await apiClient.post('/auth/verify', { token });
+  },
+
+  /**
+   * Resend verification email
+   */
+  resendVerification: async (email: string): Promise<void> => {
+    await apiClient.post('/auth/resend-verification', { email });
+  },
 };
