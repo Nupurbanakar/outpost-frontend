@@ -1,19 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts';
-import { foundersApi, lookupsApi } from '@/api';
+import { useStages, useSectors } from '@/hooks';
+import { foundersApi } from '@/api';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { ApiErrorDisplay } from '@/components/ApiErrorDisplay';
 import { isErrorCode } from '@/utils/errorHandling';
-import type { Stage, Sector } from '@/types';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 
 export default function OnboardingPageMultiStep() {
-  const { user, refreshUser } = useAuth();
+  const { refreshUser } = useAuth();
   const navigate = useNavigate();
+  const { stages, isLoading: isLoadingStages, error: stagesError } = useStages();
+  const { sectors, isLoading: isLoadingSectors, error: sectorsError } = useSectors();
 
   const [currentStep, setCurrentStep] = useState(1);
   const [founderName, setFounderName] = useState('');
@@ -23,33 +25,26 @@ export default function OnboardingPageMultiStep() {
   const [city, setCity] = useState('');
   const [website, setWebsite] = useState('');
 
-  const [stages, setStages] = useState<Stage[]>([]);
-  const [sectors, setSectors] = useState<Sector[]>([]);
-  const [isLoadingData, setIsLoadingData] = useState(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const totalSteps = 3;
+  const isLoadingData = isLoadingStages || isLoadingSectors;
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [stagesData, sectorsData] = await Promise.all([
-          lookupsApi.getStages(),
-          lookupsApi.getSectors(),
-        ]);
-        setStages(stagesData);
-        setSectors(sectorsData);
-      } catch (error) {
-        toast.error('Failed to load form data');
-      } finally {
-        setIsLoadingData(false);
-      }
-    };
-
-    loadData();
-  }, []);
+  // Show error if lookups failed
+  if (stagesError || sectorsError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-paper p-4">
+        <div className="text-center">
+          <p className="text-rose-600 mb-4">Failed to load form data</p>
+          <Button onClick={() => window.location.reload()}>
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   const validateStep = (step: number): boolean => {
     const newErrors: Record<string, string> = {};
