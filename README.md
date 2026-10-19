@@ -79,12 +79,49 @@ npm run build
 # Preview production build
 npm run preview
 
-# Run tests
-npm run test
-
 # Lint
 npm run lint
 ```
+
+## Testing
+
+### Unit Tests (Vitest + React Testing Library)
+
+```bash
+# Run unit tests
+npm run test
+
+# Run tests with UI
+npm run test:ui
+
+# Run tests with coverage
+npm run test:coverage
+```
+
+**Test Coverage:**
+- Utility functions (errorHandling, cn)
+- UI components (Button, Input, Badge, Card)
+- AuthContext (login, signup, logout, refresh)
+
+### E2E Tests (Playwright)
+
+```bash
+# Run E2E tests
+npm run test:e2e
+
+# Run E2E tests with UI
+npm run test:e2e:ui
+
+# Run E2E tests in headed mode
+npm run test:e2e:headed
+```
+
+**E2E Test Coverage:**
+- Signup flow (validation, error handling, success)
+- Login flow (redirect logic, error cases)
+- Onboarding flow (profile completion, validation)
+
+**Note:** Tests require Node.js 18+ to run.
 
 ## Documentation
 
