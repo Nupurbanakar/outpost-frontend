@@ -22,8 +22,11 @@ export default function VerifyPage() {
         return;
       }
 
+      console.log('Attempting to verify with token:', token);
+
       try {
         await authApi.verifyEmail(token);
+        console.log('Verification successful!');
         setStatus('success');
         toast.success('Email verified successfully!');
         
@@ -32,6 +35,8 @@ export default function VerifyPage() {
           navigate('/login');
         }, 2000);
       } catch (error: any) {
+        console.error('Verification failed:', error);
+        console.error('Error response:', error.response?.data);
         setStatus('error');
         setErrorMessage(
           error.response?.data?.detail || 'Verification failed. The token may be invalid or expired.'
