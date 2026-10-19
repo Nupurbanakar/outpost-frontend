@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts';
 import { authApi } from '@/api';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { GoogleLoginButton } from '@/components/GoogleLoginButton';
 import { ApiErrorDisplay } from '@/components/ApiErrorDisplay';
 import { isErrorCode } from '@/utils/errorHandling';
 
@@ -163,6 +164,19 @@ export default function SignupPage() {
             <Button type="submit" variant="primary" fullWidth disabled={isLoading}>
               {isLoading ? 'Creating account...' : 'Sign Up'}
             </Button>
+
+            {/* Divider */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-line"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-paper-light text-muted-text">Or continue with</span>
+              </div>
+            </div>
+
+            {/* Google Signup */}
+            <GoogleLoginButton mode="signup" />
           </form>
 
           {/* Login Link */}
