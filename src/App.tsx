@@ -1,5 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ProtectedRoute, PublicRoute } from './components';
+import { useGlobalSearch } from './hooks/useGlobalSearch';
+import { GlobalSearchModal } from './components/search/GlobalSearchModal';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -23,8 +25,12 @@ import ProfilePage from './pages/ProfilePage';
 import SecuritySettingsPage from './pages/SecuritySettingsPage';
 
 function App() {
+  const { isOpen, close } = useGlobalSearch();
+  
   return (
-    <Routes>
+    <>
+      <GlobalSearchModal isOpen={isOpen} onClose={close} />
+      <Routes>
       {/* Public landing page */}
       <Route path="/" element={<HomePage />} />
       
@@ -180,6 +186,7 @@ function App() {
       {/* Catch all - redirect to discover for authenticated users, login otherwise */}
       <Route path="*" element={<Navigate to="/discover" replace />} />
     </Routes>
+    </>
   );
 }
 
