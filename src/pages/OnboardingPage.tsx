@@ -97,7 +97,9 @@ export default function OnboardingPage() {
       
       toast.success('Profile completed!');
       console.log('Redirecting to /discover...');
-      navigate('/discover', { replace: true });
+      
+      // Use window.location for immediate redirect
+      window.location.href = '/discover';
     } catch (error) {
       console.error('Onboarding failed:', error);
       setApiError(error);
