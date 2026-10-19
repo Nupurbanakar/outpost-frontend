@@ -56,3 +56,61 @@ export interface SignupRequest {
   email: string;
   password: string;
 }
+
+// Grant types
+export interface Grant {
+  id: string;
+  title: string;
+  summary: string;
+  issuingBody: string;
+  issuingBodyType: 'CENTRAL' | 'STATE' | 'OTHER';
+  type: 'GRANT' | 'SUBSIDY' | 'SCHEME' | 'INCENTIVE';
+  amount?: number;
+  amountBand?: 'UNDER_10L' | '10L_50L' | '50L_1CR' | 'OVER_1CR';
+  deadline?: string; // ISO date string, null for rolling
+  sourceUrl: string;
+  eligibleStages?: Stage[];
+  eligibleSectors?: Sector[];
+  status: 'DRAFT' | 'PUBLISHED' | 'EXPIRED';
+  aiReason?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Challenge types
+export interface Challenge {
+  id: string;
+  title: string;
+  description: string;
+  organizer: string;
+  prize?: string;
+  deadline?: string; // ISO date string
+  sourceUrl: string;
+  eligibleStages?: Stage[];
+  eligibleSectors?: Sector[];
+  status: 'DRAFT' | 'PUBLISHED' | 'EXPIRED';
+  aiReason?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Mentor types
+export interface Mentor {
+  id: string;
+  name: string;
+  role: string;
+  company: string;
+  photo?: string;
+  bio: string;
+  expertise: string[];
+  linkedinUrl?: string;
+  calendlyUrl?: string;
+  status: 'DRAFT' | 'PUBLISHED';
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Unified opportunity type for mixed grant/challenge displays
+export type Opportunity = (Grant | Challenge) & {
+  opportunityType: 'GRANT' | 'CHALLENGE';
+}
