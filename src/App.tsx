@@ -17,6 +17,7 @@ import GrantDetailPage from './pages/GrantDetailPage';
 import ChallengesPage from './pages/ChallengesPage';
 import ChallengeDetailPage from './pages/ChallengeDetailPage';
 import MentorsPage from './pages/MentorsPage';
+import MentorDetailPage from './pages/MentorDetailPage';
 import SecuritySettingsPage from './pages/SecuritySettingsPage';
 
 function App() {
@@ -140,6 +141,16 @@ function App() {
         element={
           <ProtectedRoute>
             <MentorsPage />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Mentor detail */}
+      <Route
+        path="/mentors/:id"
+        element={
+          <ProtectedRoute>
+            <MentorDetailPage />
           </ProtectedRoute>
         }
       />
