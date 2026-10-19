@@ -99,15 +99,21 @@ export default function OnboardingPageMultiStep() {
     setIsSubmitting(true);
 
     try {
-      console.log('Submitting onboarding data...');
-      await foundersApi.completeOnboarding({
+      const payload = {
         founderName,
         startupName,
         stageId,
         sectorId,
         city,
         website: website || undefined,
-      });
+      };
+      console.log('=== ONBOARDING SUBMISSION ===');
+      console.log('Payload:', JSON.stringify(payload, null, 2));
+      console.log('StageId:', stageId, '(type:', typeof stageId, ')');
+      console.log('SectorId:', sectorId, '(type:', typeof sectorId, ')');
+      console.log('Access Token:', localStorage.getItem('accessToken')?.substring(0, 20) + '...');
+      
+      await foundersApi.completeOnboarding(payload);
       console.log('Onboarding completed successfully');
 
       try {
@@ -132,6 +138,34 @@ export default function OnboardingPageMultiStep() {
       if (isAlreadyOnboarded || is409Conflict) {
         toast.success('Profile already completed!');
         window.location.href = '/discover';
+        return;
+      }
+
+      // Check for UUID parsing error (backend issue)
+      const errorMessage = (error as any)?.response?.data?.message || 
+                          (error as any)?.response?.data?.detail || 
+                          (error as any)?.message || '';
+      
+      if (errorMessage.includes('Invalid UUID') || errorMessage.includes('IllegalArgumentException')) {
+        toast.error(
+          'Authentication Error',
+          { 
+            description: 'There was an issue with your session. Please try logging out and logging in again.',
+            duration: 6000,
+          }
+        );
+        console.error('UUID parsing error detected - likely backend JWT issue');
+        
+        // Show user-friendly error in UI
+        setApiError({
+          response: {
+            data: {
+              code: 'AUTH_SESSION_ERROR',
+              message: 'Session Authentication Error',
+              detail: 'There is a temporary issue with your login session. Please log out and log back in to continue.',
+            }
+          }
+        });
         return;
       }
 

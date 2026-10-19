@@ -10,8 +10,19 @@ export function parseApiError(error: unknown): string {
 
     // If we have a structured API error
     if (apiError) {
+      // Check for specific error codes
+      if (apiError.code === 'AUTH_SESSION_ERROR') {
+        return apiError.detail || 'Session authentication error. Please log out and log in again.';
+      }
+      
       // Return the detail message or message field
       return apiError.detail || apiError.message || 'An unexpected error occurred';
+    }
+
+    // Check for UUID parsing errors in the raw message
+    const rawMessage = error.response?.data?.message || error.message || '';
+    if (rawMessage.includes('Invalid UUID') || rawMessage.includes('IllegalArgumentException')) {
+      return 'There is a temporary authentication issue. Please log out and log back in to continue.';
     }
 
     // Handle network errors
