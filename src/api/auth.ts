@@ -1,33 +1,39 @@
 import apiClient from './client';
-import type { AuthResponse, LoginRequest, SignupRequest } from '@/types';
+import type { LoginRequest, SignupRequest } from '@/types';
+
+interface TokenResponse {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+}
 
 export const authApi = {
   /**
    * Login with email and password
+   * Returns tokens only - fetch user separately with GET /me
    */
-  login: async (credentials: LoginRequest): Promise<AuthResponse> => {
-    const response = await apiClient.post<AuthResponse>('/auth/login', credentials);
-    const { accessToken, refreshToken, user } = response.data;
+  login: async (credentials: LoginRequest): Promise<TokenResponse> => {
+    const response = await apiClient.post<TokenResponse>('/auth/login', credentials);
+    const { accessToken, refreshToken } = response.data;
     
     // Store tokens in localStorage
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
-    localStorage.setItem('user', JSON.stringify(user));
     
     return response.data;
   },
 
   /**
    * Sign up a new founder
+   * Returns tokens only - fetch user separately with GET /me
    */
-  signup: async (data: SignupRequest): Promise<AuthResponse> => {
-    const response = await apiClient.post<AuthResponse>('/auth/signup', data);
-    const { accessToken, refreshToken, user } = response.data;
+  signup: async (data: SignupRequest): Promise<TokenResponse> => {
+    const response = await apiClient.post<TokenResponse>('/auth/signup', data);
+    const { accessToken, refreshToken } = response.data;
     
     // Store tokens in localStorage
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
-    localStorage.setItem('user', JSON.stringify(user));
     
     return response.data;
   },
@@ -35,8 +41,8 @@ export const authApi = {
   /**
    * Refresh access token using refresh token
    */
-  refresh: async (refreshToken: string): Promise<{ accessToken: string; refreshToken: string }> => {
-    const response = await apiClient.post<{ accessToken: string; refreshToken: string }>(
+  refresh: async (refreshToken: string): Promise<TokenResponse> => {
+    const response = await apiClient.post<TokenResponse>(
       '/auth/refresh',
       { refreshToken }
     );

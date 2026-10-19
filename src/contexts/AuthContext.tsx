@@ -48,13 +48,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = useCallback(async (credentials: LoginRequest) => {
-    const response = await authApi.login(credentials);
-    setUser(response.user);
+    await authApi.login(credentials);
+    // Fetch user profile after successful login
+    const userData = await foundersApi.getMe();
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
   }, []);
 
   const signup = useCallback(async (data: SignupRequest) => {
-    const response = await authApi.signup(data);
-    setUser(response.user);
+    await authApi.signup(data);
+    // Fetch user profile after successful signup
+    const userData = await foundersApi.getMe();
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
   }, []);
 
   const logout = useCallback(() => {

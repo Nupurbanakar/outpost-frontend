@@ -31,11 +31,8 @@ export default function TestPage() {
       await signup({
         email,
         password,
-        founderName: 'Test User',
-        startupName: 'Test Startup',
-        city: 'Hyderabad',
       });
-      addResult('✅ Signup successful');
+      addResult('✅ Signup successful - complete onboarding next');
     } catch (err: any) {
       setError(err.response?.data?.detail || err.message);
       addResult('❌ Signup failed: ' + err.message);

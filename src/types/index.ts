@@ -55,13 +55,4 @@ export interface LoginRequest {
 export interface SignupRequest {
   email: string;
   password: string;
-  founderName: string;
-  startupName: string;
-  city: string;
-}
-
-export interface AuthResponse {
-  accessToken: string;
-  refreshToken: string;
-  user: User;
 }
