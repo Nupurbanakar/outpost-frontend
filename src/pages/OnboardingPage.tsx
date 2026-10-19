@@ -75,6 +75,7 @@ export default function OnboardingPage() {
     setIsSubmitting(true);
 
     try {
+      console.log('Submitting onboarding data...');
       await foundersApi.completeOnboarding({
         founderName,
         startupName,
@@ -83,13 +84,22 @@ export default function OnboardingPage() {
         city,
         website: website || undefined,
       });
+      console.log('Onboarding completed successfully');
       
-      // Refresh user data
-      await refreshUser();
+      // Refresh user data to get updated isOnboarded status
+      try {
+        await refreshUser();
+        console.log('User data refreshed');
+      } catch (refreshError) {
+        console.warn('Failed to refresh user data, but continuing:', refreshError);
+        // Continue anyway since onboarding was successful
+      }
       
       toast.success('Profile completed!');
-      navigate('/discover');
+      console.log('Redirecting to /discover...');
+      navigate('/discover', { replace: true });
     } catch (error) {
+      console.error('Onboarding failed:', error);
       setApiError(error);
     } finally {
       setIsSubmitting(false);

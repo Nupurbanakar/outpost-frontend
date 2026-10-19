@@ -45,7 +45,8 @@ export function ProtectedRoute({
 
   // Check if user has completed onboarding
   if (requireOnboarded && user) {
-    const isOnboarded = !!(user.startupName && user.stage && user.sector);
+    // Check the onboarded flag first (most reliable)
+    const isOnboarded = user.onboarded || !!(user.startupName && user.stage && user.sector);
     if (!isOnboarded) {
       return <Navigate to="/onboarding" replace />;
     }
