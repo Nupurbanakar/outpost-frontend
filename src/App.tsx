@@ -18,6 +18,7 @@ import ChallengesPage from './pages/ChallengesPage';
 import ChallengeDetailPage from './pages/ChallengeDetailPage';
 import MentorsPage from './pages/MentorsPage';
 import MentorDetailPage from './pages/MentorDetailPage';
+import ProfilePage from './pages/ProfilePage';
 import SecuritySettingsPage from './pages/SecuritySettingsPage';
 
 function App() {
@@ -91,6 +92,16 @@ function App() {
         element={
           <ProtectedRoute>
             <GrantDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Profile */}
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <ProfilePage />
           </ProtectedRoute>
         }
       />
