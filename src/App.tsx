@@ -25,6 +25,7 @@ import ProfilePage from './pages/ProfilePage';
 import SecuritySettingsPage from './pages/SecuritySettingsPage';
 import SearchResultsPage from './pages/SearchResultsPage';
 import SavedItemsPage from './pages/SavedItemsPage';
+import PublicFounderProfilePage from './pages/PublicFounderProfilePage';
 
 function App() {
   const { isOpen, close } = useGlobalSearch();
@@ -201,6 +202,16 @@ function App() {
         element={
           <ProtectedRoute>
             <SavedItemsPage />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Public founder profile */}
+      <Route
+        path="/founders/:id"
+        element={
+          <ProtectedRoute>
+            <PublicFounderProfilePage />
           </ProtectedRoute>
         }
       />
