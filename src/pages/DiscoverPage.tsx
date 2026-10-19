@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { AppLayout } from '@/components/AppLayout';
 import { OpportunityCard } from '@/components/OpportunityCard';
+import { MentorCard } from '@/components/MentorCard';
 import { grantsApi } from '@/api/endpoints/grants';
 import { challengesApi } from '@/api/endpoints/challenges';
 import { mentorsApi } from '@/api/endpoints/mentors';
@@ -140,7 +141,8 @@ export default function DiscoverPage() {
         {/* Opportunities Section (FE-017) */}
         <OpportunitiesSection />
 
-        {/* TODO: Mentors Section (FE-018) */}
+        {/* Mentors Section (FE-018) */}
+        <MentorsSection />
       </div>
     </AppLayout>
   );
@@ -259,6 +261,81 @@ function OpportunitiesSection() {
         >
           Explore all opportunities
         </Link>
+      </div>
+    </section>
+  );
+}
+
+/* Mentors Section Component */
+function MentorsSection() {
+  const [mentors, setMentors] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMentors = async () => {
+      try {
+        setIsLoading(true);
+        const response = await mentorsApi.getMentors({ size: 3 });
+        setMentors(response.content);
+      } catch (error) {
+        console.error('Failed to fetch mentors:', error);
+        setMentors([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMentors();
+  }, []);
+
+  return (
+    <section className="bg-[#17231c] -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-7xl mx-auto">
+        {/* Section Header */}
+        <div className="mb-12">
+          <p className="text-xs font-semibold tracking-wide uppercase text-[#a8b5af] mb-2">
+            Founder to founder
+          </p>
+          <h2 className="text-3xl sm:text-4xl font-serif font-bold text-white mb-4">
+            Meet mentors who've been there
+          </h2>
+          <p className="text-lg text-[#a8b5af] max-w-2xl">
+            Get guidance from operators, investors, and experts who've scaled startups and navigated the challenges you're facing.
+          </p>
+        </div>
+
+        {/* Loading State */}
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-[#1f2b25] border border-[#2d3d35] p-6 h-64 animate-pulse" />
+            ))}
+          </div>
+        ) : mentors.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-[#a8b5af]">No mentors available right now.</p>
+          </div>
+        ) : (
+          /* Mentors Grid */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {mentors.map((mentor) => (
+              <MentorCard key={mentor.id} mentor={mentor} darkMode />
+            ))}
+          </div>
+        )}
+
+        {/* Browse All Link */}
+        <div className="text-center">
+          <Link
+            to="/mentors"
+            className="inline-flex items-center gap-2 text-[#6b8073] hover:text-white font-medium transition-colors"
+          >
+            Browse all mentors
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </Link>
+        </div>
       </div>
     </section>
   );
