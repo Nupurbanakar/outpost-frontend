@@ -14,6 +14,7 @@ import OnboardingPage from './pages/OnboardingPageMultiStep';
 import DiscoverPage from './pages/DiscoverPage';
 import GrantsPage from './pages/GrantsPage';
 import GrantDetailPage from './pages/GrantDetailPage';
+import SecuritySettingsPage from './pages/SecuritySettingsPage';
 
 function App() {
   return (
@@ -86,6 +87,16 @@ function App() {
         element={
           <ProtectedRoute>
             <GrantDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Security Settings */}
+      <Route
+        path="/profile/security"
+        element={
+          <ProtectedRoute>
+            <SecuritySettingsPage />
           </ProtectedRoute>
         }
       />
