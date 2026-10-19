@@ -6,6 +6,8 @@ import HomePage from './pages/HomePage';
 import TestPage from './pages/TestPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import VerifyPage from './pages/VerifyPage';
 import OnboardingPage from './pages/OnboardingPage';
@@ -41,6 +43,10 @@ function App() {
       {/* Verification routes - public */}
       <Route path="/verify-email" element={<VerifyEmailPage />} />
       <Route path="/verify" element={<VerifyPage />} />
+      
+      {/* Password reset routes - public */}
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
       
       {/* Onboarding - requires auth but not onboarding */}
       <Route
