@@ -27,7 +27,7 @@ export function ApiErrorDisplay({ error, className = '' }: ApiErrorDisplayProps)
         <p className="text-sm font-medium mb-2">{message}</p>
         {isAuthError && (
           <Button
-            variant="outline"
+            variant="secondary"
             size="sm"
             onClick={() => {
               logout();
