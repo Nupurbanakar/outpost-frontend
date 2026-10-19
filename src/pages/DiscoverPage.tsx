@@ -341,7 +341,7 @@ function MentorsSection() {
           /* Mentors Grid */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {mentors.map((mentor) => (
-              <MentorCard key={mentor.id} mentor={mentor} darkMode />
+              <MentorCard key={mentor.id} mentor={mentor} variant="dark" />
             ))}
           </div>
         )}

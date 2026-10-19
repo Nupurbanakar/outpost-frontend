@@ -16,6 +16,7 @@ import GrantsPage from './pages/GrantsPage';
 import GrantDetailPage from './pages/GrantDetailPage';
 import ChallengesPage from './pages/ChallengesPage';
 import ChallengeDetailPage from './pages/ChallengeDetailPage';
+import MentorsPage from './pages/MentorsPage';
 import SecuritySettingsPage from './pages/SecuritySettingsPage';
 
 function App() {
@@ -132,11 +133,13 @@ function App() {
           </ProtectedRoute>
         }
       />
+      
+      {/* Mentors listing */}
       <Route
         path="/mentors"
         element={
           <ProtectedRoute>
-            <div className="p-8">Mentors page (coming soon)</div>
+            <MentorsPage />
           </ProtectedRoute>
         }
       />
