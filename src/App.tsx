@@ -23,6 +23,7 @@ import MentorDetailPage from './pages/MentorDetailPage';
 import MentorApplicationPage from './pages/MentorApplicationPage';
 import ProfilePage from './pages/ProfilePage';
 import SecuritySettingsPage from './pages/SecuritySettingsPage';
+import SearchResultsPage from './pages/SearchResultsPage';
 
 function App() {
   const { isOpen, close } = useGlobalSearch();
@@ -179,6 +180,16 @@ function App() {
         element={
           <ProtectedRoute>
             <MentorApplicationPage />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Search results */}
+      <Route
+        path="/search"
+        element={
+          <ProtectedRoute>
+            <SearchResultsPage />
           </ProtectedRoute>
         }
       />

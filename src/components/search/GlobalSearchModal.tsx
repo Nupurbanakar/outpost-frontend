@@ -234,6 +234,19 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                   </div>
                 </button>
               ))}
+              
+              {/* View All Results Link */}
+              {results.length >= 5 && (
+                <button
+                  onClick={() => {
+                    navigate(`/search?q=${encodeURIComponent(query)}`);
+                    onClose();
+                  }}
+                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 px-3 py-3 text-sm font-medium text-gray-700 transition-colors hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700"
+                >
+                  View all results for "{query}"
+                </button>
+              )}
             </div>
           )}
         </div>
