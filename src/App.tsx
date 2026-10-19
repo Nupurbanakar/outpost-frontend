@@ -18,6 +18,7 @@ import ChallengesPage from './pages/ChallengesPage';
 import ChallengeDetailPage from './pages/ChallengeDetailPage';
 import MentorsPage from './pages/MentorsPage';
 import MentorDetailPage from './pages/MentorDetailPage';
+import MentorApplicationPage from './pages/MentorApplicationPage';
 import ProfilePage from './pages/ProfilePage';
 import SecuritySettingsPage from './pages/SecuritySettingsPage';
 
@@ -162,6 +163,16 @@ function App() {
         element={
           <ProtectedRoute>
             <MentorDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Mentor application form */}
+      <Route
+        path="/mentors/apply"
+        element={
+          <ProtectedRoute>
+            <MentorApplicationPage />
           </ProtectedRoute>
         }
       />
