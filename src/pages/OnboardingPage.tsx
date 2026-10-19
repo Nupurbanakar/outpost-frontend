@@ -103,9 +103,17 @@ export default function OnboardingPage() {
       window.location.href = '/discover';
     } catch (error) {
       console.error('Onboarding failed:', error);
+      console.log('Error type:', error);
+      console.log('Error response:', (error as any)?.response?.data);
+      console.log('Error code:', (error as any)?.response?.data?.code);
       
       // If already onboarded, just redirect to discover
-      if (isErrorCode(error, 'ALREADY_ONBOARDED')) {
+      const isAlreadyOnboarded = isErrorCode(error, 'ALREADY_ONBOARDED');
+      const is409Conflict = (error as any)?.response?.status === 409;
+      console.log('Is already onboarded?', isAlreadyOnboarded);
+      console.log('Is 409 conflict?', is409Conflict);
+      
+      if (isAlreadyOnboarded || is409Conflict) {
         toast.success('Profile already completed!');
         console.log('Already onboarded, redirecting to /discover...');
         window.location.href = '/discover';
