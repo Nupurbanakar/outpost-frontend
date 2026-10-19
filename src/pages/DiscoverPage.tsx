@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { AppLayout } from '@/components/AppLayout';
+import { OpportunityCard } from '@/components/OpportunityCard';
 import { grantsApi } from '@/api/endpoints/grants';
+import { challengesApi } from '@/api/endpoints/challenges';
 import { mentorsApi } from '@/api/endpoints/mentors';
 import { Sparkles, TrendingUp, Users, Clock } from 'lucide-react';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
@@ -134,9 +137,129 @@ export default function DiscoverPage() {
         {/* Section Divider */}
         <div className="border-t border-line mb-12" />
 
-        {/* TODO: Opportunities Section (FE-017) */}
+        {/* Opportunities Section (FE-017) */}
+        <OpportunitiesSection />
+
         {/* TODO: Mentors Section (FE-018) */}
       </div>
     </AppLayout>
+  );
+}
+
+/* Opportunities Section Component */
+function OpportunitiesSection() {
+  const [filter, setFilter] = useState<'ALL' | 'GRANT' | 'CHALLENGE'>('ALL');
+  const [opportunities, setOpportunities] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchOpportunities = async () => {
+      try {
+        setIsLoading(true);
+        
+        // Fetch grants and challenges in parallel
+        const [grantsResponse, challengesResponse] = await Promise.all([
+          grantsApi.getGrants({ size: 6 }),
+          challengesApi.getChallenges({ status: 'OPEN', size: 6 }),
+        ]);
+
+        // Combine and sort by deadline
+        const combined = [
+          ...grantsResponse.content.map((g: any) => ({ ...g, opportunityType: 'GRANT' as const })),
+          ...challengesResponse.content.map((c: any) => ({ ...c, opportunityType: 'CHALLENGE' as const })),
+        ];
+
+        // Sort by deadline (nulls last)
+        combined.sort((a, b) => {
+          if (!a.deadline) return 1;
+          if (!b.deadline) return -1;
+          return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+        });
+
+        // Take first 6
+        setOpportunities(combined.slice(0, 6));
+      } catch (error) {
+        console.error('Failed to fetch opportunities:', error);
+        setOpportunities([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOpportunities();
+  }, []);
+
+  // Filter opportunities
+  const filteredOpportunities = opportunities.filter((opp) => {
+    if (filter === 'ALL') return true;
+    return opp.opportunityType === filter;
+  });
+
+  return (
+    <section className="mb-16">
+      {/* Section Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <p className="text-xs font-semibold tracking-wide uppercase text-muted-text mb-1">
+            Open now
+          </p>
+          <h2 className="text-3xl font-serif font-bold text-ink">
+            Opportunities for you
+          </h2>
+        </div>
+      </div>
+
+      {/* Filter Pills */}
+      <div className="flex gap-2 mb-8">
+        {(['ALL', 'GRANT', 'CHALLENGE'] as const).map((filterType) => (
+          <button
+            key={filterType}
+            onClick={() => setFilter(filterType)}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${
+              filter === filterType
+                ? 'bg-ink text-paper-light'
+                : 'bg-paper-light text-muted-text border border-line hover:border-ink'
+            }`}
+          >
+            {filterType === 'ALL' ? 'All opportunities' : filterType === 'GRANT' ? 'Grants' : 'Challenges'}
+          </button>
+        ))}
+      </div>
+
+      {/* Loading State */}
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-paper-light border border-line p-6 h-80 animate-pulse" />
+          ))}
+        </div>
+      ) : filteredOpportunities.length === 0 ? (
+        /* Empty State */
+        <div className="text-center py-12">
+          <p className="text-muted-text">No {filter === 'ALL' ? '' : filter.toLowerCase() + ' '}opportunities available right now.</p>
+        </div>
+      ) : (
+        /* Opportunities Grid */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {filteredOpportunities.map((opp) => (
+            <OpportunityCard
+              key={opp.id}
+              opportunity={opp}
+              type={opp.opportunityType}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Explore All CTA */}
+      <div className="text-center">
+        <Link
+          to="/opportunities"
+          className="inline-block px-6 py-3 bg-transparent border-2 border-ink text-ink font-semibold hover:bg-ink hover:text-paper-light transition-colors"
+        >
+          Explore all opportunities
+        </Link>
+      </div>
+    </section>
   );
 }
