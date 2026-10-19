@@ -24,6 +24,7 @@ import MentorApplicationPage from './pages/MentorApplicationPage';
 import ProfilePage from './pages/ProfilePage';
 import SecuritySettingsPage from './pages/SecuritySettingsPage';
 import SearchResultsPage from './pages/SearchResultsPage';
+import SavedItemsPage from './pages/SavedItemsPage';
 
 function App() {
   const { isOpen, close } = useGlobalSearch();
@@ -190,6 +191,16 @@ function App() {
         element={
           <ProtectedRoute>
             <SearchResultsPage />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Saved items */}
+      <Route
+        path="/saved"
+        element={
+          <ProtectedRoute>
+            <SavedItemsPage />
           </ProtectedRoute>
         }
       />
