@@ -63,7 +63,7 @@ export const authApi = {
    * Get current user profile
    */
   getCurrentUser: async () => {
-    const response = await apiClient.get('/founders/me');
+    const response = await apiClient.get('/me');
     return response.data;
   },
 
