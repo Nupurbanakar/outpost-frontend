@@ -78,4 +78,32 @@ export const foundersApi = {
   unlinkIdentity: async (provider: 'EMAIL' | 'GOOGLE'): Promise<void> => {
     await apiClient.delete(`/me/identities/${provider}`);
   },
+
+  /**
+   * Upload pitch deck
+   */
+  uploadPitchDeck: async (file: File): Promise<void> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    await apiClient.put('/me/pitch-deck', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+
+  /**
+   * Get pitch deck URL
+   */
+  getPitchDeck: async (): Promise<{ url: string }> => {
+    const response = await apiClient.get<{ url: string }>('/me/pitch-deck');
+    return response.data;
+  },
+
+  /**
+   * Delete pitch deck
+   */
+  deletePitchDeck: async (): Promise<void> => {
+    await apiClient.delete('/me/pitch-deck');
+  },
 };

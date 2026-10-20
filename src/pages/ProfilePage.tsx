@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { AppLayout } from '@/components/AppLayout';
 import { useAuth } from '@/contexts';
 import { foundersApi, UpdateProfileRequest } from '@/api/endpoints/founders';
 import { useStages } from '@/hooks/useStages';
 import { useSectors } from '@/hooks/useSectors';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { PitchDeckUpload } from '@/components/profile/PitchDeckUpload';
 import { parseApiError } from '@/utils/errorHandling';
-import { User, Building2, MapPin, Target, Briefcase, Mail, Edit, Save, X, FileText, Globe, Linkedin, Twitter } from 'lucide-react';
+import { User, Building2, MapPin, Target, Briefcase, Mail, Edit, Save, X, FileText, Globe, Link as LinkIcon } from 'lucide-react';
 
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth();
-  const navigate = useNavigate();
   const { stages, isLoading: stagesLoading } = useStages();
   const { sectors, isLoading: sectorsLoading } = useSectors();
 
@@ -19,6 +19,7 @@ export default function ProfilePage() {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [pitchDeckUrl, setPitchDeckUrl] = useState<string | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -46,8 +47,21 @@ export default function ProfilePage() {
         linkedInUrl: user.linkedInUrl || '',
         twitterUrl: user.twitterUrl || '',
       });
+      
+      // Load pitch deck
+      loadPitchDeck();
     }
   }, [user]);
+
+  const loadPitchDeck = async () => {
+    try {
+      const data = await foundersApi.getPitchDeck();
+      setPitchDeckUrl(data.url);
+    } catch (err) {
+      // No pitch deck uploaded yet, ignore 404
+      setPitchDeckUrl(null);
+    }
+  };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -380,7 +394,7 @@ export default function ProfilePage() {
           <div className="p-6 border-b border-line">
             <div className="flex items-start gap-4">
               <div className="p-3 bg-[#f5f3ed] rounded">
-                <Linkedin className="w-5 h-5 text-[#b58c4f]" />
+                <LinkIcon className="w-5 h-5 text-[#b58c4f]" />
               </div>
               <div className="flex-1">
                 <label className="block text-sm font-medium text-muted-text mb-2">
@@ -411,7 +425,7 @@ export default function ProfilePage() {
           <div className="p-6">
             <div className="flex items-start gap-4">
               <div className="p-3 bg-[#f5f3ed] rounded">
-                <Twitter className="w-5 h-5 text-[#b58c4f]" />
+                <LinkIcon className="w-5 h-5 text-[#b58c4f]" />
               </div>
               <div className="flex-1">
                 <label className="block text-sm font-medium text-muted-text mb-2">
@@ -460,6 +474,16 @@ export default function ProfilePage() {
             </button>
           </div>
         )}
+
+        {/* Additional Settings Links */}
+        <div className="mt-8 p-6 bg-[#f5f3ed] border border-line">
+          <h3 className="text-lg font-serif font-bold text-ink mb-4">Pitch Deck</h3>
+          <PitchDeckUpload
+            currentDeckUrl={pitchDeckUrl || undefined}
+            onUploadSuccess={loadPitchDeck}
+            onDeleteSuccess={() => setPitchDeckUrl(null)}
+          />
+        </div>
 
         {/* Additional Settings Links */}
         <div className="mt-8 p-6 bg-[#f5f3ed] border border-line">
