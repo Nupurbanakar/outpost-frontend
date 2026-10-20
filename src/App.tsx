@@ -26,6 +26,7 @@ import SecuritySettingsPage from './pages/SecuritySettingsPage';
 import SearchResultsPage from './pages/SearchResultsPage';
 import SavedItemsPage from './pages/SavedItemsPage';
 import PublicFounderProfilePage from './pages/PublicFounderProfilePage';
+import BenefitsPage from './pages/BenefitsPage';
 
 function App() {
   const { isOpen, close } = useGlobalSearch();
@@ -212,6 +213,16 @@ function App() {
         element={
           <ProtectedRoute>
             <PublicFounderProfilePage />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Benefits */}
+      <Route
+        path="/benefits"
+        element={
+          <ProtectedRoute>
+            <BenefitsPage />
           </ProtectedRoute>
         }
       />
