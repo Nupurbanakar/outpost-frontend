@@ -28,6 +28,7 @@ import SavedItemsPage from './pages/SavedItemsPage';
 import PublicFounderProfilePage from './pages/PublicFounderProfilePage';
 import BenefitsPage from './pages/BenefitsPage';
 import BenefitDetailPage from './pages/BenefitDetailPage';
+import TalentPage from './pages/TalentPage';
 
 function App() {
   const { isOpen, close } = useGlobalSearch();
@@ -234,6 +235,16 @@ function App() {
         element={
           <ProtectedRoute>
             <BenefitDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Talent pool */}
+      <Route
+        path="/talent"
+        element={
+          <ProtectedRoute>
+            <TalentPage />
           </ProtectedRoute>
         }
       />
