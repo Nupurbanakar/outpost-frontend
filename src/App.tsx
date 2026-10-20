@@ -31,6 +31,10 @@ import BenefitDetailPage from './pages/BenefitDetailPage';
 import TalentPage from './pages/TalentPage';
 import CandidateDetailPage from './pages/CandidateDetailPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
+import AdminGrantsPage from './pages/admin/AdminGrantsPage';
+import AdminChallengesPage from './pages/admin/AdminChallengesPage';
+import AdminMentorsPage from './pages/admin/AdminMentorsPage';
+import AdminSpotlightPage from './pages/admin/AdminSpotlightPage';
 
 function App() {
   const { isOpen, close } = useGlobalSearch();
@@ -267,6 +271,38 @@ function App() {
         element={
           <ProtectedRoute>
             <AdminDashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/grants"
+        element={
+          <ProtectedRoute>
+            <AdminGrantsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/challenges"
+        element={
+          <ProtectedRoute>
+            <AdminChallengesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/mentors"
+        element={
+          <ProtectedRoute>
+            <AdminMentorsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/spotlight"
+        element={
+          <ProtectedRoute>
+            <AdminSpotlightPage />
           </ProtectedRoute>
         }
       />
