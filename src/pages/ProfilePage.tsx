@@ -7,7 +7,7 @@ import { useStages } from '@/hooks/useStages';
 import { useSectors } from '@/hooks/useSectors';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { parseApiError } from '@/utils/errorHandling';
-import { User, Building2, MapPin, Target, Briefcase, Mail, Edit, Save, X } from 'lucide-react';
+import { User, Building2, MapPin, Target, Briefcase, Mail, Edit, Save, X, FileText, Globe, Linkedin, Twitter } from 'lucide-react';
 
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth();
@@ -27,6 +27,10 @@ export default function ProfilePage() {
     city: user?.city || '',
     stageId: user?.stage?.id || '',
     sectorId: user?.sector?.id || '',
+    bio: user?.bio || '',
+    website: user?.website || '',
+    linkedInUrl: user?.linkedInUrl || '',
+    twitterUrl: user?.twitterUrl || '',
   });
 
   useEffect(() => {
@@ -37,6 +41,10 @@ export default function ProfilePage() {
         city: user.city,
         stageId: user.stage?.id || '',
         sectorId: user.sector?.id || '',
+        bio: user.bio || '',
+        website: user.website || '',
+        linkedInUrl: user.linkedInUrl || '',
+        twitterUrl: user.twitterUrl || '',
       });
     }
   }, [user]);
@@ -64,6 +72,10 @@ export default function ProfilePage() {
         city: user.city,
         stageId: user.stage?.id || '',
         sectorId: user.sector?.id || '',
+        bio: user.bio || '',
+        website: user.website || '',
+        linkedInUrl: user.linkedInUrl || '',
+        twitterUrl: user.twitterUrl || '',
       });
     }
   };
@@ -80,6 +92,10 @@ export default function ProfilePage() {
         city: formData.city,
         stageId: formData.stageId || undefined,
         sectorId: formData.sectorId || undefined,
+        bio: formData.bio || undefined,
+        website: formData.website || undefined,
+        linkedInUrl: formData.linkedInUrl || undefined,
+        twitterUrl: formData.twitterUrl || undefined,
       };
 
       await foundersApi.updateProfile(updateData);

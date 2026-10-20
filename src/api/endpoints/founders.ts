@@ -17,6 +17,9 @@ export interface UpdateProfileRequest {
   sectorId?: string;
   city?: string;
   website?: string;
+  bio?: string;
+  linkedInUrl?: string;
+  twitterUrl?: string;
 }
 
 export interface ChangePasswordRequest {

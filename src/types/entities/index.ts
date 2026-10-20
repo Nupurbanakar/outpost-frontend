@@ -73,4 +73,8 @@ export interface User {
   city: string;
   stage?: Stage;
   sector?: Sector;
+  bio?: string;
+  website?: string;
+  linkedInUrl?: string;
+  twitterUrl?: string;
 }
