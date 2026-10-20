@@ -29,6 +29,7 @@ import PublicFounderProfilePage from './pages/PublicFounderProfilePage';
 import BenefitsPage from './pages/BenefitsPage';
 import BenefitDetailPage from './pages/BenefitDetailPage';
 import TalentPage from './pages/TalentPage';
+import CandidateDetailPage from './pages/CandidateDetailPage';
 
 function App() {
   const { isOpen, close } = useGlobalSearch();
@@ -245,6 +246,16 @@ function App() {
         element={
           <ProtectedRoute>
             <TalentPage />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Candidate detail */}
+      <Route
+        path="/talent/:id"
+        element={
+          <ProtectedRoute>
+            <CandidateDetailPage />
           </ProtectedRoute>
         }
       />
