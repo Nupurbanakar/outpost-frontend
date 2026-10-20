@@ -30,6 +30,7 @@ import BenefitsPage from './pages/BenefitsPage';
 import BenefitDetailPage from './pages/BenefitDetailPage';
 import TalentPage from './pages/TalentPage';
 import CandidateDetailPage from './pages/CandidateDetailPage';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 
 function App() {
   const { isOpen, close } = useGlobalSearch();
@@ -256,6 +257,16 @@ function App() {
         element={
           <ProtectedRoute>
             <CandidateDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Admin routes */}
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute>
+            <AdminDashboardPage />
           </ProtectedRoute>
         }
       />
