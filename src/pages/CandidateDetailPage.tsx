@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { MapPin, Briefcase, Clock, Mail, Phone, Download } from 'lucide-react';
+import { MapPin, Clock, Mail, Phone, Download } from 'lucide-react';
 import { AppLayout } from '../components/AppLayout';
 import { getCandidateById, Candidate } from '../api/endpoints/candidates';
 

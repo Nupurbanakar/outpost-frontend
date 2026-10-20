@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { MapPin, Briefcase, Clock, Sparkles } from 'lucide-react';
+import { MapPin, Clock, Sparkles } from 'lucide-react';
 import type { Candidate } from '@/api/endpoints/candidates';
 
 interface CandidateCardProps {

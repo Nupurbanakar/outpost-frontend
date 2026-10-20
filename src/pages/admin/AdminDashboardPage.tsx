@@ -1,4 +1,4 @@
-import { AdminLayout } from '../components/admin/AdminLayout';
+import { AdminLayout } from '../../components/admin/AdminLayout';
 import { TrendingUp, Award, Users, Gift } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
