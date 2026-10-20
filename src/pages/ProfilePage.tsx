@@ -284,7 +284,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Sector */}
-          <div className="p-6">
+          <div className="p-6 border-b border-line">
             <div className="flex items-start gap-4">
               <div className="p-3 bg-[#f5f3ed] rounded">
                 <Briefcase className="w-5 h-5 text-[#b58c4f]" />
@@ -309,6 +309,130 @@ export default function ProfilePage() {
                   </select>
                 ) : (
                   <p className="text-lg text-ink">{user.sector?.name || 'Not specified'}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Bio */}
+          <div className="p-6 border-b border-line">
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-[#f5f3ed] rounded">
+                <FileText className="w-5 h-5 text-[#b58c4f]" />
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-muted-text mb-2">
+                  Bio
+                </label>
+                {isEditing ? (
+                  <div>
+                    <textarea
+                      value={formData.bio}
+                      onChange={(e) => handleInputChange('bio', e.target.value)}
+                      maxLength={2000}
+                      rows={4}
+                      className="w-full px-4 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink"
+                      placeholder="Tell us about yourself and your startup..."
+                    />
+                    <p className="text-xs text-muted-text mt-1">
+                      {formData.bio.length}/2000 characters
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-lg text-ink whitespace-pre-wrap">{user.bio || 'Not specified'}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Website */}
+          <div className="p-6 border-b border-line">
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-[#f5f3ed] rounded">
+                <Globe className="w-5 h-5 text-[#b58c4f]" />
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-muted-text mb-2">
+                  Website
+                </label>
+                {isEditing ? (
+                  <input
+                    type="url"
+                    value={formData.website}
+                    onChange={(e) => handleInputChange('website', e.target.value)}
+                    className="w-full px-4 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink"
+                    placeholder="https://yourwebsite.com"
+                  />
+                ) : (
+                  user.website ? (
+                    <a href={user.website} target="_blank" rel="noopener noreferrer" className="text-lg text-indigo-600 hover:text-indigo-700">
+                      {user.website}
+                    </a>
+                  ) : (
+                    <p className="text-lg text-ink">Not specified</p>
+                  )
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* LinkedIn */}
+          <div className="p-6 border-b border-line">
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-[#f5f3ed] rounded">
+                <Linkedin className="w-5 h-5 text-[#b58c4f]" />
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-muted-text mb-2">
+                  LinkedIn URL
+                </label>
+                {isEditing ? (
+                  <input
+                    type="url"
+                    value={formData.linkedInUrl}
+                    onChange={(e) => handleInputChange('linkedInUrl', e.target.value)}
+                    className="w-full px-4 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink"
+                    placeholder="https://linkedin.com/in/yourprofile"
+                  />
+                ) : (
+                  user.linkedInUrl ? (
+                    <a href={user.linkedInUrl} target="_blank" rel="noopener noreferrer" className="text-lg text-indigo-600 hover:text-indigo-700">
+                      {user.linkedInUrl}
+                    </a>
+                  ) : (
+                    <p className="text-lg text-ink">Not specified</p>
+                  )
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Twitter */}
+          <div className="p-6">
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-[#f5f3ed] rounded">
+                <Twitter className="w-5 h-5 text-[#b58c4f]" />
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-muted-text mb-2">
+                  Twitter/X URL
+                </label>
+                {isEditing ? (
+                  <input
+                    type="url"
+                    value={formData.twitterUrl}
+                    onChange={(e) => handleInputChange('twitterUrl', e.target.value)}
+                    className="w-full px-4 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink"
+                    placeholder="https://twitter.com/yourhandle"
+                  />
+                ) : (
+                  user.twitterUrl ? (
+                    <a href={user.twitterUrl} target="_blank" rel="noopener noreferrer" className="text-lg text-indigo-600 hover:text-indigo-700">
+                      {user.twitterUrl}
+                    </a>
+                  ) : (
+                    <p className="text-lg text-ink">Not specified</p>
+                  )
                 )}
               </div>
             </div>
