@@ -141,7 +141,27 @@ export default function ProfilePage() {
       console.log('Sending profile update:', JSON.stringify(updateData, null, 2));
 
       await foundersApi.updateProfile(updateData);
+      
+      // Refresh user data from server
       await refreshUser();
+      
+      // Wait a moment for context to update, then update form
+      setTimeout(() => {
+        if (user) {
+          setFormData({
+            founderName: user.founderName,
+            startupName: user.startupName,
+            city: user.city,
+            stageId: user.stage?.id || '',
+            sectorId: user.sector?.id || '',
+            bio: user.profile?.bio || user.bio || '',
+            website: user.profile?.links?.find(l => l.type === 'OTHER')?.url || user.website || '',
+            linkedInUrl: user.profile?.links?.find(l => l.type === 'LINKEDIN')?.url || user.linkedInUrl || '',
+            twitterUrl: user.profile?.links?.find(l => l.type === 'X')?.url || user.twitterUrl || '',
+          });
+        }
+      }, 100);
+      
       setSuccess(true);
       setIsEditing(false);
 

@@ -33,9 +33,11 @@ export default function DiscoverPage() {
           mentorsApi.getMentors({ page: 1, size: 1 }),
         ]);
 
-        const totalGrants = grantsResponse.totalElements || 0;
-        const totalChallenges = challengesResponse.totalElements || 0;
-        const totalMentors = mentorsResponse.totalElements || 0;
+        const totalGrants = grantsResponse.page?.totalElements || 0;
+        const totalChallenges = challengesResponse.page?.totalElements || 0;
+        const totalMentors = mentorsResponse.page?.totalElements || 0;
+
+        console.log('Stats loaded:', { totalGrants, totalChallenges, totalMentors });
 
         setStats({
           openCalls: totalGrants + totalChallenges, // Sum of grants and challenges
