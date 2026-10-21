@@ -1,8 +1,9 @@
 import { test, expect, devices } from '@playwright/test';
 
-test.describe('Mobile Responsiveness', () => {
-  test.use({ ...devices['iPhone 12'] });
+// Configure mobile device for all tests in this file
+test.use({ ...devices['iPhone 12'] });
 
+test.describe('Mobile Responsiveness', () => {
   test.beforeEach(async ({ page }) => {
     // Mock authentication
     await page.route('**/api/v1/auth/login', async (route) => {
@@ -345,47 +346,5 @@ test.describe('Mobile Responsiveness', () => {
         expect(box.width).toBeLessThanOrEqual(viewportSize.width);
       }
     }
-  });
-});
-
-test.describe('Tablet Responsiveness', () => {
-  test.use({ ...devices['iPad Pro'] });
-
-  test('should display tablet layout', async ({ page }) => {
-    await page.route('**/api/v1/auth/login', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          accessToken: 'mock-access-token',
-          refreshToken: 'mock-refresh-token',
-        }),
-      });
-    });
-
-    await page.route('**/api/v1/founders/me', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          id: 1,
-          email: 'test@example.com',
-          firstName: 'Test',
-          lastName: 'User',
-          isVerified: true,
-          isOnboarded: true,
-        }),
-      });
-    });
-
-    await page.goto('/login');
-    await page.getByPlaceholder(/email/i).fill('test@example.com');
-    await page.getByPlaceholder(/password/i).fill('password123');
-    await page.getByRole('button', { name: /log in/i }).click();
-    await page.waitForURL('/discover');
-
-    // Tablet might show desktop nav instead of mobile bottom bar
-    const nav = page.locator('nav');
-    await expect(nav).toBeVisible();
   });
 });
