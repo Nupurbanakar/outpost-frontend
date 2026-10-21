@@ -15,7 +15,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     <div className="min-h-screen bg-paper flex flex-col">
       <Header />
       
-      <main className="flex-1 pb-20 lg:pb-0">
+      <main id="main-content" className="flex-1 pb-20 lg:pb-0">
         {children}
       </main>
       

@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { ProtectedRoute, PublicRoute } from './components';
 import { useGlobalSearch } from './hooks/useGlobalSearch';
 import { GlobalSearchModal } from './components/search/GlobalSearchModal';
+import { SkipLink } from './components/SkipLink';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -42,6 +43,7 @@ function App() {
   
   return (
     <>
+      <SkipLink />
       <GlobalSearchModal isOpen={isOpen} onClose={close} />
       <Routes>
       {/* Public landing page */}
