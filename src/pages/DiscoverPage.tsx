@@ -26,16 +26,21 @@ export default function DiscoverPage() {
       try {
         setIsLoadingStats(true);
         
-        // Fetch stats in parallel
-        const [grantStats, mentorsResponse] = await Promise.all([
-          grantsApi.getStats(),
-          mentorsApi.getMentors({ size: 1 }), // Just to get total count
+        // Fetch counts from actual endpoints (page=1, size=1 to minimize data)
+        const [grantsResponse, challengesResponse, mentorsResponse] = await Promise.all([
+          grantsApi.getGrants({ page: 1, size: 1 }),
+          challengesApi.getChallenges({ page: 1, size: 1 }),
+          mentorsApi.getMentors({ page: 1, size: 1 }),
         ]);
 
+        const totalGrants = grantsResponse.totalElements || 0;
+        const totalChallenges = challengesResponse.totalElements || 0;
+        const totalMentors = mentorsResponse.totalElements || 0;
+
         setStats({
-          openCalls: grantStats.openCalls,
-          closingSoon: grantStats.closingSoon,
-          mentors: mentorsResponse.page.totalElements,
+          openCalls: totalGrants + totalChallenges, // Sum of grants and challenges
+          closingSoon: 0, // Not available without deadline filtering
+          mentors: totalMentors,
         });
       } catch (error) {
         console.error('Failed to fetch stats:', error);

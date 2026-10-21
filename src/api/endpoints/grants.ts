@@ -59,12 +59,4 @@ export const grantsApi = {
     const response = await apiClient.get<Grant>(`/grants/${id}`);
     return response.data;
   },
-
-  /**
-   * Get stats for discover page
-   */
-  getStats: async (): Promise<{ openCalls: number; closingSoon: number }> => {
-    const response = await apiClient.get<{ openCalls: number; closingSoon: number }>('/grants/stats');
-    return response.data;
-  },
 };
