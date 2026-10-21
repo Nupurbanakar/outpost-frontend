@@ -109,33 +109,33 @@ export default function ProfilePage() {
       // Construct links array from individual URL fields
       const links = [];
       
-      // LinkedIn URL validation - must be full URL
-      if (formData.linkedInUrl) {
-        const linkedInUrl = formData.linkedInUrl.startsWith('http') 
-          ? formData.linkedInUrl 
-          : `https://linkedin.com/in/${formData.linkedInUrl}`;
+      // LinkedIn URL - ensure it's a valid full URL
+      if (formData.linkedInUrl && formData.linkedInUrl.trim()) {
+        const linkedInUrl = formData.linkedInUrl.trim().startsWith('http') 
+          ? formData.linkedInUrl.trim()
+          : `https://linkedin.com/in/${formData.linkedInUrl.trim()}`;
         links.push({ type: 'LINKEDIN' as const, url: linkedInUrl });
       }
       
-      // Twitter URL validation - must be full URL
-      if (formData.twitterUrl) {
-        const twitterUrl = formData.twitterUrl.startsWith('http') 
-          ? formData.twitterUrl 
-          : `https://twitter.com/${formData.twitterUrl}`;
+      // Twitter URL - ensure it's a valid full URL
+      if (formData.twitterUrl && formData.twitterUrl.trim()) {
+        const twitterUrl = formData.twitterUrl.trim().startsWith('http') 
+          ? formData.twitterUrl.trim()
+          : `https://twitter.com/${formData.twitterUrl.trim()}`;
         links.push({ type: 'TWITTER' as const, url: twitterUrl });
       }
       
-      // Website URL validation - must be full URL
-      if (formData.website) {
-        const websiteUrl = formData.website.startsWith('http') 
-          ? formData.website 
-          : `https://${formData.website}`;
+      // Website URL - ensure it's a valid full URL
+      if (formData.website && formData.website.trim()) {
+        const websiteUrl = formData.website.trim().startsWith('http') 
+          ? formData.website.trim()
+          : `https://${formData.website.trim()}`;
         links.push({ type: 'WEBSITE' as const, url: websiteUrl });
       }
 
       const updateData: UpdateProfileRequest = {
         bio: formData.bio || '', // Send empty string if no bio
-        links: links.length > 0 ? links : [], // Send empty array if no links
+        links: links, // Send the links array (can be empty)
       };
 
       console.log('Sending profile update:', JSON.stringify(updateData, null, 2));
