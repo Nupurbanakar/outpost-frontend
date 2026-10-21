@@ -108,20 +108,37 @@ export default function ProfilePage() {
     try {
       // Construct links array from individual URL fields
       const links = [];
+      
+      // LinkedIn URL validation - must be full URL
       if (formData.linkedInUrl) {
-        links.push({ type: 'LINKEDIN' as const, url: formData.linkedInUrl });
+        const linkedInUrl = formData.linkedInUrl.startsWith('http') 
+          ? formData.linkedInUrl 
+          : `https://linkedin.com/in/${formData.linkedInUrl}`;
+        links.push({ type: 'LINKEDIN' as const, url: linkedInUrl });
       }
+      
+      // Twitter URL validation - must be full URL
       if (formData.twitterUrl) {
-        links.push({ type: 'TWITTER' as const, url: formData.twitterUrl });
+        const twitterUrl = formData.twitterUrl.startsWith('http') 
+          ? formData.twitterUrl 
+          : `https://twitter.com/${formData.twitterUrl}`;
+        links.push({ type: 'TWITTER' as const, url: twitterUrl });
       }
+      
+      // Website URL validation - must be full URL
       if (formData.website) {
-        links.push({ type: 'WEBSITE' as const, url: formData.website });
+        const websiteUrl = formData.website.startsWith('http') 
+          ? formData.website 
+          : `https://${formData.website}`;
+        links.push({ type: 'WEBSITE' as const, url: websiteUrl });
       }
 
       const updateData: UpdateProfileRequest = {
         bio: formData.bio || '', // Send empty string if no bio
         links: links.length > 0 ? links : [], // Send empty array if no links
       };
+
+      console.log('Sending profile update:', JSON.stringify(updateData, null, 2));
 
       await foundersApi.updateProfile(updateData);
       await refreshUser();
@@ -131,6 +148,7 @@ export default function ProfilePage() {
       // Hide success message after 3 seconds
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: any) {
+      console.error('Profile update error:', err);
       setError(parseApiError(err));
     } finally {
       setIsSaving(false);
