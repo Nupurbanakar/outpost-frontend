@@ -13,6 +13,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import VerifyPage from './pages/VerifyPage';
+import OAuthCallbackPage from './pages/OAuthCallbackPage';
 import OnboardingPage from './pages/OnboardingPageMultiStep';
 import DiscoverPage from './pages/DiscoverPage';
 import GrantsPage from './pages/GrantsPage';
@@ -73,6 +74,9 @@ function App() {
       {/* Verification routes - public */}
       <Route path="/verify-email" element={<VerifyEmailPage />} />
       <Route path="/verify" element={<VerifyPage />} />
+      
+      {/* OAuth callback - public */}
+      <Route path="/auth/callback" element={<OAuthCallbackPage />} />
       
       {/* Password reset routes - public */}
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
