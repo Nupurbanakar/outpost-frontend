@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { AppLayout } from '@/components/AppLayout';
 import { mentorsApi, Mentor } from '@/api/endpoints/mentors';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { ChevronLeft, Calendar, Linkedin, Twitter, Globe, Mail } from 'lucide-react';
+import { ChevronLeft, Calendar, Linkedin as LinkedinIcon, Twitter, Globe, Mail } from 'lucide-react';
 
 export default function MentorDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -132,7 +132,7 @@ export default function MentorDetailPage() {
                     className="text-muted-text hover:text-ink transition-colors"
                     aria-label="LinkedIn"
                   >
-                    <Linkedin className="w-5 h-5" />
+                    <LinkedinIcon className="w-5 h-5" />
                   </a>
                 )}
                 {mentor.twitterUrl && (
