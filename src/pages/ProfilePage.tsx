@@ -119,8 +119,8 @@ export default function ProfilePage() {
       }
 
       const updateData: UpdateProfileRequest = {
-        bio: formData.bio || undefined,
-        links: links.length > 0 ? links : undefined,
+        bio: formData.bio || '', // Send empty string if no bio
+        links: links.length > 0 ? links : [], // Send empty array if no links
       };
 
       await foundersApi.updateProfile(updateData);
@@ -213,15 +213,21 @@ export default function ProfilePage() {
                   Your Name
                 </label>
                 {isEditing ? (
-                  <input
-                    type="text"
-                    value={formData.founderName}
-                    onChange={(e) => handleInputChange('founderName', e.target.value)}
-                    className="w-full px-4 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink"
-                    placeholder="Enter your name"
-                  />
+                  <div>
+                    <input
+                      type="text"
+                      value={formData.founderName}
+                      disabled
+                      className="w-full px-4 py-2 border border-line bg-gray-50 text-gray-500 cursor-not-allowed"
+                      placeholder="Enter your name"
+                    />
+                    <p className="text-xs text-muted-text mt-1">Set during onboarding</p>
+                  </div>
                 ) : (
                   <p className="text-lg text-ink">{user.founderName}</p>
+                )}
+                {isEditing && (
+                  <p className="text-xs text-muted-text mt-1">Name cannot be changed after onboarding</p>
                 )}
               </div>
             </div>
