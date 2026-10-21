@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { AxiosError } from 'axios';
 import { authApi, foundersApi } from '@/api';
 import type { User, LoginRequest, SignupRequest } from '@/types';
 
@@ -75,15 +76,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         
-        // Throw error with EMAIL_NOT_VERIFIED code
-        const verificationError = new Error('Please verify your email before logging in');
-        (verificationError as any).response = {
-          status: 401,
-          data: { 
-            code: 'EMAIL_NOT_VERIFIED',
-            message: 'Please verify your email before logging in'
+        // Throw error with EMAIL_NOT_VERIFIED code as AxiosError
+        const verificationError = new AxiosError(
+          'Please verify your email before logging in',
+          'EMAIL_NOT_VERIFIED',
+          undefined,
+          undefined,
+          {
+            status: 401,
+            statusText: 'Unauthorized',
+            data: { 
+              code: 'EMAIL_NOT_VERIFIED',
+              message: 'Please verify your email before logging in'
+            },
+            headers: {},
+            config: {} as any
           }
-        };
+        );
         throw verificationError;
       } else if (error.response?.status === 404) {
         console.warn('Backend /founders/me endpoint not found, using basic user data');

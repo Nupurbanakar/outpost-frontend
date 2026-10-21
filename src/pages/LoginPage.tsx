@@ -52,11 +52,18 @@ export default function LoginPage() {
       const from = (location.state as any)?.from?.pathname || '/discover';
       navigate(from, { replace: true });
     } catch (error) {
+      console.log('Login error caught:', error);
+      console.log('Error response:', (error as any)?.response);
+      console.log('Error response data:', (error as any)?.response?.data);
+      console.log('isErrorCode check:', isErrorCode(error, 'EMAIL_NOT_VERIFIED'));
+      
       // Handle EMAIL_NOT_VERIFIED specifically
       if (isErrorCode(error, 'EMAIL_NOT_VERIFIED')) {
+        console.log('EMAIL_NOT_VERIFIED detected, redirecting...');
         toast.error('Please verify your email first');
         navigate('/verify-email', { state: { email } });
       } else {
+        console.log('Other error, showing API error display');
         setApiError(error);
       }
     } finally {
