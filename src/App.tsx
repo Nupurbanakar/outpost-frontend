@@ -35,6 +35,7 @@ import AdminGrantsPage from './pages/admin/AdminGrantsPage';
 import AdminChallengesPage from './pages/admin/AdminChallengesPage';
 import AdminMentorsPage from './pages/admin/AdminMentorsPage';
 import AdminSpotlightPage from './pages/admin/AdminSpotlightPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
   const { isOpen, close } = useGlobalSearch();
@@ -307,8 +308,8 @@ function App() {
         }
       />
       
-      {/* Catch all - redirect to discover for authenticated users, login otherwise */}
-      <Route path="*" element={<Navigate to="/discover" replace />} />
+      {/* Catch all - 404 page */}
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
     </>
   );

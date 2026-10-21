@@ -1,24 +1,19 @@
 import { Component, ReactNode } from 'react';
-import { AlertCircle } from 'lucide-react';
-import { Button } from './ui/Button';
+import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 
 interface Props {
   children: ReactNode;
-  fallback?: ReactNode;
 }
 
 interface State {
   hasError: boolean;
-  error?: Error;
+  error: Error | null;
 }
 
-/**
- * ErrorBoundary - Catches React errors and shows friendly fallback
- */
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, error: null };
   }
 
   static getDerivedStateFromError(error: Error): State {
@@ -26,45 +21,55 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    console.error('Error caught by boundary:', error, errorInfo);
+    // TODO: Log to error tracking service (Sentry, etc.)
   }
 
   handleReset = () => {
-    this.setState({ hasError: false, error: undefined });
+    this.setState({ hasError: false, error: null });
+    window.location.href = '/';
   };
 
   render() {
     if (this.state.hasError) {
-      if (this.props.fallback) {
-        return this.props.fallback;
-      }
-
       return (
-        <div className="min-h-screen flex items-center justify-center bg-paper p-4">
-          <div className="max-w-md w-full text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-rose-100 mb-4">
-              <AlertCircle className="w-8 h-8 text-rose-600" />
+        <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+          <div className="max-w-md text-center">
+            <div className="mb-6 flex justify-center">
+              <div className="rounded-full bg-red-100 p-4">
+                <AlertTriangle className="h-12 w-12 text-red-600" />
+              </div>
             </div>
-            
-            <h2 className="text-2xl font-bold text-ink mb-2">Something went wrong</h2>
-            
-            <p className="text-muted-text mb-6">
-              We're sorry, but something unexpected happened. Please try refreshing the page.
+            <h1 className="mb-4 text-3xl font-bold text-gray-900">Something went wrong</h1>
+            <p className="mb-2 text-gray-600">
+              We're sorry, but something unexpected happened. Our team has been notified.
             </p>
-
-            {this.state.error && import.meta.env.DEV && (
-              <pre className="text-left text-xs bg-paper-light border border-line p-4 mb-4 overflow-auto">
-                {this.state.error.message}
-              </pre>
+            {process.env.NODE_ENV === 'development' && this.state.error && (
+              <details className="mb-6 rounded-lg bg-gray-100 p-4 text-left text-sm">
+                <summary className="cursor-pointer font-medium text-gray-700">
+                  Error details (dev only)
+                </summary>
+                <pre className="mt-2 overflow-auto text-xs text-red-600">
+                  {this.state.error.toString()}
+                  {this.state.error.stack}
+                </pre>
+              </details>
             )}
-
-            <div className="flex gap-3 justify-center">
-              <Button onClick={() => window.location.reload()} variant="primary">
-                Refresh Page
-              </Button>
-              <Button onClick={this.handleReset} variant="secondary">
-                Try Again
-              </Button>
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <button
+                onClick={this.handleReset}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white hover:bg-indigo-700 transition-colors"
+              >
+                <Home className="h-5 w-5" />
+                Go Home
+              </button>
+              <button
+                onClick={() => window.location.reload()}
+                className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-gray-300 bg-white px-6 py-3 font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                <RefreshCw className="h-5 w-5" />
+                Reload Page
+              </button>
             </div>
           </div>
         </div>
