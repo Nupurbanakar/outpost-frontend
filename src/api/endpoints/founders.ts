@@ -53,7 +53,7 @@ export const foundersApi = {
    * Update profile
    */
   updateProfile: async (data: UpdateProfileRequest): Promise<User> => {
-    const response = await apiClient.put<User>('/me', data);
+    const response = await apiClient.patch<User>('/me/profile', data);
     return response.data;
   },
 
