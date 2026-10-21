@@ -11,7 +11,7 @@ export interface OnboardingRequest {
 }
 
 export interface SocialLink {
-  type: 'LINKEDIN' | 'TWITTER' | 'WEBSITE';
+  type: 'LINKEDIN' | 'X' | 'OTHER';
   url: string;
 }
 

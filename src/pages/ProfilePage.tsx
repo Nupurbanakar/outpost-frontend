@@ -117,20 +117,20 @@ export default function ProfilePage() {
         links.push({ type: 'LINKEDIN' as const, url: linkedInUrl });
       }
       
-      // Twitter URL - ensure it's a valid full URL
+      // Twitter/X URL - ensure it's a valid full URL
       if (formData.twitterUrl && formData.twitterUrl.trim()) {
         const twitterUrl = formData.twitterUrl.trim().startsWith('http') 
           ? formData.twitterUrl.trim()
           : `https://twitter.com/${formData.twitterUrl.trim()}`;
-        links.push({ type: 'TWITTER' as const, url: twitterUrl });
+        links.push({ type: 'X' as const, url: twitterUrl });
       }
       
-      // Website URL - ensure it's a valid full URL
+      // Website URL - use OTHER type
       if (formData.website && formData.website.trim()) {
         const websiteUrl = formData.website.trim().startsWith('http') 
           ? formData.website.trim()
           : `https://${formData.website.trim()}`;
-        links.push({ type: 'WEBSITE' as const, url: websiteUrl });
+        links.push({ type: 'OTHER' as const, url: websiteUrl });
       }
 
       const updateData: UpdateProfileRequest = {
