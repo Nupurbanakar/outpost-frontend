@@ -4,8 +4,9 @@ interface GoogleLoginButtonProps {
 
 export function GoogleLoginButton({ mode = 'login' }: GoogleLoginButtonProps) {
   const handleGoogleLogin = () => {
-    // Redirect to backend OAuth endpoint
-    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1'}/oauth2/authorization/google`;
+    // Spring Security OAuth2 endpoints are at root level, not under /api/v1
+    const baseUrl = import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:8080';
+    window.location.href = `${baseUrl}/oauth2/authorization/google`;
   };
 
   return (
