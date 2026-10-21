@@ -77,4 +77,11 @@ export interface User {
   website?: string;
   linkedInUrl?: string;
   twitterUrl?: string;
+  profile?: {
+    bio?: string;
+    links?: Array<{
+      type: 'LINKEDIN' | 'X' | 'OTHER';
+      url: string;
+    }>;
+  };
 }

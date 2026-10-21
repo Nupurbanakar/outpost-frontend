@@ -28,10 +28,10 @@ export default function ProfilePage() {
     city: user?.city || '',
     stageId: user?.stage?.id || '',
     sectorId: user?.sector?.id || '',
-    bio: user?.bio || '',
-    website: user?.website || '',
-    linkedInUrl: user?.linkedInUrl || '',
-    twitterUrl: user?.twitterUrl || '',
+    bio: user?.profile?.bio || user?.bio || '',
+    website: user?.profile?.links?.find(l => l.type === 'OTHER')?.url || user?.website || '',
+    linkedInUrl: user?.profile?.links?.find(l => l.type === 'LINKEDIN')?.url || user?.linkedInUrl || '',
+    twitterUrl: user?.profile?.links?.find(l => l.type === 'X')?.url || user?.twitterUrl || '',
   });
 
   useEffect(() => {
@@ -42,10 +42,10 @@ export default function ProfilePage() {
         city: user.city,
         stageId: user.stage?.id || '',
         sectorId: user.sector?.id || '',
-        bio: user.bio || '',
-        website: user.website || '',
-        linkedInUrl: user.linkedInUrl || '',
-        twitterUrl: user.twitterUrl || '',
+        bio: user.profile?.bio || user.bio || '',
+        website: user.profile?.links?.find(l => l.type === 'OTHER')?.url || user.website || '',
+        linkedInUrl: user.profile?.links?.find(l => l.type === 'LINKEDIN')?.url || user.linkedInUrl || '',
+        twitterUrl: user.profile?.links?.find(l => l.type === 'X')?.url || user.twitterUrl || '',
       });
       
       // Load pitch deck
