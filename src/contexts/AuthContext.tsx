@@ -50,8 +50,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = useCallback(async (credentials: LoginRequest) => {
     console.log('Attempting login with email:', credentials.email);
     
-    await authApi.login(credentials);
-    console.log('Login API call successful, tokens stored');
+    try {
+      await authApi.login(credentials);
+      console.log('Login API call successful, tokens stored');
+    } catch (error: any) {
+      // Clear tokens if login failed
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      throw error;
+    }
     
     // Try to fetch user profile after successful login
     try {
@@ -61,8 +68,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
     } catch (error: any) {
-      // If /founders/me endpoint doesn't exist (404), create a basic user object
-      if (error.response?.status === 404) {
+      // If 401, user might not be verified - create error with EMAIL_NOT_VERIFIED code
+      if (error.response?.status === 401) {
+        console.error('User not verified or unauthorized:', error);
+        // Clear tokens since we can't access the profile
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        
+        // Throw error with EMAIL_NOT_VERIFIED code
+        const verificationError = new Error('Please verify your email before logging in');
+        (verificationError as any).response = {
+          status: 401,
+          data: { 
+            error: 'EMAIL_NOT_VERIFIED',
+            message: 'Please verify your email before logging in'
+          }
+        };
+        throw verificationError;
+      } else if (error.response?.status === 404) {
         console.warn('Backend /founders/me endpoint not found, using basic user data');
         const basicUser = {
           id: 0,
@@ -79,6 +102,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem('user', JSON.stringify(basicUser));
       } else {
         console.error('Failed to fetch user profile:', error);
+        // Clear tokens on error
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
         throw error;
       }
     }
