@@ -106,16 +106,21 @@ export default function ProfilePage() {
     setSuccess(false);
 
     try {
+      // Construct links array from individual URL fields
+      const links = [];
+      if (formData.linkedInUrl) {
+        links.push({ type: 'LINKEDIN' as const, url: formData.linkedInUrl });
+      }
+      if (formData.twitterUrl) {
+        links.push({ type: 'TWITTER' as const, url: formData.twitterUrl });
+      }
+      if (formData.website) {
+        links.push({ type: 'WEBSITE' as const, url: formData.website });
+      }
+
       const updateData: UpdateProfileRequest = {
-        founderName: formData.founderName,
-        startupName: formData.startupName,
-        city: formData.city,
-        stageId: formData.stageId || undefined,
-        sectorId: formData.sectorId || undefined,
         bio: formData.bio || undefined,
-        website: formData.website || undefined,
-        linkedInUrl: formData.linkedInUrl || undefined,
-        twitterUrl: formData.twitterUrl || undefined,
+        links: links.length > 0 ? links : undefined,
       };
 
       await foundersApi.updateProfile(updateData);

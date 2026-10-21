@@ -10,16 +10,14 @@ export interface OnboardingRequest {
   website?: string;
 }
 
+export interface SocialLink {
+  type: 'LINKEDIN' | 'TWITTER' | 'WEBSITE';
+  url: string;
+}
+
 export interface UpdateProfileRequest {
-  founderName?: string;
-  startupName?: string;
-  stageId?: string;
-  sectorId?: string;
-  city?: string;
-  website?: string;
   bio?: string;
-  linkedInUrl?: string;
-  twitterUrl?: string;
+  links?: SocialLink[];
 }
 
 export interface ChangePasswordRequest {
