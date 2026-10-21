@@ -408,7 +408,7 @@ export default function ProfilePage() {
                     </p>
                   </div>
                 ) : (
-                  <p className="text-lg text-ink whitespace-pre-wrap">{user.bio || 'Not specified'}</p>
+                  <p className="text-lg text-ink whitespace-pre-wrap">{user.profile?.bio || user.bio || 'Not specified'}</p>
                 )}
               </div>
             </div>
@@ -433,9 +433,9 @@ export default function ProfilePage() {
                     placeholder="https://yourwebsite.com"
                   />
                 ) : (
-                  user.website ? (
-                    <a href={user.website} target="_blank" rel="noopener noreferrer" className="text-lg text-indigo-600 hover:text-indigo-700">
-                      {user.website}
+                  (user.profile?.links?.find(l => l.type === 'OTHER')?.url || user.website) ? (
+                    <a href={user.profile?.links?.find(l => l.type === 'OTHER')?.url || user.website} target="_blank" rel="noopener noreferrer" className="text-lg text-indigo-600 hover:text-indigo-700">
+                      {user.profile?.links?.find(l => l.type === 'OTHER')?.url || user.website}
                     </a>
                   ) : (
                     <p className="text-lg text-ink">Not specified</p>
@@ -464,9 +464,9 @@ export default function ProfilePage() {
                     placeholder="https://linkedin.com/in/yourprofile"
                   />
                 ) : (
-                  user.linkedInUrl ? (
-                    <a href={user.linkedInUrl} target="_blank" rel="noopener noreferrer" className="text-lg text-indigo-600 hover:text-indigo-700">
-                      {user.linkedInUrl}
+                  (user.profile?.links?.find(l => l.type === 'LINKEDIN')?.url || user.linkedInUrl) ? (
+                    <a href={user.profile?.links?.find(l => l.type === 'LINKEDIN')?.url || user.linkedInUrl} target="_blank" rel="noopener noreferrer" className="text-lg text-indigo-600 hover:text-indigo-700">
+                      {user.profile?.links?.find(l => l.type === 'LINKEDIN')?.url || user.linkedInUrl}
                     </a>
                   ) : (
                     <p className="text-lg text-ink">Not specified</p>
@@ -495,9 +495,9 @@ export default function ProfilePage() {
                     placeholder="https://twitter.com/yourhandle"
                   />
                 ) : (
-                  user.twitterUrl ? (
-                    <a href={user.twitterUrl} target="_blank" rel="noopener noreferrer" className="text-lg text-indigo-600 hover:text-indigo-700">
-                      {user.twitterUrl}
+                  (user.profile?.links?.find(l => l.type === 'X')?.url || user.twitterUrl) ? (
+                    <a href={user.profile?.links?.find(l => l.type === 'X')?.url || user.twitterUrl} target="_blank" rel="noopener noreferrer" className="text-lg text-indigo-600 hover:text-indigo-700">
+                      {user.profile?.links?.find(l => l.type === 'X')?.url || user.twitterUrl}
                     </a>
                   ) : (
                     <p className="text-lg text-ink">Not specified</p>
