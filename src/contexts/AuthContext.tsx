@@ -80,7 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         (verificationError as any).response = {
           status: 401,
           data: { 
-            error: 'EMAIL_NOT_VERIFIED',
+            code: 'EMAIL_NOT_VERIFIED',
             message: 'Please verify your email before logging in'
           }
         };
