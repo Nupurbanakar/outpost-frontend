@@ -57,9 +57,15 @@ export default function ProfilePage() {
     try {
       const data = await foundersApi.getPitchDeck();
       setPitchDeckUrl(data.url);
-    } catch (err) {
-      // No pitch deck uploaded yet, ignore 404
-      setPitchDeckUrl(null);
+    } catch (err: any) {
+      // No pitch deck uploaded yet or endpoint not implemented, ignore 404
+      if (err.response?.status === 404) {
+        // Silently ignore - pitch deck not uploaded or endpoint not implemented
+        setPitchDeckUrl(null);
+      } else {
+        console.error('Error loading pitch deck:', err);
+        setPitchDeckUrl(null);
+      }
     }
   };
 
