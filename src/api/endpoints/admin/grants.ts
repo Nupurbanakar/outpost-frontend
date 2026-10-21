@@ -1,5 +1,5 @@
-import apiClient from '../client';
-import type { Grant } from './grants';
+import apiClient from '../../client';
+import type { Grant } from '../grants';
 import type { PaginatedResponse } from '@/types';
 
 export interface AdminGrantCreateRequest {
