@@ -125,6 +125,35 @@ export function PitchDeckUpload({ currentDeckUrl, onUploadSuccess, onDeleteSucce
     fileInputRef.current?.click();
   };
 
+  const handleDownload = async () => {
+    if (!currentDeckUrl) return;
+    
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch(currentDeckUrl, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to download');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'pitch-deck.pdf';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err) {
+      setError('Failed to download pitch deck');
+    }
+  };
+
   return (
     <div className="space-y-4">
       {/* Current Deck */}
@@ -139,15 +168,13 @@ export function PitchDeckUpload({ currentDeckUrl, onUploadSuccess, onDeleteSucce
               </div>
             </div>
             <div className="flex gap-2">
-              <a
-                href={currentDeckUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={handleDownload}
                 className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 <Download className="h-4 w-4" />
                 Download
-              </a>
+              </button>
               <button
                 onClick={handleDelete}
                 className="flex items-center gap-2 rounded-lg border border-red-300 bg-white px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50"
