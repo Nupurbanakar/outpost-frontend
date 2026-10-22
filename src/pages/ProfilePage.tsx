@@ -55,11 +55,28 @@ export default function ProfilePage() {
 
   const loadPitchDeck = async () => {
     try {
+      // First check localStorage for cached URL
+      const cachedUrl = localStorage.getItem('pitchDeckUrl');
+      if (cachedUrl) {
+        setPitchDeckUrl(cachedUrl);
+        return;
+      }
+
+      // Try to check if pitch deck exists via backend
+      // This endpoint may not exist, so we gracefully handle errors
       const url = await foundersApi.hasPitchDeck();
-      setPitchDeckUrl(url);
+      if (url) {
+        setPitchDeckUrl(url);
+        localStorage.setItem('pitchDeckUrl', url);
+      } else {
+        setPitchDeckUrl(null);
+        localStorage.removeItem('pitchDeckUrl');
+      }
     } catch (err: any) {
-      // No pitch deck uploaded yet
-      setPitchDeckUrl(null);
+      // No pitch deck uploaded yet or endpoint doesn't exist
+      // Keep cached URL if it exists, otherwise clear
+      const cachedUrl = localStorage.getItem('pitchDeckUrl');
+      setPitchDeckUrl(cachedUrl);
     }
   };
 
@@ -529,8 +546,14 @@ export default function ProfilePage() {
           <h3 className="text-lg font-serif font-bold text-ink mb-4">Pitch Deck</h3>
           <PitchDeckUpload
             currentDeckUrl={pitchDeckUrl || undefined}
-            onUploadSuccess={(url) => setPitchDeckUrl(url)}
-            onDeleteSuccess={() => setPitchDeckUrl(null)}
+            onUploadSuccess={(url) => {
+              setPitchDeckUrl(url);
+              localStorage.setItem('pitchDeckUrl', url);
+            }}
+            onDeleteSuccess={() => {
+              setPitchDeckUrl(null);
+              localStorage.removeItem('pitchDeckUrl');
+            }}
           />
         </div>
 
