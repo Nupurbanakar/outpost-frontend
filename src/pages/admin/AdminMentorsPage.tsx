@@ -28,8 +28,11 @@ export default function AdminMentorsPage() {
         page: currentPage - 1,
         size: pageSize,
       });
-      setMentors(response.content);
-      setTotalElements(response.page.totalElements);
+      
+      console.log('Mentors response:', response);
+      
+      setMentors(response.content || []);
+      setTotalElements(response.page?.totalElements || response.totalElements || 0);
     } catch (error) {
       console.error('Failed to fetch mentors:', error);
       toast.error('Failed to load mentors');

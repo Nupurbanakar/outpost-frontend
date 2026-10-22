@@ -26,8 +26,11 @@ export default function AdminGrantsPage() {
         page: currentPage,
         size: pageSize,
       });
-      setGrants(response.content);
-      setTotalElements(response.page.totalElements);
+      
+      console.log('Grants response:', response);
+      
+      setGrants(response.content || []);
+      setTotalElements(response.page?.totalElements || response.totalElements || 0);
     } catch (error) {
       console.error('Failed to fetch grants:', error);
       toast.error('Failed to load grants');
