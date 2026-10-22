@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 
 function HomePage() {
@@ -37,8 +38,11 @@ function HomePage() {
 
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="group inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all">
-                  Start Free Today
+                <Link
+                  to="/signup"
+                  className="group inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all"
+                >
+                  Join Outpost Now
                   <svg
                     className="w-5 h-5 group-hover:translate-x-1 transition-transform"
                     fill="none"
@@ -52,29 +56,13 @@ function HomePage() {
                       d="M17 8l4 4m0 0l-4 4m4-4H3"
                     />
                   </svg>
-                </button>
-                <button className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-slate-700 font-semibold rounded-xl border-2 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 transition-all">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  Watch Demo
-                </button>
+                </Link>
+                <Link
+                  to="/login"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-slate-700 font-semibold rounded-xl border-2 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 transition-all"
+                >
+                  Sign In
+                </Link>
               </div>
 
               {/* Stats */}
@@ -203,12 +191,15 @@ function HomePage() {
               Join India's fastest-growing founder community
             </h2>
             <p className="text-xl text-indigo-100 mb-8 max-w-3xl mx-auto">
-              From idea to scale, we've got the resources and connections you need to succeed.
+              Create your free account and start accessing grants, challenges, mentors, and exclusive opportunities today.
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-              <button className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-indigo-600 font-bold rounded-xl hover:shadow-2xl hover:scale-105 transition-all">
-                Create Free Account
+              <Link
+                to="/signup"
+                className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-indigo-600 font-bold rounded-xl hover:shadow-2xl hover:scale-105 transition-all"
+              >
+                Get Started Free
                 <svg
                   className="w-5 h-5 group-hover:translate-x-1 transition-transform"
                   fill="none"
@@ -222,7 +213,7 @@ function HomePage() {
                     d="M17 8l4 4m0 0l-4 4m4-4H3"
                   />
                 </svg>
-              </button>
+              </Link>
             </div>
 
             {/* Trust Badges */}
@@ -238,7 +229,7 @@ function HomePage() {
       {/* Footer */}
       <footer className="bg-slate-900 text-slate-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
             {/* Brand */}
             <div>
               <div className="flex items-center gap-2 mb-4">
@@ -259,31 +250,40 @@ function HomePage() {
                 </div>
                 <span className="text-lg font-bold text-white">Outpost</span>
               </div>
-              <p className="text-sm text-slate-400 leading-relaxed">
+              <p className="text-sm text-slate-400 leading-relaxed mb-4">
                 Empowering Indian founders with opportunities and connections.
               </p>
+              <Link
+                to="/signup"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+              >
+                Join Now
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
+              </Link>
             </div>
 
-            {/* Resources */}
-            <FooterColumn title="Resources">
-              <FooterLink href="/grants">Grants</FooterLink>
-              <FooterLink href="/challenges">Challenges</FooterLink>
-              <FooterLink href="/mentors">Mentors</FooterLink>
-              <FooterLink href="/partners">Partners</FooterLink>
-            </FooterColumn>
-
-            {/* Company */}
-            <FooterColumn title="Company">
-              <FooterLink href="/about">About</FooterLink>
-              <FooterLink href="/blog">Blog</FooterLink>
-              <FooterLink href="/contact">Contact</FooterLink>
+            {/* Quick Links */}
+            <FooterColumn title="Get Started">
+              <FooterLink to="/signup">Create Account</FooterLink>
+              <FooterLink to="/login">Sign In</FooterLink>
             </FooterColumn>
 
             {/* Legal */}
             <FooterColumn title="Legal">
-              <FooterLink href="/terms">Terms</FooterLink>
-              <FooterLink href="/privacy">Privacy</FooterLink>
-              <FooterLink href="/cookies">Cookies</FooterLink>
+              <FooterLink to="/terms">Terms of Service</FooterLink>
+              <FooterLink to="/privacy">Privacy Policy</FooterLink>
             </FooterColumn>
           </div>
 
@@ -362,15 +362,15 @@ function FooterColumn({ title, children }: { title: string; children: React.Reac
   );
 }
 
-function FooterLink({ href, children }: { href: string; children: string }) {
+function FooterLink({ to, children }: { to: string; children: string }) {
   return (
     <li>
-      <a
-        href={href}
+      <Link
+        to={to}
         className="text-sm text-slate-400 hover:text-white transition-colors"
       >
         {children}
-      </a>
+      </Link>
     </li>
   );
 }
