@@ -8,6 +8,18 @@ export function UserMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  // If not logged in, show login button
+  if (!user) {
+    return (
+      <Link
+        to="/login"
+        className="inline-flex items-center gap-2 px-4 py-2 bg-ink text-paper-light font-semibold hover:bg-[#304258] transition-colors rounded"
+      >
+        Log In
+      </Link>
+    );
+  }
+
   // Get user initials
   const getInitials = () => {
     if (!user?.founderName) return '?';
