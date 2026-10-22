@@ -60,6 +60,8 @@ export const mentorsApi = {
       }
     });
 
+    console.log('🌐 Mentors API URL:', `/mentors?${params.toString()}`);
+    
     const response = await apiClient.get<PaginatedResponse<Mentor>>('/mentors', { params });
     return response.data;
   },
