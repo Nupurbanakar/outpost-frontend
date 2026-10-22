@@ -38,9 +38,13 @@ export interface GrantsFilters {
 export const grantsApi = {
   /**
    * Get paginated list of grants with filters
+   * Founder endpoint - only returns PUBLISHED grants
    */
   getGrants: async (filters: GrantsFilters = {}): Promise<PaginatedResponse<Grant>> => {
     const params = new URLSearchParams();
+    
+    // Ensure only published grants are returned to founders
+    params.append('status', 'PUBLISHED');
     
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {

@@ -35,9 +35,13 @@ export interface ChallengesFilters {
 export const challengesApi = {
   /**
    * Get paginated list of challenges with filters
+   * Founder endpoint - only returns OPEN challenges
    */
   getChallenges: async (filters: ChallengesFilters = {}): Promise<PaginatedResponse<Challenge>> => {
     const params = new URLSearchParams();
+    
+    // Ensure only open challenges are returned to founders
+    params.append('status', 'OPEN');
     
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {

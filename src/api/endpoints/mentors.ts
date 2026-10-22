@@ -41,9 +41,13 @@ export interface MentorApplicationRequest {
 export const mentorsApi = {
   /**
    * Get paginated list of mentors with filters
+   * Founder endpoint - only returns APPROVED mentors
    */
   getMentors: async (filters: MentorsFilters = {}): Promise<PaginatedResponse<Mentor>> => {
     const params = new URLSearchParams();
+    
+    // Ensure only approved mentors are returned to founders
+    params.append('status', 'APPROVED');
     
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
