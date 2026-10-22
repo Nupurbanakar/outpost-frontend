@@ -287,10 +287,10 @@ function OpportunitiesSection() {
       {/* Explore All CTA */}
       <div className="text-center">
         <Link
-          to="/opportunities"
+          to="/grants"
           className="inline-block px-6 py-3 bg-transparent border-2 border-ink text-ink font-semibold hover:bg-ink hover:text-paper-light transition-colors"
         >
-          Explore all opportunities
+          Explore all grants
         </Link>
       </div>
     </section>

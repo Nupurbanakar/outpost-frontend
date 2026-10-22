@@ -24,7 +24,9 @@ export default function GrantDetailPage() {
       try {
         setIsLoading(true);
         setError(null);
+        // Add timestamp to bust cache
         const data = await grantsApi.getGrantById(id);
+        console.log('Fetched grant details:', data);
         setGrant(data);
       } catch (err: any) {
         console.error('Failed to fetch grant:', err);
