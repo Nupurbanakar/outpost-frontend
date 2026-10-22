@@ -19,7 +19,7 @@ interface Challenge {
   id: string;
   title: string;
   corporateName: string;
-  sector: string;
+  sector?: { id: string; name: string };
   deadline: string;
   status: string;
 }
@@ -143,7 +143,7 @@ export default function SavedItemsPage() {
                       id={challenge.id}
                       title={challenge.title}
                       organization={challenge.corporateName}
-                      sector={challenge.sector}
+                      sector={challenge.sector?.name}
                       deadline={challenge.deadline}
                       status={challenge.status}
                       onBookmark={handleBookmarkRemoved}
