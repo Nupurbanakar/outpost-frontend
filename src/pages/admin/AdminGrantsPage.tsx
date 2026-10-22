@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
-import { Plus, Edit, Trash2, Eye, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Plus, Edit, Trash2, CheckCircle, XCircle, Clock, X } from 'lucide-react';
 import { adminGrantsApi } from '../../api/endpoints/admin/grants';
 import type { Grant } from '../../api/endpoints/grants';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { toast } from 'sonner';
+import { useStages, useSectors } from '../../hooks';
 
 export default function AdminGrantsPage() {
   const [grants, setGrants] = useState<Grant[]>([]);
@@ -13,6 +14,14 @@ export default function AdminGrantsPage() {
   const [totalElements, setTotalElements] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 20;
+
+  // Edit modal state
+  const [editingGrant, setEditingGrant] = useState<Grant | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const { stages } = useStages();
+  const { sectors } = useSectors();
 
   useEffect(() => {
     fetchGrants();
@@ -80,6 +89,36 @@ export default function AdminGrantsPage() {
       fetchGrants();
     } catch (error) {
       toast.error('Failed to delete grant');
+    }
+  };
+
+  const handleEdit = async (grant: Grant) => {
+    setEditingGrant(grant);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingGrant) return;
+
+    try {
+      setIsSaving(true);
+      await adminGrantsApi.updateGrant(editingGrant.id, editingGrant);
+      toast.success('Grant updated successfully');
+      setIsEditModalOpen(false);
+      setEditingGrant(null);
+      fetchGrants();
+    } catch (error) {
+      toast.error('Failed to update grant');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCloseModal = () => {
+    if (!isSaving) {
+      setIsEditModalOpen(false);
+      setEditingGrant(null);
     }
   };
 
@@ -220,7 +259,7 @@ export default function AdminGrantsPage() {
                           </>
                         )}
                         <button
-                          onClick={() => toast.info('Edit form coming soon')}
+                          onClick={() => handleEdit(grant)}
                           className="text-indigo-600 hover:text-indigo-900"
                           title="Edit"
                         >
@@ -265,6 +304,132 @@ export default function AdminGrantsPage() {
           </div>
         )}
       </div>
+
+      {/* Edit Modal */}
+      {isEditModalOpen && editingGrant && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              {/* Modal Header */}
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Edit Grant</h2>
+                <button
+                  onClick={handleCloseModal}
+                  disabled={isSaving}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+
+              {/* Edit Form */}
+              <form onSubmit={handleSaveEdit} className="space-y-4">
+                {/* Title */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Title *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={editingGrant.title}
+                    onChange={(e) => setEditingGrant({ ...editingGrant, title: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+
+                {/* Summary */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Summary *
+                  </label>
+                  <textarea
+                    required
+                    rows={3}
+                    value={editingGrant.summary}
+                    onChange={(e) => setEditingGrant({ ...editingGrant, summary: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+
+                {/* Issuing Body */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Issuing Body *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={editingGrant.issuingBody}
+                    onChange={(e) => setEditingGrant({ ...editingGrant, issuingBody: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+
+                {/* Amount Band */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Amount Band
+                  </label>
+                  <input
+                    type="text"
+                    value={editingGrant.amountBand || ''}
+                    onChange={(e) => setEditingGrant({ ...editingGrant, amountBand: e.target.value })}
+                    placeholder="e.g., ₹10L - ₹50L"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+
+                {/* Deadline */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Deadline
+                  </label>
+                  <input
+                    type="date"
+                    value={editingGrant.deadline || ''}
+                    onChange={(e) => setEditingGrant({ ...editingGrant, deadline: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+
+                {/* Source URL */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Source URL *
+                  </label>
+                  <input
+                    type="url"
+                    required
+                    value={editingGrant.sourceUrl}
+                    onChange={(e) => setEditingGrant({ ...editingGrant, sourceUrl: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+
+                {/* Form Actions */}
+                <div className="flex justify-end gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={handleCloseModal}
+                    disabled={isSaving}
+                    className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSaving}
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
+                  >
+                    {isSaving ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 }
