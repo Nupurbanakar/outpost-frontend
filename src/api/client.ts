@@ -44,10 +44,15 @@ apiClient.interceptors.request.use(
     
     // Add cache-busting timestamp for GET requests
     if (config.method === 'get') {
-      config.params = {
-        ...config.params,
-        _t: Date.now(),
-      };
+      // Handle URLSearchParams separately
+      if (config.params instanceof URLSearchParams) {
+        config.params.append('_t', String(Date.now()));
+      } else {
+        config.params = {
+          ...config.params,
+          _t: Date.now(),
+        };
+      }
     }
     
     return config;
