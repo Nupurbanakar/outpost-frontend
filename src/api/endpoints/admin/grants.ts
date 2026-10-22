@@ -29,6 +29,55 @@ export interface AdminGrantsFilters {
   size?: number;
 }
 
+// Backend admin response format
+interface AdminGrantResponse {
+  id: string;
+  name: string;
+  issuingBody: string;
+  issuingBodyType: string;
+  type: string;
+  summary: string;
+  amountMin?: number;
+  amountMax?: number;
+  amountDisplay?: string;
+  deadline?: string;
+  sourceUrl: string;
+  published: boolean;
+  expired: boolean;
+  stages: any[];
+  sectors: any[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Transform admin API response to Grant format
+const transformAdminGrant = (adminGrant: AdminGrantResponse): Grant => {
+  let status: 'DRAFT' | 'PUBLISHED' | 'EXPIRED' = 'DRAFT';
+  if (adminGrant.expired) {
+    status = 'EXPIRED';
+  } else if (adminGrant.published) {
+    status = 'PUBLISHED';
+  }
+
+  return {
+    id: adminGrant.id,
+    title: adminGrant.name, // Backend uses 'name', frontend uses 'title'
+    summary: adminGrant.summary || '',
+    issuingBody: adminGrant.issuingBody,
+    issuingBodyType: adminGrant.issuingBodyType as any,
+    type: adminGrant.type as any,
+    amount: adminGrant.amountMin,
+    amountBand: adminGrant.amountDisplay,
+    deadline: adminGrant.deadline,
+    sourceUrl: adminGrant.sourceUrl,
+    eligibleStages: adminGrant.stages || [],
+    eligibleSectors: adminGrant.sectors || [],
+    status,
+    createdAt: adminGrant.createdAt,
+    updatedAt: adminGrant.updatedAt,
+  };
+};
+
 export const adminGrantsApi = {
   /**
    * List all grants (admin view - includes drafts and expired)
@@ -42,10 +91,15 @@ export const adminGrantsApi = {
       }
     });
 
-    const response = await apiClient.get<PaginatedResponse<Grant>>(
+    const response = await apiClient.get<PaginatedResponse<AdminGrantResponse>>(
       `/admin/grants?${params.toString()}`
     );
-    return response.data;
+    
+    // Transform each grant from admin format to frontend format
+    return {
+      ...response.data,
+      content: response.data.content.map(transformAdminGrant),
+    };
   },
 
   /**
@@ -68,8 +122,8 @@ export const adminGrantsApi = {
    * Update grant
    */
   updateGrant: async (id: string, data: AdminGrantUpdateRequest): Promise<Grant> => {
-    const response = await apiClient.put<Grant>(`/admin/grants/${id}`, data);
-    return response.data;
+    const response = await apiClient.put<AdminGrantResponse>(`/admin/grants/${id}`, data);
+    return transformAdminGrant(response.data);
   },
 
   /**
