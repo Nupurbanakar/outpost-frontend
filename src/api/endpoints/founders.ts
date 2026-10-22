@@ -80,7 +80,7 @@ export const foundersApi = {
   /**
    * Upload pitch deck
    */
-  uploadPitchDeck: async (file: File): Promise<void> => {
+  uploadPitchDeck: async (file: File): Promise<{ url: string }> => {
     const formData = new FormData();
     formData.append('file', file);
     await apiClient.put('/me/pitch-deck', formData, {
@@ -88,28 +88,32 @@ export const foundersApi = {
         'Content-Type': 'multipart/form-data',
       },
     });
+    // Return the URL immediately after successful upload
+    const pitchDeckUrl = `${apiClient.defaults.baseURL}/me/pitch-deck`;
+    return { url: pitchDeckUrl };
   },
 
   /**
    * Get pitch deck URL (backend redirects to actual file)
+   * Note: Backend may return CORS error for HEAD, so we just construct the URL
    */
   getPitchDeck: async (): Promise<{ url: string }> => {
+    // Try GET request and check if it redirects or returns 404
     try {
-      console.log('Checking if pitch deck exists...');
-      // Use HEAD request with maxRedirects: 0 to prevent following redirect
-      const response = await apiClient.head('/me/pitch-deck', {
+      await apiClient.get('/me/pitch-deck', {
         maxRedirects: 0,
-        validateStatus: (status) => status === 302 || status === 200,
+        validateStatus: (status) => status === 302 || status === 200 || status === 404,
       });
-      console.log('HEAD response:', response.status, response.headers);
-      // If 302 or 200, pitch deck exists - return the URL
+      // If we get here without error, pitch deck exists
       const pitchDeckUrl = `${apiClient.defaults.baseURL}/me/pitch-deck`;
-      console.log('Pitch deck URL:', pitchDeckUrl);
       return { url: pitchDeckUrl };
     } catch (err: any) {
-      // 404 means no pitch deck exists
-      console.log('Pitch deck check failed:', err.response?.status, err.message);
-      throw err;
+      // 404 or CORS error means no pitch deck
+      if (err.response?.status === 404) {
+        throw err;
+      }
+      // For CORS or other errors, assume no pitch deck
+      throw new Error('No pitch deck found');
     }
   },
 

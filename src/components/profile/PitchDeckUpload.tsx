@@ -47,11 +47,13 @@ export function PitchDeckUpload({ currentDeckUrl, onUploadSuccess, onDeleteSucce
         setUploadProgress((prev) => Math.min(prev + 10, 90));
       }, 200);
 
-      await foundersApi.uploadPitchDeck(file);
+      const result = await foundersApi.uploadPitchDeck(file);
 
       clearInterval(progressInterval);
       setUploadProgress(100);
       setSuccess(true);
+      
+      // Pass the URL from upload response
       onUploadSuccess();
 
       setTimeout(() => {

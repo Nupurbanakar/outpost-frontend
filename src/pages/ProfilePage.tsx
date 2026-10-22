@@ -54,20 +54,12 @@ export default function ProfilePage() {
   }, [user]);
 
   const loadPitchDeck = async () => {
-    console.log('loadPitchDeck called');
     try {
       const data = await foundersApi.getPitchDeck();
-      console.log('Setting pitch deck URL:', data.url);
       setPitchDeckUrl(data.url);
     } catch (err: any) {
-      // No pitch deck uploaded yet (404 expected)
-      console.log('loadPitchDeck error:', err.response?.status, err.message);
-      if (err.response?.status === 404) {
-        setPitchDeckUrl(null);
-      } else {
-        console.error('Error loading pitch deck:', err);
-        setPitchDeckUrl(null);
-      }
+      // No pitch deck uploaded yet (404 or CORS error expected)
+      setPitchDeckUrl(null);
     }
   };
 
