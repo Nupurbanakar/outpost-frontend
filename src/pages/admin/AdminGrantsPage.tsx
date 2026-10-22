@@ -113,7 +113,6 @@ export default function AdminGrantsPage() {
         summary: editingGrant.summary,
         deadline: editingGrant.deadline || undefined,
         sourceUrl: editingGrant.sourceUrl,
-        // Parse amountBand if provided
         amountMin: editingGrant.amount,
         amountMax: editingGrant.amount,
       };
@@ -392,17 +391,34 @@ export default function AdminGrantsPage() {
                 </div>
 
                 {/* Amount Band */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Amount Band
-                  </label>
-                  <input
-                    type="text"
-                    value={editingGrant.amountBand || ''}
-                    onChange={(e) => setEditingGrant({ ...editingGrant, amountBand: e.target.value })}
-                    placeholder="e.g., ₹10L - ₹50L"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Amount Min (₹)
+                    </label>
+                    <input
+                      type="number"
+                      value={editingGrant.amount || ''}
+                      onChange={(e) => setEditingGrant({ 
+                        ...editingGrant, 
+                        amount: e.target.value ? parseInt(e.target.value) : undefined 
+                      })}
+                      placeholder="1000000"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Display Text
+                    </label>
+                    <input
+                      type="text"
+                      value={editingGrant.amountBand || ''}
+                      onChange={(e) => setEditingGrant({ ...editingGrant, amountBand: e.target.value })}
+                      placeholder="Up to ₹10L"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
                 </div>
 
                 {/* Deadline */}
