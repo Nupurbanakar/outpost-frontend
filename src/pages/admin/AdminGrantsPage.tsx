@@ -103,13 +103,30 @@ export default function AdminGrantsPage() {
 
     try {
       setIsSaving(true);
-      await adminGrantsApi.updateGrant(editingGrant.id, editingGrant);
+      
+      // Map Grant fields to AdminGrantUpdateRequest format
+      const updateData = {
+        name: editingGrant.title,
+        issuingBody: editingGrant.issuingBody,
+        issuingBodyType: editingGrant.issuingBodyType,
+        type: editingGrant.type,
+        summary: editingGrant.summary,
+        deadline: editingGrant.deadline || undefined,
+        sourceUrl: editingGrant.sourceUrl,
+        // Parse amountBand if provided
+        amountMin: editingGrant.amount,
+        amountMax: editingGrant.amount,
+      };
+      
+      console.log('Updating grant with data:', updateData);
+      await adminGrantsApi.updateGrant(editingGrant.id, updateData);
       toast.success('Grant updated successfully');
       setIsEditModalOpen(false);
       setEditingGrant(null);
       fetchGrants();
-    } catch (error) {
-      toast.error('Failed to update grant');
+    } catch (error: any) {
+      console.error('Failed to update grant:', error);
+      toast.error(error.response?.data?.message || 'Failed to update grant');
     } finally {
       setIsSaving(false);
     }
