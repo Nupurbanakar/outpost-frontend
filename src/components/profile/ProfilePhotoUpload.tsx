@@ -39,9 +39,17 @@ export function ProfilePhotoUpload({
     setUploadError(null);
     setUploadSuccess(false);
 
+    console.log('📤 Uploading photo:', { 
+      name: file.name, 
+      type: file.type, 
+      size: `${(file.size / 1024).toFixed(2)} KB` 
+    });
+
     try {
       const formData = new FormData();
       formData.append('file', file);
+
+      console.log('🌐 POST /upload/photo with FormData');
 
       const response = await api.post<{ url: string }>('/upload/photo', formData, {
         headers: {
@@ -49,18 +57,37 @@ export function ProfilePhotoUpload({
         },
       });
 
+      console.log('✅ Upload success:', response.data);
+
       onPhotoChange(response.data.url);
       setUploadSuccess(true);
       
       // Clear success message after 3 seconds
       setTimeout(() => setUploadSuccess(false), 3000);
     } catch (error: any) {
-      console.error('Photo upload failed:', error);
-      setUploadError(
-        error.response?.data?.message || 
-        error.response?.data?.detail ||
-        'Failed to upload photo. Please try again.'
-      );
+      console.error('❌ Photo upload failed:', error);
+      console.error('Response data:', error.response?.data);
+      console.error('Response status:', error.response?.status);
+      
+      let errorMessage = 'Failed to upload photo. Please try again.';
+      
+      if (error.response?.status === 401) {
+        errorMessage = 'Authentication required. Please log in and try again.';
+      } else if (error.response?.status === 413) {
+        errorMessage = 'File is too large. Maximum size is 5MB.';
+      } else if (error.response?.status === 415) {
+        errorMessage = 'Unsupported file type. Please upload JPG, PNG, or GIF.';
+      } else if (error.response?.status === 500) {
+        errorMessage = error.response?.data?.message || 
+                      error.response?.data?.detail ||
+                      'Server error. Please contact support if this persists.';
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      }
+      
+      setUploadError(errorMessage);
     } finally {
       setIsUploading(false);
       // Reset file input
