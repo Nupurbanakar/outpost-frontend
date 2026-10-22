@@ -32,9 +32,18 @@ export function ChallengesFiltersPanel({
     const loadThemes = async () => {
       try {
         const data = await challengesApi.getThemes();
-        setThemes(data);
+        console.log('Themes API response:', data, 'Type:', typeof data, 'Is array?', Array.isArray(data));
+        
+        // Ensure it's an array
+        if (Array.isArray(data)) {
+          setThemes(data);
+        } else {
+          console.error('Themes API returned non-array:', data);
+          setThemes([]);
+        }
       } catch (err) {
         console.error('Failed to load themes:', err);
+        setThemes([]);
       } finally {
         setThemesLoading(false);
       }
@@ -153,7 +162,7 @@ export function ChallengesFiltersPanel({
             className="w-full px-3 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink text-sm"
           >
             <option value="">All Themes</option>
-            {themes.map((theme) => (
+            {Array.isArray(themes) && themes.map((theme) => (
               <option key={theme} value={theme}>
                 {theme}
               </option>
