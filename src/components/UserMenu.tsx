@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { User, Settings, LogOut } from 'lucide-react';
+import { User, Settings, LogOut, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts';
 
 export function UserMenu() {
@@ -114,6 +114,19 @@ export function UserMenu() {
               <Settings size={16} />
               <span>Settings</span>
             </Link>
+
+            {/* Admin Link - Only show for admin users */}
+            {user?.role === 'ADMIN' && (
+              <Link
+                to="/admin"
+                className="flex items-center gap-3 px-4 py-2 text-sm text-purple-700 hover:bg-purple-50 transition-colors border-t border-line"
+                onClick={() => setIsOpen(false)}
+                role="menuitem"
+              >
+                <Shield size={16} />
+                <span className="font-semibold">Admin Portal</span>
+              </Link>
+            )}
           </div>
 
           <div className="border-t border-line py-2">

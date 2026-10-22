@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom';
-import { Search, Compass, Briefcase, Users } from 'lucide-react';
+import { Search, Compass, Briefcase, Users, Bookmark, Shield } from 'lucide-react';
 import { NavItem } from './NavItem';
 import { UserMenu } from './UserMenu';
+import { useAuth } from '@/contexts';
 
 export function Header() {
+  const { user } = useAuth();
+  
   return (
     <header className="sticky top-0 z-50 bg-paper-light border-b border-line">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -21,6 +24,10 @@ export function Header() {
             <NavItem to="/discover" icon={Compass} label="Discover" />
             <NavItem to="/opportunities" icon={Briefcase} label="Opportunities" />
             <NavItem to="/mentors" icon={Users} label="Mentors" />
+            <NavItem to="/saved" icon={Bookmark} label="Saved" />
+            {user?.role === 'ADMIN' && (
+              <NavItem to="/admin" icon={Shield} label="Admin" />
+            )}
           </nav>
 
           {/* Desktop Search & User Menu */}
