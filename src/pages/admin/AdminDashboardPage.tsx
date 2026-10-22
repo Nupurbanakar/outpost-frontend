@@ -42,53 +42,67 @@ export default function AdminDashboardPage() {
       ] = await Promise.all([
         adminGrantsApi.listGrants({ page: 0, size: 1 }).catch(err => {
           console.error('Failed to fetch all grants:', err);
-          return { page: { totalElements: 0 }, content: [] };
+          return null;
         }),
         adminGrantsApi.listGrants({ status: 'DRAFT', page: 0, size: 1 }).catch(err => {
           console.error('Failed to fetch draft grants:', err);
-          return { page: { totalElements: 0 }, content: [] };
+          return null;
         }),
         adminGrantsApi.listGrants({ status: 'PUBLISHED', page: 0, size: 1 }).catch(err => {
           console.error('Failed to fetch published grants:', err);
-          return { page: { totalElements: 0 }, content: [] };
+          return null;
         }),
         adminGrantsApi.listGrants({ status: 'EXPIRED', page: 0, size: 1 }).catch(err => {
           console.error('Failed to fetch expired grants:', err);
-          return { page: { totalElements: 0 }, content: [] };
+          return null;
         }),
         adminMentorsApi.listMentors({ status: 'PENDING', page: 0, size: 1 }).catch(err => {
           console.error('Failed to fetch pending mentors:', err);
-          return { page: { totalElements: 0 }, content: [] };
+          return null;
         }),
         adminMentorsApi.listMentors({ status: 'APPROVED', page: 0, size: 1 }).catch(err => {
           console.error('Failed to fetch approved mentors:', err);
-          return { page: { totalElements: 0 }, content: [] };
+          return null;
         }),
         adminMentorsApi.listMentors({ status: 'REJECTED', page: 0, size: 1 }).catch(err => {
           console.error('Failed to fetch rejected mentors:', err);
-          return { page: { totalElements: 0 }, content: [] };
+          return null;
         }),
       ]);
 
-      console.log('Dashboard stats fetched:', {
-        allGrants: allGrants.page.totalElements,
-        draftGrants: draftGrants.page.totalElements,
-        publishedGrants: publishedGrants.page.totalElements,
-        expiredGrants: expiredGrants.page.totalElements,
-        pendingMentors: pendingMentors.page.totalElements,
-        approvedMentors: approvedMentors.page.totalElements,
-        rejectedMentors: rejectedMentors.page.totalElements,
-      });
+      console.log('Raw responses:', { allGrants, pendingMentors });
 
-      setStats({
-        totalGrants: allGrants.page.totalElements,
-        draftGrants: draftGrants.page.totalElements,
-        publishedGrants: publishedGrants.page.totalElements,
-        expiredGrants: expiredGrants.page.totalElements,
-        pendingMentors: pendingMentors.page.totalElements,
-        approvedMentors: approvedMentors.page.totalElements,
-        rejectedMentors: rejectedMentors.page.totalElements,
-      });
+      // Helper to safely get count from response
+      const getCount = (response: any): number => {
+        if (!response) return 0;
+        // Check different possible response structures
+        if (response.page?.totalElements !== undefined) {
+          return response.page.totalElements;
+        }
+        if (response.totalElements !== undefined) {
+          return response.totalElements;
+        }
+        if (Array.isArray(response.content)) {
+          return response.content.length;
+        }
+        if (Array.isArray(response)) {
+          return response.length;
+        }
+        return 0;
+      };
+
+      const stats = {
+        totalGrants: getCount(allGrants),
+        draftGrants: getCount(draftGrants),
+        publishedGrants: getCount(publishedGrants),
+        expiredGrants: getCount(expiredGrants),
+        pendingMentors: getCount(pendingMentors),
+        approvedMentors: getCount(approvedMentors),
+        rejectedMentors: getCount(rejectedMentors),
+      };
+
+      console.log('Dashboard stats calculated:', stats);
+      setStats(stats);
     } catch (error) {
       console.error('Failed to fetch dashboard stats:', error);
     } finally {
