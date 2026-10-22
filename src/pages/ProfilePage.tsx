@@ -55,10 +55,10 @@ export default function ProfilePage() {
 
   const loadPitchDeck = async () => {
     try {
-      const data = await foundersApi.getPitchDeck();
-      setPitchDeckUrl(data.url);
+      const url = await foundersApi.hasPitchDeck();
+      setPitchDeckUrl(url);
     } catch (err: any) {
-      // No pitch deck uploaded yet (404 or CORS error expected)
+      // No pitch deck uploaded yet
       setPitchDeckUrl(null);
     }
   };
@@ -529,7 +529,7 @@ export default function ProfilePage() {
           <h3 className="text-lg font-serif font-bold text-ink mb-4">Pitch Deck</h3>
           <PitchDeckUpload
             currentDeckUrl={pitchDeckUrl || undefined}
-            onUploadSuccess={loadPitchDeck}
+            onUploadSuccess={(url) => setPitchDeckUrl(url)}
             onDeleteSuccess={() => setPitchDeckUrl(null)}
           />
         </div>

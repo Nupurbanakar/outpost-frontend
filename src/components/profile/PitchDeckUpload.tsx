@@ -4,7 +4,7 @@ import { foundersApi } from '@/api/endpoints/founders';
 
 interface PitchDeckUploadProps {
   currentDeckUrl?: string;
-  onUploadSuccess: () => void;
+  onUploadSuccess: (url: string) => void;
   onDeleteSuccess: () => void;
 }
 
@@ -54,7 +54,7 @@ export function PitchDeckUpload({ currentDeckUrl, onUploadSuccess, onDeleteSucce
       setSuccess(true);
       
       // Pass the URL from upload response
-      onUploadSuccess();
+      onUploadSuccess(result.url);
 
       setTimeout(() => {
         setSuccess(false);

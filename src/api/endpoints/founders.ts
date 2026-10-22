@@ -94,26 +94,22 @@ export const foundersApi = {
   },
 
   /**
-   * Get pitch deck URL (backend redirects to actual file)
-   * Note: Backend may return CORS error for HEAD, so we just construct the URL
+   * Check if pitch deck exists
+   * Returns null if no pitch deck, otherwise returns the URL
    */
-  getPitchDeck: async (): Promise<{ url: string }> => {
-    // Try GET request and check if it redirects or returns 404
+  hasPitchDeck: async (): Promise<string | null> => {
     try {
-      await apiClient.get('/me/pitch-deck', {
-        maxRedirects: 0,
-        validateStatus: (status) => status === 302 || status === 200 || status === 404,
-      });
-      // If we get here without error, pitch deck exists
-      const pitchDeckUrl = `${apiClient.defaults.baseURL}/me/pitch-deck`;
-      return { url: pitchDeckUrl };
-    } catch (err: any) {
-      // 404 or CORS error means no pitch deck
-      if (err.response?.status === 404) {
-        throw err;
+      // Try to get pitch deck metadata (not the file itself)
+      // If this endpoint doesn't exist, we'll get 404
+      const response = await apiClient.get<{ fileName: string; sizeBytes: number }>('/me/pitch-deck/info');
+      if (response.data?.fileName) {
+        // Pitch deck exists, return URL
+        return `${apiClient.defaults.baseURL}/me/pitch-deck`;
       }
-      // For CORS or other errors, assume no pitch deck
-      throw new Error('No pitch deck found');
+      return null;
+    } catch (err: any) {
+      // 404 means no pitch deck exists
+      return null;
     }
   },
 
