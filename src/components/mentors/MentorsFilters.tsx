@@ -89,7 +89,24 @@ export function MentorsFiltersPanel({
 
       {/* Expertise Filter (Multi-select) */}
       <div className="pb-6 border-b border-line">
-        <h3 className="font-semibold text-ink mb-3">Expertise</h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-semibold text-ink">
+            Expertise
+            {selectedExpertise.length > 0 && (
+              <span className="ml-2 text-xs font-normal text-muted-text">
+                ({selectedExpertise.length} selected)
+              </span>
+            )}
+          </h3>
+          {selectedExpertise.length > 0 && (
+            <button
+              onClick={() => onFilterChange('expertise', [])}
+              className="text-xs text-ink font-semibold hover:underline"
+            >
+              Clear
+            </button>
+          )}
+        </div>
         <div className="space-y-2 max-h-64 overflow-y-auto">
           {EXPERTISE_OPTIONS.map((expertise) => (
             <label key={expertise} className="flex items-center gap-2 cursor-pointer">
