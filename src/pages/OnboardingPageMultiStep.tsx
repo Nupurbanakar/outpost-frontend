@@ -79,6 +79,8 @@ export default function OnboardingPageMultiStep() {
 
   const handleNext = () => {
     if (validateStep(currentStep)) {
+      setErrors({}); // Clear errors when moving to next step
+      setApiError(null); // Clear any API errors too
       setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
     }
   };
@@ -86,6 +88,7 @@ export default function OnboardingPageMultiStep() {
   const handleBack = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 1));
     setErrors({});
+    setApiError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
