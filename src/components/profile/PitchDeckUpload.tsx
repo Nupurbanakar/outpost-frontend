@@ -56,12 +56,21 @@ export function PitchDeckUpload({ currentDeckUrl, onUploadSuccess, onDeleteSucce
       // Pass the URL from upload response
       onUploadSuccess(result.url);
 
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+
       setTimeout(() => {
         setSuccess(false);
         setUploadProgress(0);
       }, 3000);
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Failed to upload pitch deck');
+      // Reset file input on error too
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     } finally {
       setIsUploading(false);
     }
@@ -76,6 +85,11 @@ export function PitchDeckUpload({ currentDeckUrl, onUploadSuccess, onDeleteSucce
       setError(null);
       await foundersApi.deletePitchDeck();
       onDeleteSuccess();
+      
+      // Reset file input after delete
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Failed to delete pitch deck');
     }
