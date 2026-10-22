@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Search, Compass, Briefcase, Users, Bookmark, Shield } from 'lucide-react';
+import { Compass, Briefcase, Users, Bookmark, Shield } from 'lucide-react';
 import { NavItem } from './NavItem';
 import { UserMenu } from './UserMenu';
 import { useAuth } from '@/contexts';
@@ -32,16 +32,6 @@ export function Header() {
 
           {/* Desktop Search & User Menu */}
           <div className="hidden lg:flex items-center gap-4">
-            {/* Search Bar */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-text" size={16} />
-              <input
-                type="text"
-                placeholder="Search... ⌘K"
-                className="input w-64 pl-10 pr-4 h-10"
-              />
-            </div>
-
             {/* User Menu */}
             <UserMenu />
           </div>
