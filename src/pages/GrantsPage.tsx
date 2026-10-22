@@ -62,8 +62,8 @@ export default function GrantsPage() {
 
       const response = await grantsApi.getGrants(filters);
       setGrants(response.content);
-      setTotalPages(response.page.totalPages);
-      setTotalElements(response.page.totalElements);
+      setTotalPages(response.totalPages);
+      setTotalElements(response.totalElements);
     } catch (error) {
       console.error('Failed to fetch grants:', error);
       setGrants([]);
