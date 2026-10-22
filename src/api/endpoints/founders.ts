@@ -91,11 +91,19 @@ export const foundersApi = {
   },
 
   /**
-   * Get pitch deck URL
+   * Get pitch deck URL (backend redirects to actual file)
    */
   getPitchDeck: async (): Promise<{ url: string }> => {
-    const response = await apiClient.get<{ url: string }>('/me/pitch-deck');
-    return response.data;
+    try {
+      // Use HEAD request to check if pitch deck exists without downloading it
+      await apiClient.head('/me/pitch-deck');
+      // If no error, pitch deck exists - return the URL
+      const pitchDeckUrl = `${apiClient.defaults.baseURL}/me/pitch-deck`;
+      return { url: pitchDeckUrl };
+    } catch (err: any) {
+      // 404 means no pitch deck exists
+      throw err;
+    }
   },
 
   /**

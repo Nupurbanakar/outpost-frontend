@@ -56,23 +56,10 @@ export default function ProfilePage() {
   const loadPitchDeck = async () => {
     try {
       const data = await foundersApi.getPitchDeck();
-      console.log('Pitch deck response:', data);
-      
-      // Handle different response formats
-      if (typeof data === 'string') {
-        setPitchDeckUrl(data);
-      } else if (data?.url) {
-        setPitchDeckUrl(data.url);
-      } else if (data?.pitchDeckUrl) {
-        setPitchDeckUrl((data as any).pitchDeckUrl);
-      } else {
-        console.warn('Unexpected pitch deck response format:', data);
-        setPitchDeckUrl(null);
-      }
+      setPitchDeckUrl(data.url);
     } catch (err: any) {
-      // No pitch deck uploaded yet or endpoint not implemented, ignore 404
+      // No pitch deck uploaded yet (404 expected)
       if (err.response?.status === 404) {
-        // Silently ignore - pitch deck not uploaded or endpoint not implemented
         setPitchDeckUrl(null);
       } else {
         console.error('Error loading pitch deck:', err);
