@@ -28,6 +28,8 @@ export default function AdminDashboardPage() {
     try {
       setIsLoading(true);
 
+      console.log('Fetching dashboard stats...');
+
       // Fetch counts for different statuses
       const [
         allGrants,
@@ -38,14 +40,45 @@ export default function AdminDashboardPage() {
         approvedMentors,
         rejectedMentors,
       ] = await Promise.all([
-        adminGrantsApi.listGrants({ page: 0, size: 1 }),
-        adminGrantsApi.listGrants({ status: 'DRAFT', page: 0, size: 1 }),
-        adminGrantsApi.listGrants({ status: 'PUBLISHED', page: 0, size: 1 }),
-        adminGrantsApi.listGrants({ status: 'EXPIRED', page: 0, size: 1 }),
-        adminMentorsApi.listMentors({ status: 'PENDING', page: 0, size: 1 }),
-        adminMentorsApi.listMentors({ status: 'APPROVED', page: 0, size: 1 }),
-        adminMentorsApi.listMentors({ status: 'REJECTED', page: 0, size: 1 }),
+        adminGrantsApi.listGrants({ page: 0, size: 1 }).catch(err => {
+          console.error('Failed to fetch all grants:', err);
+          return { page: { totalElements: 0 }, content: [] };
+        }),
+        adminGrantsApi.listGrants({ status: 'DRAFT', page: 0, size: 1 }).catch(err => {
+          console.error('Failed to fetch draft grants:', err);
+          return { page: { totalElements: 0 }, content: [] };
+        }),
+        adminGrantsApi.listGrants({ status: 'PUBLISHED', page: 0, size: 1 }).catch(err => {
+          console.error('Failed to fetch published grants:', err);
+          return { page: { totalElements: 0 }, content: [] };
+        }),
+        adminGrantsApi.listGrants({ status: 'EXPIRED', page: 0, size: 1 }).catch(err => {
+          console.error('Failed to fetch expired grants:', err);
+          return { page: { totalElements: 0 }, content: [] };
+        }),
+        adminMentorsApi.listMentors({ status: 'PENDING', page: 0, size: 1 }).catch(err => {
+          console.error('Failed to fetch pending mentors:', err);
+          return { page: { totalElements: 0 }, content: [] };
+        }),
+        adminMentorsApi.listMentors({ status: 'APPROVED', page: 0, size: 1 }).catch(err => {
+          console.error('Failed to fetch approved mentors:', err);
+          return { page: { totalElements: 0 }, content: [] };
+        }),
+        adminMentorsApi.listMentors({ status: 'REJECTED', page: 0, size: 1 }).catch(err => {
+          console.error('Failed to fetch rejected mentors:', err);
+          return { page: { totalElements: 0 }, content: [] };
+        }),
       ]);
+
+      console.log('Dashboard stats fetched:', {
+        allGrants: allGrants.page.totalElements,
+        draftGrants: draftGrants.page.totalElements,
+        publishedGrants: publishedGrants.page.totalElements,
+        expiredGrants: expiredGrants.page.totalElements,
+        pendingMentors: pendingMentors.page.totalElements,
+        approvedMentors: approvedMentors.page.totalElements,
+        rejectedMentors: rejectedMentors.page.totalElements,
+      });
 
       setStats({
         totalGrants: allGrants.page.totalElements,
