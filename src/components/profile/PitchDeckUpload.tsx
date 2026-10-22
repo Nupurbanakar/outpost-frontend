@@ -126,28 +126,16 @@ export function PitchDeckUpload({ currentDeckUrl, onUploadSuccess, onDeleteSucce
     fileInputRef.current?.click();
   };
 
-  const handleDownload = async () => {
+  const handleDownload = () => {
     if (!currentDeckUrl) return;
     
-    try {
-      // Use axios which automatically includes auth token and follows redirects
-      const response = await apiClient.get('/me/pitch-deck', {
-        responseType: 'blob',
-      });
-      
-      // Create download link
-      const url = window.URL.createObjectURL(response.data);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'pitch-deck.pdf';
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (err) {
-      console.error('Download error:', err);
-      setError('Failed to download pitch deck');
-    }
+    // Note: Backend returns 302 redirect to S3, which causes CORS/ERR_UNSAFE_REDIRECT in XHR
+    // Workaround: Open in new tab - browser will follow redirect naturally
+    // Limitation: Can't send Authorization header, so backend must:
+    //   1. Accept token via cookie/session, OR
+    //   2. Return pre-signed S3 URL instead of redirect (recommended)
+    
+    window.open(currentDeckUrl, '_blank');
   };
 
   return (
