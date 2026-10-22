@@ -71,6 +71,7 @@ export interface User {
   founderName: string;
   startupName: string;
   city: string;
+  profilePhotoUrl?: string;
   // Backend returns flat fields instead of nested objects
   stageId?: string;
   stageName?: string;

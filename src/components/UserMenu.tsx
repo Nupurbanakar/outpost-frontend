@@ -74,12 +74,20 @@ export function UserMenu() {
       {/* Avatar Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center w-10 h-10 rounded-full bg-[#2d6a4f] text-white font-medium text-sm hover:bg-[#1f4d36] transition-colors focus:outline-none focus:ring-2 focus:ring-[#2d6a4f] focus:ring-offset-2"
+        className="flex items-center justify-center w-10 h-10 rounded-full bg-[#2d6a4f] text-white font-medium text-sm hover:bg-[#1f4d36] transition-colors focus:outline-none focus:ring-2 focus:ring-[#2d6a4f] focus:ring-offset-2 overflow-hidden"
         aria-label="User menu"
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        {getInitials()}
+        {user?.profilePhotoUrl ? (
+          <img 
+            src={user.profilePhotoUrl} 
+            alt={user.founderName}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          getInitials()
+        )}
       </button>
 
       {/* Dropdown Menu */}
