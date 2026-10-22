@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AppLayout } from '@/components/AppLayout';
 import { PageHeader } from '@/components/common/PageHeader';
+import { ResultsHeader } from '@/components/common/ResultsHeader';
 import { challengesApi, Challenge, ChallengesFilters } from '@/api/endpoints/challenges';
 import { OpportunityCard } from '@/components/OpportunityCard';
 import { SearchBar } from '@/components/grants/SearchBar';
@@ -132,18 +133,15 @@ export default function ChallengesPage() {
           {/* Results */}
           <main className="flex-1 min-w-0">
             {/* Results Header */}
-            {!isLoading && !error && (
-              <div className="mb-6 flex items-center justify-between">
-                <p className="text-sm text-muted-text">
-                  <span className="font-semibold text-ink">{totalElements}</span> challenge
-                  {totalElements !== 1 ? 's' : ''} found
-                </p>
-                {aiEnabled && (
-                  <span className="text-xs px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200">
-                    AI-Ranked Results
-                  </span>
-                )}
-              </div>
+            {/* Results Header */}
+            {!isLoading && !error && challenges.length > 0 && (
+              <ResultsHeader
+                count={challenges.length}
+                total={totalElements}
+                itemName="challenge"
+                aiEnabled={aiEnabled}
+                aiMessage="AI-Ranked Results"
+              />
             )}
 
             {/* Loading State */}

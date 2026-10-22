@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Sparkles } from 'lucide-react';
 import { AppLayout } from '@/components/AppLayout';
 import { PageHeader } from '@/components/common/PageHeader';
+import { ResultsHeader } from '@/components/common/ResultsHeader';
 import { OpportunityCard } from '@/components/OpportunityCard';
 import { SearchBar } from '@/components/grants/SearchBar';
 import { GrantsFilters } from '@/components/grants/GrantsFilters';
@@ -125,17 +125,15 @@ export default function GrantsPage() {
         />
 
         {/* Results Count & AI Badge */}
-        <div className="mb-6 flex items-center justify-between">
-          <p className="text-sm text-muted-text">
-            Showing {grants.length} of {totalElements} grants
-          </p>
-          {aiEnabled && canUseAI && (
-            <p className="text-sm text-[#2d6a4f] flex items-center gap-1">
-              <Sparkles className="w-4 h-4" />
-              <span>AI-ranked for your startup</span>
-            </p>
-          )}
-        </div>
+        {!isLoading && grants.length > 0 && (
+          <ResultsHeader
+            count={grants.length}
+            total={totalElements}
+            itemName="grant"
+            aiEnabled={aiEnabled && canUseAI}
+            aiMessage="AI-ranked for your startup"
+          />
+        )}
 
         {/* Content */}
         {isLoading ? (

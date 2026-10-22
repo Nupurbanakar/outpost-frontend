@@ -3,6 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { UserPlus } from 'lucide-react';
 import { AppLayout } from '@/components/AppLayout';
 import { PageHeader } from '@/components/common/PageHeader';
+import { ResultsHeader } from '@/components/common/ResultsHeader';
 import { mentorsApi, Mentor, MentorsFilters } from '@/api/endpoints/mentors';
 import { MentorCard } from '@/components/MentorCard';
 import { SearchBar } from '@/components/grants/SearchBar';
@@ -162,18 +163,14 @@ export default function MentorsPage() {
           {/* Results */}
           <main className="flex-1 min-w-0">
             {/* Results Header */}
-            {!isLoading && !error && (
-              <div className="mb-6 flex items-center justify-between">
-                <p className="text-sm text-muted-text">
-                  <span className="font-semibold text-ink">{totalElements}</span> mentor
-                  {totalElements !== 1 ? 's' : ''} found
-                </p>
-                {aiEnabled && (
-                  <span className="text-xs px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200">
-                    AI-Ranked Results
-                  </span>
-                )}
-              </div>
+            {!isLoading && !error && mentors.length > 0 && (
+              <ResultsHeader
+                count={mentors.length}
+                total={totalElements}
+                itemName="mentor"
+                aiEnabled={aiEnabled}
+                aiMessage="AI-Ranked Results"
+              />
             )}
 
             {/* Loading State */}
