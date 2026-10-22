@@ -300,17 +300,17 @@ function App() {
       <Route
         path="/admin/mentors"
         element={
-          <ProtectedRoute>
+          <AdminRoute>
             <AdminMentorsPage />
-          </ProtectedRoute>
+          </AdminRoute>
         }
       />
       <Route
         path="/admin/spotlight"
         element={
-          <ProtectedRoute>
+          <AdminRoute>
             <AdminSpotlightPage />
-          </ProtectedRoute>
+          </AdminRoute>
         }
       />
       
