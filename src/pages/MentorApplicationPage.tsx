@@ -82,11 +82,19 @@ export default function MentorApplicationPage() {
         linkedInUrl: data.linkedInUrl || undefined,
       };
 
+      console.log('Submitting mentor application:', application);
       await mentorsApi.applyAsMentor(application);
       setSuccess(true);
     } catch (err: any) {
+      console.error('Mentor application error:', err.response?.data);
+      
       if (err.response?.status === 409) {
         setError('An application with this email already exists. Please use a different email.');
+      } else if (err.response?.status === 400 && err.response?.data?.errors) {
+        // Show field-specific validation errors
+        const errors = err.response.data.errors;
+        const errorMessages = errors.map((e: any) => `${e.field}: ${e.message}`).join('\n');
+        setError(`Validation failed:\n${errorMessages}`);
       } else {
         setError(parseApiError(err));
       }
@@ -156,7 +164,7 @@ export default function MentorApplicationPage() {
         {error && (
           <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-800">
             <p className="font-semibold">Error</p>
-            <p className="text-sm">{error}</p>
+            <pre className="text-sm whitespace-pre-wrap mt-1">{error}</pre>
           </div>
         )}
 
