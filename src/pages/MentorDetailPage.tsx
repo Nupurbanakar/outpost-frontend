@@ -3,6 +3,8 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { AppLayout } from '@/components/AppLayout';
 import { mentorsApi, Mentor } from '@/api/endpoints/mentors';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { Card } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
 import { ChevronLeft, Calendar, ExternalLink, Globe, Mail } from 'lucide-react';
 
 export default function MentorDetailPage() {
@@ -73,40 +75,43 @@ export default function MentorDetailPage() {
 
   return (
     <AppLayout>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="bg-paper-light min-h-screen">
         {/* Breadcrumb */}
-        <nav className="mb-6 flex items-center gap-2 text-sm text-muted-text">
-          <Link to="/mentors" className="hover:text-ink transition-colors">
-            Mentors
-          </Link>
-          <span>/</span>
-          <span className="text-ink font-medium">{mentor.name}</span>
-        </nav>
+        <div className="border-b border-line bg-paper-light">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <nav className="flex items-center gap-2 text-sm text-muted-text">
+              <Link to="/mentors" className="hover:text-ink transition-colors">
+                Mentors
+              </Link>
+              <span>/</span>
+              <span className="text-ink font-medium">{mentor.name}</span>
+            </nav>
+          </div>
+        </div>
 
-        {/* Back Button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 text-sm text-muted-text hover:text-ink mb-6 transition-colors"
-        >
-          <ChevronLeft className="w-4 h-4" />
-          Back
-        </button>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Back Button */}
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-2 text-sm text-muted-text hover:text-ink mb-6 transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            Back
+          </button>
 
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Main Content */}
-          <div className="flex-1">
-            {/* Header */}
-            <header className="mb-8">
-              {/* Photo */}
-              <div className="mb-6">
+          {/* Profile Header Card */}
+          <Card className="mb-6 p-8">
+            <div className="flex flex-col md:flex-row gap-8">
+              {/* Profile Photo */}
+              <div className="flex-shrink-0">
                 {mentor.photoUrl ? (
                   <img
                     src={mentor.photoUrl}
                     alt={mentor.name}
-                    className="w-32 h-32 rounded-full object-cover"
+                    className="w-40 h-40 rounded-full object-cover border-4 border-[#f5f3ed]"
                   />
                 ) : (
-                  <div className="w-32 h-32 rounded-full bg-[#f5f3ed] flex items-center justify-center text-4xl font-bold text-[#b58c4f]">
+                  <div className="w-40 h-40 rounded-full bg-[#f5f3ed] flex items-center justify-center text-5xl font-bold text-[#b58c4f] border-4 border-line">
                     {mentor.name
                       .split(' ')
                       .map((n) => n[0])
@@ -116,135 +121,150 @@ export default function MentorDetailPage() {
                 )}
               </div>
 
-              {/* Name and Headline */}
-              <h1 className="text-3xl sm:text-4xl font-serif font-bold text-ink mb-3">
-                {mentor.name}
-              </h1>
-              <p className="text-xl text-[#2d6a4f] font-medium mb-4">{mentor.headline}</p>
+              {/* Name, Headline, Actions */}
+              <div className="flex-1 flex flex-col">
+                <div className="flex-1">
+                  <h1 className="text-3xl sm:text-4xl font-serif font-bold text-ink mb-2">
+                    {mentor.name}
+                  </h1>
+                  <p className="text-xl text-green-dark font-medium mb-6">
+                    {mentor.headline}
+                  </p>
 
-              {/* Social Links */}
-              <div className="flex items-center gap-4">
-                {mentor.linkedInUrl && (
-                  <a
-                    href={mentor.linkedInUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-muted-text hover:text-ink transition-colors"
-                    aria-label="LinkedIn"
-                  >
-                    <ExternalLink className="w-5 h-5" />
-                  </a>
-                )}
-                {mentor.twitterUrl && (
-                  <a
-                    href={mentor.twitterUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-muted-text hover:text-ink transition-colors"
-                    aria-label="Twitter"
-                  >
-                    <ExternalLink className="w-5 h-5" />
-                  </a>
-                )}
-                {mentor.websiteUrl && (
-                  <a
-                    href={mentor.websiteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-muted-text hover:text-ink transition-colors"
-                    aria-label="Website"
-                  >
-                    <Globe className="w-5 h-5" />
-                  </a>
-                )}
-              </div>
-            </header>
-
-            {/* Expertise Tags */}
-            {mentor.expertise && mentor.expertise.length > 0 && (
-              <div className="mb-8">
-                <h2 className="text-xl font-serif font-bold text-ink mb-3">Expertise</h2>
-                <div className="flex flex-wrap gap-2">
-                  {mentor.expertise.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1.5 bg-[#f5f3ed] text-ink text-sm font-medium border border-line"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+                  {/* Social Links as Icon Buttons */}
+                  <div className="flex items-center gap-3">
+                    {mentor.linkedInUrl && (
+                      <a
+                        href={mentor.linkedInUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center w-10 h-10 bg-[#f5f3ed] text-ink hover:bg-line transition-colors"
+                        aria-label="LinkedIn Profile"
+                        title="LinkedIn Profile"
+                      >
+                        <ExternalLink className="w-5 h-5" />
+                      </a>
+                    )}
+                    {mentor.twitterUrl && (
+                      <a
+                        href={mentor.twitterUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center w-10 h-10 bg-[#f5f3ed] text-ink hover:bg-line transition-colors"
+                        aria-label="Twitter Profile"
+                        title="Twitter Profile"
+                      >
+                        <ExternalLink className="w-5 h-5" />
+                      </a>
+                    )}
+                    {mentor.websiteUrl && (
+                      <a
+                        href={mentor.websiteUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center w-10 h-10 bg-[#f5f3ed] text-ink hover:bg-line transition-colors"
+                        aria-label="Personal Website"
+                        title="Personal Website"
+                      >
+                        <Globe className="w-5 h-5" />
+                      </a>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
 
-            {/* Bio */}
-            <section className="mb-8">
-              <h2 className="text-2xl font-serif font-bold text-ink mb-4">About</h2>
-              <div className="prose max-w-none text-muted-text whitespace-pre-line">
-                {mentor.bio}
-              </div>
-            </section>
-
-            {/* Experience */}
-            {mentor.experience && (
-              <section className="mb-8">
-                <h2 className="text-2xl font-serif font-bold text-ink mb-4">Experience</h2>
-                <div className="prose max-w-none text-muted-text whitespace-pre-line">
-                  {mentor.experience}
-                </div>
-              </section>
-            )}
-          </div>
-
-          {/* Sidebar - Booking */}
-          <aside className="lg:w-96 flex-shrink-0">
-            <div className="bg-[#f5f3ed] border border-line p-6 sticky top-8">
-              <h3 className="text-xl font-serif font-bold text-ink mb-3">
-                Book a Session
-              </h3>
-              <p className="text-sm text-muted-text mb-6">
-                Schedule a 1-on-1 mentoring session to get personalized guidance
-              </p>
-
-              {/* Cal.com Integration */}
-              <div className="mb-6">
-                <a
-                  href={mentor.calComUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-ink text-paper-light font-semibold hover:bg-[#304258] transition-colors"
-                >
-                  <Calendar className="w-5 h-5" />
-                  <span>Schedule via Cal.com</span>
-                </a>
-              </div>
-
-              <div className="text-xs text-muted-text">
-                <p className="mb-2">
-                  <strong>What to expect:</strong>
-                </p>
-                <ul className="list-disc list-inside space-y-1">
-                  <li>30-60 minute sessions</li>
-                  <li>Video call via preferred platform</li>
-                  <li>Personalized advice for your startup</li>
-                  <li>Actionable next steps</li>
-                </ul>
-              </div>
-
-              {/* Alternative Contact */}
-              <div className="mt-6 pt-6 border-t border-line">
-                <p className="text-xs text-muted-text text-center">
-                  Questions about mentorship?{' '}
+                {/* Primary Action */}
+                <div className="mt-6 md:mt-0">
                   <a
-                    href="mailto:mentors@outpost.com"
-                    className="text-ink hover:underline font-medium"
+                    href={mentor.calComUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-ink text-paper-light font-semibold hover:bg-[#304258] transition-colors w-full md:w-auto"
                   >
-                    Contact us
+                    <Calendar className="w-5 h-5" />
+                    <span>Book a Session</span>
                   </a>
-                </p>
+                </div>
               </div>
             </div>
-          </aside>
+          </Card>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Main Content Column */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* About Section */}
+              <Card>
+                <h2 className="text-2xl font-serif font-bold text-ink mb-4">About</h2>
+                <div className="text-muted-text leading-relaxed whitespace-pre-line">
+                  {mentor.bio}
+                </div>
+              </Card>
+
+              {/* Experience Section */}
+              {mentor.experience && (
+                <Card>
+                  <h2 className="text-2xl font-serif font-bold text-ink mb-4">Experience</h2>
+                  <div className="text-muted-text leading-relaxed whitespace-pre-line">
+                    {mentor.experience}
+                  </div>
+                </Card>
+              )}
+            </div>
+
+            {/* Sidebar Column */}
+            <div className="space-y-6">
+              {/* Expertise Card */}
+              {mentor.expertise && mentor.expertise.length > 0 && (
+                <Card>
+                  <h2 className="text-xl font-serif font-bold text-ink mb-4">Expertise</h2>
+                  <div className="flex flex-wrap gap-2">
+                    {mentor.expertise.map((tag, index) => (
+                      <Badge key={index} variant="tag" className="px-3 py-1.5 border border-line">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </Card>
+              )}
+
+              {/* Session Info Card */}
+              <Card className="bg-[#f5f3ed]">
+                <h3 className="text-lg font-serif font-bold text-ink mb-3">
+                  What to Expect
+                </h3>
+                <ul className="space-y-3 text-sm text-muted-text">
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-dark mt-0.5">•</span>
+                    <span>30-60 minute personalized sessions</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-dark mt-0.5">•</span>
+                    <span>Video call via your preferred platform</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-dark mt-0.5">•</span>
+                    <span>Expert advice tailored to your startup</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-dark mt-0.5">•</span>
+                    <span>Actionable next steps and guidance</span>
+                  </li>
+                </ul>
+
+                <div className="mt-6 pt-6 border-t border-line">
+                  <p className="text-xs text-muted-text text-center">
+                    Questions about mentorship?{' '}
+                    <a
+                      href="mailto:mentors@outpost.com"
+                      className="text-ink hover:text-gold-dark font-medium transition-colors inline-flex items-center gap-1"
+                    >
+                      <Mail className="w-3 h-3" />
+                      Contact us
+                    </a>
+                  </p>
+                </div>
+              </Card>
+            </div>
+          </div>
         </div>
       </div>
     </AppLayout>

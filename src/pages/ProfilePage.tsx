@@ -8,7 +8,7 @@ import { useSectors } from '@/hooks/useSectors';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { PitchDeckUpload } from '@/components/profile/PitchDeckUpload';
 import { parseApiError } from '@/utils/errorHandling';
-import { User, Building2, MapPin, Target, Briefcase, Mail, Edit, Save, X, FileText, Globe, Link as LinkIcon } from 'lucide-react';
+import { MapPin, Mail, Edit, Save, X, Globe, Link as LinkIcon } from 'lucide-react';
 
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth();
@@ -202,67 +202,80 @@ export default function ProfilePage() {
 
   return (
     <AppLayout>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-serif font-bold text-ink mb-2">Your Profile</h1>
-            <p className="text-muted-text">Manage your account information</p>
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-2">
+            <h1 className="text-3xl font-serif font-bold text-ink">Your Profile</h1>
+            {!isEditing && (
+              <button
+                onClick={handleEdit}
+                className="flex items-center gap-2 px-4 py-2 bg-ink text-paper-light font-semibold hover:bg-[#304258] transition-colors"
+              >
+                <Edit className="w-4 h-4" />
+                Edit Profile
+              </button>
+            )}
           </div>
-          {!isEditing && (
-            <button
-              onClick={handleEdit}
-              className="flex items-center gap-2 px-4 py-2 bg-ink text-paper-light font-semibold hover:bg-[#304258] transition-colors"
-            >
-              <Edit className="w-4 h-4" />
-              Edit Profile
-            </button>
-          )}
+          <p className="text-muted-text">Manage your account information</p>
         </div>
 
         {/* Success Message */}
         {success && (
-          <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-800">
+          <div className="mb-6 p-4 bg-green-light border-l-4 border-green text-green-dark">
             <p className="font-semibold">Profile updated successfully!</p>
           </div>
         )}
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-800">
+          <div className="mb-6 p-4 bg-rose-light border-l-4 border-rose text-rose">
             <p className="font-semibold">Error:</p>
             <p className="text-sm">{error}</p>
           </div>
         )}
 
-        {/* Profile Information */}
-        <div className="bg-paper-light border border-line">
-          {/* Email (Read-only) */}
-          <div className="p-6 border-b border-line">
-            <div className="flex items-start gap-4">
-              <div className="p-3 bg-[#f5f3ed] rounded">
-                <Mail className="w-5 h-5 text-[#b58c4f]" />
+        {/* Profile Header Card */}
+        <div className="bg-paper-light border border-line p-6 mb-6">
+          <div className="flex items-start gap-6">
+            {/* Avatar Placeholder */}
+            <div className="flex-shrink-0">
+              <div className="w-24 h-24 rounded-full bg-[#f5f3ed] border-2 border-line flex items-center justify-center">
+                <span className="text-3xl font-serif font-bold text-[#b58c4f]">
+                  {user.founderName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+                </span>
               </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-muted-text mb-1">
-                  Email Address
-                </label>
-                <p className="text-lg text-ink">{user.email}</p>
-                <p className="text-xs text-muted-text mt-1">
-                  Email cannot be changed. Contact support if you need assistance.
-                </p>
+            </div>
+            
+            {/* Header Info */}
+            <div className="flex-1">
+              <h2 className="text-2xl font-serif font-bold text-ink mb-1">{user.founderName}</h2>
+              <p className="text-lg text-muted-text mb-3">{user.startupName}</p>
+              <div className="flex flex-wrap gap-3">
+                <div className="flex items-center gap-2 text-sm text-muted-text">
+                  <MapPin className="w-4 h-4" />
+                  <span>{user.city}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-text">
+                  <Mail className="w-4 h-4" />
+                  <span>{user.email}</span>
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Founder Name */}
-          <div className="p-6 border-b border-line">
-            <div className="flex items-start gap-4">
-              <div className="p-3 bg-[#f5f3ed] rounded">
-                <User className="w-5 h-5 text-[#b58c4f]" />
-              </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-muted-text mb-2">
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Basic Information Card */}
+          <div className="bg-paper-light border border-line p-6">
+            <h3 className="text-lg font-serif font-bold text-ink mb-4 pb-3 border-b border-line">
+              Basic Information
+            </h3>
+            <div className="space-y-4">
+              {/* Founder Name */}
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-wide text-muted-text mb-1">
                   Your Name
                 </label>
                 {isEditing ? (
@@ -271,54 +284,28 @@ export default function ProfilePage() {
                       type="text"
                       value={formData.founderName}
                       disabled
-                      className="w-full px-4 py-2 border border-line bg-gray-50 text-gray-500 cursor-not-allowed"
+                      className="w-full px-3 py-2 border border-line bg-gray-50 text-gray-500 cursor-not-allowed text-sm"
                       placeholder="Enter your name"
                     />
                     <p className="text-xs text-muted-text mt-1">Set during onboarding</p>
                   </div>
                 ) : (
-                  <p className="text-lg text-ink">{user.founderName}</p>
-                )}
-                {isEditing && (
-                  <p className="text-xs text-muted-text mt-1">Name cannot be changed after onboarding</p>
+                  <p className="text-ink">{user.founderName}</p>
                 )}
               </div>
-            </div>
-          </div>
 
-          {/* Startup Name */}
-          <div className="p-6 border-b border-line">
-            <div className="flex items-start gap-4">
-              <div className="p-3 bg-[#f5f3ed] rounded">
-                <Building2 className="w-5 h-5 text-[#b58c4f]" />
-              </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-muted-text mb-2">
-                  Startup Name
+              {/* Email */}
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-wide text-muted-text mb-1">
+                  Email Address
                 </label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={formData.startupName}
-                    onChange={(e) => handleInputChange('startupName', e.target.value)}
-                    className="w-full px-4 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink"
-                    placeholder="Enter startup name"
-                  />
-                ) : (
-                  <p className="text-lg text-ink">{user.startupName}</p>
-                )}
+                <p className="text-ink">{user.email}</p>
+                <p className="text-xs text-muted-text mt-1">Email cannot be changed</p>
               </div>
-            </div>
-          </div>
 
-          {/* City */}
-          <div className="p-6 border-b border-line">
-            <div className="flex items-start gap-4">
-              <div className="p-3 bg-[#f5f3ed] rounded">
-                <MapPin className="w-5 h-5 text-[#b58c4f]" />
-              </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-muted-text mb-2">
+              {/* City */}
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-wide text-muted-text mb-1">
                   City
                 </label>
                 {isEditing ? (
@@ -326,31 +313,50 @@ export default function ProfilePage() {
                     type="text"
                     value={formData.city}
                     onChange={(e) => handleInputChange('city', e.target.value)}
-                    className="w-full px-4 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink"
+                    className="w-full px-3 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink text-sm"
                     placeholder="Enter city"
                   />
                 ) : (
-                  <p className="text-lg text-ink">{user.city}</p>
+                  <p className="text-ink">{user.city}</p>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Stage */}
-          <div className="p-6 border-b border-line">
-            <div className="flex items-start gap-4">
-              <div className="p-3 bg-[#f5f3ed] rounded">
-                <Target className="w-5 h-5 text-[#b58c4f]" />
+          {/* Startup Information Card */}
+          <div className="bg-paper-light border border-line p-6">
+            <h3 className="text-lg font-serif font-bold text-ink mb-4 pb-3 border-b border-line">
+              Startup Information
+            </h3>
+            <div className="space-y-4">
+              {/* Startup Name */}
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-wide text-muted-text mb-1">
+                  Startup Name
+                </label>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={formData.startupName}
+                    onChange={(e) => handleInputChange('startupName', e.target.value)}
+                    className="w-full px-3 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink text-sm"
+                    placeholder="Enter startup name"
+                  />
+                ) : (
+                  <p className="text-ink">{user.startupName}</p>
+                )}
               </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-muted-text mb-2">
+
+              {/* Stage */}
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-wide text-muted-text mb-1">
                   Stage
                 </label>
                 {isEditing ? (
                   <select
                     value={formData.stageId}
                     onChange={(e) => handleInputChange('stageId', e.target.value)}
-                    className="w-full px-4 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink"
+                    className="w-full px-3 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink text-sm"
                     disabled={stagesLoading}
                   >
                     <option value="">Select stage</option>
@@ -361,27 +367,20 @@ export default function ProfilePage() {
                     ))}
                   </select>
                 ) : (
-                  <p className="text-lg text-ink">{user.stageName || user.stage?.name || 'Not specified'}</p>
+                  <p className="text-ink">{user.stageName || user.stage?.name || 'Not specified'}</p>
                 )}
               </div>
-            </div>
-          </div>
 
-          {/* Sector */}
-          <div className="p-6 border-b border-line">
-            <div className="flex items-start gap-4">
-              <div className="p-3 bg-[#f5f3ed] rounded">
-                <Briefcase className="w-5 h-5 text-[#b58c4f]" />
-              </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-muted-text mb-2">
+              {/* Sector */}
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-wide text-muted-text mb-1">
                   Sector
                 </label>
                 {isEditing ? (
                   <select
                     value={formData.sectorId}
                     onChange={(e) => handleInputChange('sectorId', e.target.value)}
-                    className="w-full px-4 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink"
+                    className="w-full px-3 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink text-sm"
                     disabled={sectorsLoading}
                   >
                     <option value="">Select sector</option>
@@ -392,51 +391,50 @@ export default function ProfilePage() {
                     ))}
                   </select>
                 ) : (
-                  <p className="text-lg text-ink">{user.sectorName || user.sector?.name || 'Not specified'}</p>
+                  <p className="text-ink">{user.sectorName || user.sector?.name || 'Not specified'}</p>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Bio */}
-          <div className="p-6 border-b border-line">
-            <div className="flex items-start gap-4">
-              <div className="p-3 bg-[#f5f3ed] rounded">
-                <FileText className="w-5 h-5 text-[#b58c4f]" />
-              </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-muted-text mb-2">
-                  Bio
-                </label>
-                {isEditing ? (
-                  <div>
-                    <textarea
-                      value={formData.bio}
-                      onChange={(e) => handleInputChange('bio', e.target.value)}
-                      maxLength={2000}
-                      rows={4}
-                      className="w-full px-4 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink"
-                      placeholder="Tell us about yourself and your startup..."
-                    />
-                    <p className="text-xs text-muted-text mt-1">
-                      {formData.bio.length}/2000 characters
-                    </p>
-                  </div>
-                ) : (
-                  <p className="text-lg text-ink whitespace-pre-wrap">{user.profile?.bio || user.bio || 'Not specified'}</p>
-                )}
-              </div>
+          {/* Bio Card - Full Width */}
+          <div className="lg:col-span-2 bg-paper-light border border-line p-6">
+            <h3 className="text-lg font-serif font-bold text-ink mb-4 pb-3 border-b border-line">
+              About
+            </h3>
+            <div>
+              <label className="block text-xs font-mono uppercase tracking-wide text-muted-text mb-2">
+                Bio
+              </label>
+              {isEditing ? (
+                <div>
+                  <textarea
+                    value={formData.bio}
+                    onChange={(e) => handleInputChange('bio', e.target.value)}
+                    maxLength={2000}
+                    rows={4}
+                    className="w-full px-3 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink text-sm"
+                    placeholder="Tell us about yourself and your startup..."
+                  />
+                  <p className="text-xs text-muted-text mt-1">
+                    {formData.bio.length}/2000 characters
+                  </p>
+                </div>
+              ) : (
+                <p className="text-ink whitespace-pre-wrap">{user.profile?.bio || user.bio || 'Not specified'}</p>
+              )}
             </div>
           </div>
 
-          {/* Website */}
-          <div className="p-6 border-b border-line">
-            <div className="flex items-start gap-4">
-              <div className="p-3 bg-[#f5f3ed] rounded">
-                <Globe className="w-5 h-5 text-[#b58c4f]" />
-              </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-muted-text mb-2">
+          {/* Links Card - Full Width */}
+          <div className="lg:col-span-2 bg-paper-light border border-line p-6">
+            <h3 className="text-lg font-serif font-bold text-ink mb-4 pb-3 border-b border-line">
+              Links & Social
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Website */}
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-wide text-muted-text mb-1">
                   Website
                 </label>
                 {isEditing ? (
@@ -444,78 +442,82 @@ export default function ProfilePage() {
                     type="url"
                     value={formData.website}
                     onChange={(e) => handleInputChange('website', e.target.value)}
-                    className="w-full px-4 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink"
-                    placeholder="https://yourwebsite.com"
+                    className="w-full px-3 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink text-sm"
+                    placeholder="https://example.com"
                   />
                 ) : (
                   (user.profile?.links?.find(l => l.type === 'OTHER')?.url || user.website) ? (
-                    <a href={user.profile?.links?.find(l => l.type === 'OTHER')?.url || user.website} target="_blank" rel="noopener noreferrer" className="text-lg text-indigo-600 hover:text-indigo-700">
-                      {user.profile?.links?.find(l => l.type === 'OTHER')?.url || user.website}
+                    <a 
+                      href={user.profile?.links?.find(l => l.type === 'OTHER')?.url || user.website} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="text-[#b58c4f] hover:text-[#94651f] text-sm flex items-center gap-1 transition-colors"
+                    >
+                      <Globe className="w-3 h-3" />
+                      <span className="truncate">{user.profile?.links?.find(l => l.type === 'OTHER')?.url || user.website}</span>
                     </a>
                   ) : (
-                    <p className="text-lg text-ink">Not specified</p>
+                    <p className="text-ink text-sm">Not specified</p>
                   )
                 )}
               </div>
-            </div>
-          </div>
 
-          {/* LinkedIn */}
-          <div className="p-6 border-b border-line">
-            <div className="flex items-start gap-4">
-              <div className="p-3 bg-[#f5f3ed] rounded">
-                <LinkIcon className="w-5 h-5 text-[#b58c4f]" />
-              </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-muted-text mb-2">
-                  LinkedIn URL
+              {/* LinkedIn */}
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-wide text-muted-text mb-1">
+                  LinkedIn
                 </label>
                 {isEditing ? (
                   <input
                     type="url"
                     value={formData.linkedInUrl}
                     onChange={(e) => handleInputChange('linkedInUrl', e.target.value)}
-                    className="w-full px-4 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink"
-                    placeholder="https://linkedin.com/in/yourprofile"
+                    className="w-full px-3 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink text-sm"
+                    placeholder="https://linkedin.com/in/..."
                   />
                 ) : (
                   (user.profile?.links?.find(l => l.type === 'LINKEDIN')?.url || user.linkedInUrl) ? (
-                    <a href={user.profile?.links?.find(l => l.type === 'LINKEDIN')?.url || user.linkedInUrl} target="_blank" rel="noopener noreferrer" className="text-lg text-indigo-600 hover:text-indigo-700">
-                      {user.profile?.links?.find(l => l.type === 'LINKEDIN')?.url || user.linkedInUrl}
+                    <a 
+                      href={user.profile?.links?.find(l => l.type === 'LINKEDIN')?.url || user.linkedInUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="text-[#b58c4f] hover:text-[#94651f] text-sm flex items-center gap-1 transition-colors"
+                    >
+                      <LinkIcon className="w-3 h-3" />
+                      <span className="truncate">{user.profile?.links?.find(l => l.type === 'LINKEDIN')?.url || user.linkedInUrl}</span>
                     </a>
                   ) : (
-                    <p className="text-lg text-ink">Not specified</p>
+                    <p className="text-ink text-sm">Not specified</p>
                   )
                 )}
               </div>
-            </div>
-          </div>
 
-          {/* Twitter */}
-          <div className="p-6">
-            <div className="flex items-start gap-4">
-              <div className="p-3 bg-[#f5f3ed] rounded">
-                <LinkIcon className="w-5 h-5 text-[#b58c4f]" />
-              </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-muted-text mb-2">
-                  Twitter/X URL
+              {/* Twitter */}
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-wide text-muted-text mb-1">
+                  Twitter/X
                 </label>
                 {isEditing ? (
                   <input
                     type="url"
                     value={formData.twitterUrl}
                     onChange={(e) => handleInputChange('twitterUrl', e.target.value)}
-                    className="w-full px-4 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink"
-                    placeholder="https://twitter.com/yourhandle"
+                    className="w-full px-3 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink text-sm"
+                    placeholder="https://twitter.com/..."
                   />
                 ) : (
                   (user.profile?.links?.find(l => l.type === 'X')?.url || user.twitterUrl) ? (
-                    <a href={user.profile?.links?.find(l => l.type === 'X')?.url || user.twitterUrl} target="_blank" rel="noopener noreferrer" className="text-lg text-indigo-600 hover:text-indigo-700">
-                      {user.profile?.links?.find(l => l.type === 'X')?.url || user.twitterUrl}
+                    <a 
+                      href={user.profile?.links?.find(l => l.type === 'X')?.url || user.twitterUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="text-[#b58c4f] hover:text-[#94651f] text-sm flex items-center gap-1 transition-colors"
+                    >
+                      <LinkIcon className="w-3 h-3" />
+                      <span className="truncate">{user.profile?.links?.find(l => l.type === 'X')?.url || user.twitterUrl}</span>
                     </a>
                   ) : (
-                    <p className="text-lg text-ink">Not specified</p>
+                    <p className="text-ink text-sm">Not specified</p>
                   )
                 )}
               </div>
@@ -529,7 +531,7 @@ export default function ProfilePage() {
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="flex items-center gap-2 px-6 py-3 bg-ink text-paper-light font-semibold hover:bg-[#304258] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-2 px-6 py-2.5 bg-ink text-paper-light font-semibold hover:bg-[#304258] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
             >
               <Save className="w-4 h-4" />
               {isSaving ? 'Saving...' : 'Save Changes'}
@@ -537,7 +539,7 @@ export default function ProfilePage() {
             <button
               onClick={handleCancel}
               disabled={isSaving}
-              className="flex items-center gap-2 px-6 py-3 bg-transparent border-2 border-ink text-ink font-semibold hover:bg-[#f5f3ed] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-2 px-6 py-2.5 bg-transparent border-2 border-ink text-ink font-semibold hover:bg-[#f5f3ed] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <X className="w-4 h-4" />
               Cancel
@@ -545,9 +547,11 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* Additional Settings Links */}
-        <div className="mt-8 p-6 bg-[#f5f3ed] border border-line">
-          <h3 className="text-lg font-serif font-bold text-ink mb-4">Pitch Deck</h3>
+        {/* Pitch Deck Card */}
+        <div className="mt-6 bg-paper-light border border-line p-6">
+          <h3 className="text-lg font-serif font-bold text-ink mb-4 pb-3 border-b border-line">
+            Pitch Deck
+          </h3>
           <PitchDeckUpload
             currentDeckUrl={pitchDeckUrl || undefined}
             onUploadSuccess={(url) => {
@@ -561,20 +565,21 @@ export default function ProfilePage() {
           />
         </div>
 
-        {/* Additional Settings Links */}
-        <div className="mt-8 p-6 bg-[#f5f3ed] border border-line">
-          <h3 className="text-lg font-serif font-bold text-ink mb-4">Account Settings</h3>
-          <div className="space-y-3">
-            <Link
-              to="/profile/security"
-              className="block text-ink hover:text-[#b58c4f] font-medium transition-colors"
-            >
-              Security Settings →
-            </Link>
-            <p className="text-sm text-muted-text">
-              Manage your password and sign-in methods
-            </p>
-          </div>
+        {/* Account Settings Card */}
+        <div className="mt-6 bg-[#f5f3ed] border border-line p-6">
+          <h3 className="text-lg font-serif font-bold text-ink mb-3">
+            Account Settings
+          </h3>
+          <Link
+            to="/profile/security"
+            className="inline-flex items-center gap-2 text-ink hover:text-[#b58c4f] font-medium transition-colors"
+          >
+            Security Settings
+            <span className="text-[#b58c4f]">→</span>
+          </Link>
+          <p className="text-sm text-muted-text mt-2">
+            Manage your password and sign-in methods
+          </p>
         </div>
       </div>
     </AppLayout>
