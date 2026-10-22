@@ -36,6 +36,10 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (user) {
+      console.log('ProfilePage - User data:', user);
+      console.log('Stage:', user.stage);
+      console.log('Sector:', user.sector);
+      
       setFormData({
         founderName: user.founderName,
         startupName: user.startupName,
