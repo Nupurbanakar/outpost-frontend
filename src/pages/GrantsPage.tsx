@@ -109,6 +109,7 @@ export default function GrantsPage() {
           aiEnabled={aiEnabled}
           canUseAI={canUseAI}
           onToggleAI={handleToggleAI}
+          placeholder="Search grants..."
         />
 
         {/* Filters */}

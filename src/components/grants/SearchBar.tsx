@@ -1,20 +1,31 @@
 import { Search, Sparkles } from 'lucide-react';
 
 interface SearchBarProps {
-  query: string;
-  onQueryChange: (value: string) => void;
-  aiEnabled: boolean;
-  canUseAI: boolean;
-  onToggleAI: () => void;
+  query?: string;
+  onQueryChange?: (value: string) => void;
+  aiEnabled?: boolean;
+  canUseAI?: boolean;
+  onToggleAI?: () => void;
+  // Alternative props for simple search (used by ChallengesPage, MentorsPage)
+  value?: string;
+  onChange?: (value: string) => void;
+  placeholder?: string;
 }
 
 export function SearchBar({
   query,
   onQueryChange,
-  aiEnabled,
-  canUseAI,
+  aiEnabled = false,
+  canUseAI = false,
   onToggleAI,
+  value,
+  onChange,
+  placeholder = 'Search...',
 }: SearchBarProps) {
+  // Support both prop patterns
+  const searchValue = value !== undefined ? value : query ?? '';
+  const handleChange = onChange || onQueryChange || (() => {});
+  
   return (
     <div className="mb-6 flex flex-col sm:flex-row gap-4">
       {/* Search Input */}
@@ -22,9 +33,9 @@ export function SearchBar({
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-text" />
         <input
           type="text"
-          placeholder="Search grants..."
-          value={query}
-          onChange={(e) => onQueryChange(e.target.value)}
+          placeholder={placeholder}
+          value={searchValue}
+          onChange={(e) => handleChange(e.target.value)}
           className="w-full pl-10 pr-4 py-3 border border-line focus:border-[#b58c4f] focus:ring-2 focus:ring-[rgba(214,155,66,0.12)] focus:outline-none bg-paper-light text-ink"
         />
       </div>
