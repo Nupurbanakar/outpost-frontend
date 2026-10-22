@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Mentor } from '@/api/endpoints/mentors';
@@ -17,6 +18,8 @@ export function MentorCard({ mentor, variant = 'dark', showAiReason = false }: M
   const tagBg = darkMode ? 'bg-[#2d3d35]' : 'bg-[#f5f3ed]';
   const tagText = darkMode ? 'text-[#a8b5af]' : 'text-muted-text';
 
+  const [imageError, setImageError] = React.useState(false);
+
   console.log('🖼️ MentorCard render:', { name: mentor.name, photoUrl: mentor.photoUrl, hasPhoto: !!mentor.photoUrl });
 
   return (
@@ -26,11 +29,15 @@ export function MentorCard({ mentor, variant = 'dark', showAiReason = false }: M
     >
       {/* Photo */}
       <div className="mb-4">
-        {mentor.photoUrl ? (
+        {mentor.photoUrl && !imageError ? (
           <img
             src={mentor.photoUrl}
             alt={mentor.name}
             className="w-20 h-20 rounded-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+            onError={(e) => {
+              console.warn('❌ Failed to load mentor photo:', mentor.photoUrl);
+              setImageError(true);
+            }}
           />
         ) : (
           <div
@@ -42,7 +49,8 @@ export function MentorCard({ mentor, variant = 'dark', showAiReason = false }: M
               .split(' ')
               .map((n) => n[0])
               .join('')
-              .slice(0, 2)}
+              .slice(0, 2)
+              .toUpperCase()}
           </div>
         )}
       </div>
