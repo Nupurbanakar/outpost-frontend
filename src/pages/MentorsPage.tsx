@@ -43,12 +43,24 @@ export default function MentorsPage() {
           ai: aiEnabled || undefined,
         };
 
+        console.log('🔍 Mentors filters being sent:', filters);
+        console.log('📋 URL params:', {
+          page: currentPage,
+          keyword,
+          stageId,
+          sectorId,
+          expertise,
+          aiEnabled,
+        });
+
         const response = await mentorsApi.getMentors(filters);
+        console.log('✅ Mentors response:', response);
+        
         setMentors(response.content);
         setTotalPages(response.totalPages);
         setTotalElements(response.totalElements);
       } catch (err: any) {
-        console.error('Failed to load mentors:', err);
+        console.error('❌ Failed to load mentors:', err);
         setError(parseApiError(err));
       } finally {
         setIsLoading(false);
