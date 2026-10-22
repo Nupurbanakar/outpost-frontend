@@ -50,30 +50,39 @@ export default function AdminGrantsPage() {
 
   const handlePublish = async (id: string) => {
     try {
+      console.log('Publishing grant:', id);
       await adminGrantsApi.publishGrant(id);
+      console.log('Grant published successfully');
       toast.success('Grant published successfully');
-      fetchGrants();
-    } catch (error) {
+      await fetchGrants();
+    } catch (error: any) {
+      console.error('Failed to publish grant:', error);
       toast.error('Failed to publish grant');
     }
   };
 
   const handleUnpublish = async (id: string) => {
     try {
+      console.log('Unpublishing grant:', id);
       await adminGrantsApi.unpublishGrant(id);
+      console.log('Grant unpublished successfully');
       toast.success('Grant unpublished');
-      fetchGrants();
-    } catch (error) {
+      await fetchGrants();
+    } catch (error: any) {
+      console.error('Failed to unpublish grant:', error);
       toast.error('Failed to unpublish grant');
     }
   };
 
   const handleExpire = async (id: string) => {
     try {
+      console.log('Expiring grant:', id);
       await adminGrantsApi.expireGrant(id);
+      console.log('Grant expired successfully');
       toast.success('Grant marked as expired');
-      fetchGrants();
-    } catch (error) {
+      await fetchGrants();
+    } catch (error: any) {
+      console.error('Failed to expire grant:', error);
       toast.error('Failed to expire grant');
     }
   };
