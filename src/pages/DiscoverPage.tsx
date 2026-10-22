@@ -287,10 +287,14 @@ function OpportunitiesSection() {
       {/* Explore All CTA */}
       <div className="text-center">
         <Link
-          to="/grants"
+          to={filter === 'CHALLENGE' ? '/challenges' : filter === 'GRANT' ? '/grants' : '/grants'}
           className="inline-block px-6 py-3 bg-transparent border-2 border-ink text-ink font-semibold hover:bg-ink hover:text-paper-light transition-colors"
         >
-          Explore all grants
+          {filter === 'CHALLENGE' 
+            ? 'Explore all challenges' 
+            : filter === 'GRANT' 
+            ? 'Explore all grants' 
+            : 'Explore all opportunities'}
         </Link>
       </div>
     </section>
