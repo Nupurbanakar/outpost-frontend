@@ -118,14 +118,22 @@ export default function AdminGrantsPage() {
         amountMax: editingGrant.amount,
       };
       
+      console.log('Updating grant ID:', editingGrant.id);
       console.log('Updating grant with data:', updateData);
-      await adminGrantsApi.updateGrant(editingGrant.id, updateData);
+      
+      const response = await adminGrantsApi.updateGrant(editingGrant.id, updateData);
+      console.log('Grant updated successfully. Response:', response);
+      
       toast.success('Grant updated successfully');
       setIsEditModalOpen(false);
       setEditingGrant(null);
-      fetchGrants();
+      
+      // Force refresh the list
+      await fetchGrants();
     } catch (error: any) {
       console.error('Failed to update grant:', error);
+      console.error('Error response:', error.response?.data);
+      console.error('Error status:', error.response?.status);
       toast.error(error.response?.data?.message || 'Failed to update grant');
     } finally {
       setIsSaving(false);
