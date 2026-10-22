@@ -33,7 +33,7 @@ export interface MentorApplicationRequest {
   headline: string;
   bio: string;
   expertise: string[];
-  calComUrl: string;
+  calcomUrl: string; // Backend expects lowercase 'calcomUrl'
   photoUrl?: string;
   linkedInUrl?: string;
 }

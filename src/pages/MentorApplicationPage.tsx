@@ -28,7 +28,7 @@ const applicationSchema = z.object({
   email: z.string().email('Invalid email address'),
   headline: z.string().min(10, 'Headline must be at least 10 characters'),
   bio: z.string().min(50, 'Bio must be at least 50 characters'),
-  calComUrl: z.string().url('Must be a valid Cal.com URL').includes('cal.com', {
+  calcomUrl: z.string().url('Must be a valid Cal.com URL').includes('cal.com', {
     message: 'Must be a Cal.com URL',
   }),
   photoUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
@@ -76,7 +76,7 @@ export default function MentorApplicationPage() {
         email: data.email,
         headline: data.headline,
         bio: data.bio,
-        calComUrl: data.calComUrl,
+        calcomUrl: data.calcomUrl,
         expertise: data.expertise,
         photoUrl: data.photoUrl || undefined,
         linkedInUrl: data.linkedInUrl || undefined,
@@ -275,21 +275,21 @@ export default function MentorApplicationPage() {
 
           {/* Cal.com URL */}
           <div>
-            <label htmlFor="calComUrl" className="block text-sm font-medium text-ink mb-2">
+            <label htmlFor="calcomUrl" className="block text-sm font-medium text-ink mb-2">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
                 Cal.com Booking URL *
               </div>
             </label>
             <input
-              {...register('calComUrl')}
+              {...register('calcomUrl')}
               type="url"
-              id="calComUrl"
+              id="calcomUrl"
               className="w-full px-4 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink"
               placeholder="https://cal.com/yourname"
             />
-            {errors.calComUrl && (
-              <p className="text-sm text-red-600 mt-1">{errors.calComUrl.message}</p>
+            {errors.calcomUrl && (
+              <p className="text-sm text-red-600 mt-1">{errors.calcomUrl.message}</p>
             )}
             <p className="text-xs text-muted-text mt-1">
               Founders will use this to book sessions with you. Don't have one?{' '}
