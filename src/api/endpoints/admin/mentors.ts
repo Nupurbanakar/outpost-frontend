@@ -25,7 +25,12 @@ export const adminMentorsApi = {
       params.append('size', String(filters.size));
     }
 
+    console.log('🔍 Admin Mentors API call:', `/admin/mentors?${params.toString()}`);
+
     const response = await apiClient.get<PaginatedResponse<Mentor>>('/admin/mentors', { params });
+    
+    console.log('✅ Admin Mentors response:', response.data);
+    
     return response.data;
   },
 

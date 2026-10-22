@@ -23,19 +23,24 @@ export default function AdminMentorsPage() {
   const fetchMentors = async () => {
     try {
       setIsLoading(true);
+      
+      console.log('📋 Fetching mentors:', { statusFilter, page: currentPage - 1, size: pageSize });
+      
       const response = await adminMentorsApi.listMentors({
         status: statusFilter,
         page: currentPage - 1, // Backend uses 0-indexed pages
         size: pageSize,
       });
       
-      console.log('Mentors response:', response);
+      console.log('✅ Mentors response:', response);
       
       setMentors(response.content || []);
       setTotalElements(response.totalElements || 0);
-    } catch (error) {
-      console.error('Failed to fetch mentors:', error);
-      toast.error('Failed to load mentors');
+    } catch (error: any) {
+      console.error('❌ Failed to fetch mentors:', error);
+      console.error('Error response:', error.response?.data);
+      console.error('Error status:', error.response?.status);
+      toast.error('Failed to load mentors: ' + (error.response?.data?.message || error.message));
     } finally {
       setIsLoading(false);
     }
