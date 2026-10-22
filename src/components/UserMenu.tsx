@@ -8,28 +8,6 @@ export function UserMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // If not logged in, show login button
-  if (!user) {
-    return (
-      <Link
-        to="/login"
-        className="inline-flex items-center gap-2 px-4 py-2 bg-ink text-paper-light font-semibold hover:bg-[#304258] transition-colors rounded"
-      >
-        Log In
-      </Link>
-    );
-  }
-
-  // Get user initials
-  const getInitials = () => {
-    if (!user?.founderName) return '?';
-    const names = user.founderName.split(' ');
-    if (names.length >= 2) {
-      return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
-    }
-    return user.founderName[0].toUpperCase();
-  };
-
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -63,6 +41,28 @@ export function UserMenu() {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen]);
+
+  // If not logged in, show login button
+  if (!user) {
+    return (
+      <Link
+        to="/login"
+        className="inline-flex items-center gap-2 px-4 py-2 bg-ink text-paper-light font-semibold hover:bg-[#304258] transition-colors rounded"
+      >
+        Log In
+      </Link>
+    );
+  }
+
+  // Get user initials
+  const getInitials = () => {
+    if (!user?.founderName) return '?';
+    const names = user.founderName.split(' ');
+    if (names.length >= 2) {
+      return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
+    }
+    return user.founderName[0].toUpperCase();
+  };
 
   const handleLogout = () => {
     setIsOpen(false);
