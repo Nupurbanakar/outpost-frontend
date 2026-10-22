@@ -25,14 +25,14 @@ export default function AdminMentorsPage() {
       setIsLoading(true);
       const response = await adminMentorsApi.listMentors({
         status: statusFilter,
-        page: currentPage - 1,
+        page: currentPage - 1, // Backend uses 0-indexed pages
         size: pageSize,
       });
       
       console.log('Mentors response:', response);
       
       setMentors(response.content || []);
-      setTotalElements(response.page?.totalElements || response.totalElements || 0);
+      setTotalElements(response.totalElements || 0);
     } catch (error) {
       console.error('Failed to fetch mentors:', error);
       toast.error('Failed to load mentors');

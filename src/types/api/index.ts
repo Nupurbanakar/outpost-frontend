@@ -20,11 +20,30 @@ export interface FieldError {
 
 export interface PaginatedResponse<T> {
   content: T[];
-  page: {
-    size: number;
-    number: number;
-    totalElements: number;
-    totalPages: number;
+  empty: boolean;
+  first: boolean;
+  last: boolean;
+  number: number;
+  numberOfElements: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  pageable?: {
+    offset: number;
+    pageNumber: number;
+    pageSize: number;
+    paged: boolean;
+    unpaged: boolean;
+    sort?: {
+      empty: boolean;
+      sorted: boolean;
+      unsorted: boolean;
+    };
+  };
+  sort?: {
+    empty: boolean;
+    sorted: boolean;
+    unsorted: boolean;
   };
 }
 

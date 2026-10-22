@@ -75,18 +75,13 @@ export default function AdminDashboardPage() {
       // Helper to safely get count from response
       const getCount = (response: any): number => {
         if (!response) return 0;
-        // Check different possible response structures
-        if (response.page?.totalElements !== undefined) {
-          return response.page.totalElements;
-        }
+        // Backend returns totalElements at root level
         if (response.totalElements !== undefined) {
           return response.totalElements;
         }
+        // Fallback to checking content array
         if (Array.isArray(response.content)) {
           return response.content.length;
-        }
-        if (Array.isArray(response)) {
-          return response.length;
         }
         return 0;
       };

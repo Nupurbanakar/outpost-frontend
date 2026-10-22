@@ -23,14 +23,14 @@ export default function AdminGrantsPage() {
       setIsLoading(true);
       const response = await adminGrantsApi.listGrants({
         status: statusFilter === 'ALL' ? undefined : statusFilter,
-        page: currentPage,
+        page: currentPage - 1, // Backend uses 0-indexed pages
         size: pageSize,
       });
       
       console.log('Grants response:', response);
       
       setGrants(response.content || []);
-      setTotalElements(response.page?.totalElements || response.totalElements || 0);
+      setTotalElements(response.totalElements || 0);
     } catch (error) {
       console.error('Failed to fetch grants:', error);
       toast.error('Failed to load grants');
