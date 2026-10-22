@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AppLayout } from '@/components/AppLayout';
+import { PageHeader } from '@/components/common/PageHeader';
 import { challengesApi, Challenge, ChallengesFilters } from '@/api/endpoints/challenges';
 import { OpportunityCard } from '@/components/OpportunityCard';
 import { SearchBar } from '@/components/grants/SearchBar';
@@ -98,14 +99,10 @@ export default function ChallengesPage() {
     <AppLayout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-serif font-bold text-ink mb-3">
-            Corporate Challenges
-          </h1>
-          <p className="text-lg text-muted-text">
-            Collaborate with leading corporates on innovation challenges
-          </p>
-        </div>
+        <PageHeader
+          title="Corporate Challenges"
+          description="Collaborate with leading corporates on innovation challenges"
+        />
 
         {/* Search Bar */}
         <div className="mb-6">

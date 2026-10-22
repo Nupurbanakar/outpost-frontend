@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
 import { AppLayout } from '@/components/AppLayout';
+import { PageHeader } from '@/components/common/PageHeader';
 import { OpportunityCard } from '@/components/OpportunityCard';
 import { SearchBar } from '@/components/grants/SearchBar';
 import { GrantsFilters } from '@/components/grants/GrantsFilters';
@@ -93,14 +94,10 @@ export default function GrantsPage() {
     <AppLayout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <header className="mb-8">
-          <h1 className="text-4xl font-serif font-bold text-ink mb-2">
-            Grants & Schemes
-          </h1>
-          <p className="text-muted-text">
-            Explore funding opportunities from central and state governments
-          </p>
-        </header>
+        <PageHeader
+          title="Grants & Schemes"
+          description="Explore funding opportunities from central and state governments"
+        />
 
         {/* Search & AI Toggle */}
         <SearchBar

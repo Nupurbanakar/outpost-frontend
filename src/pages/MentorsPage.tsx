@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
+import { UserPlus } from 'lucide-react';
 import { AppLayout } from '@/components/AppLayout';
+import { PageHeader } from '@/components/common/PageHeader';
 import { mentorsApi, Mentor, MentorsFilters } from '@/api/endpoints/mentors';
 import { MentorCard } from '@/components/MentorCard';
 import { SearchBar } from '@/components/grants/SearchBar';
@@ -9,7 +11,6 @@ import { EmptyState } from '@/components/common/EmptyState';
 import { MentorsFiltersPanel } from '@/components/mentors/MentorsFilters';
 import { MentorsLoadingSkeleton } from '@/components/mentors/MentorsLoadingSkeleton';
 import { parseApiError } from '@/utils/errorHandling';
-import { UserPlus } from 'lucide-react';
 
 export default function MentorsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -120,25 +121,19 @@ export default function MentorsPage() {
     <AppLayout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl sm:text-4xl font-serif font-bold text-ink mb-3">
-              Find a Mentor
-            </h1>
-            <p className="text-lg text-muted-text">
-              Connect with experienced founders and operators
-            </p>
-          </div>
-          
-          {/* Become a Mentor Button */}
-          <Link
-            to="/mentors/apply"
-            className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-ink text-paper-light font-semibold hover:bg-[#304258] transition-colors rounded-lg whitespace-nowrap"
-          >
-            <UserPlus className="w-5 h-5" />
-            Become a Mentor
-          </Link>
-        </div>
+        <PageHeader
+          title="Find a Mentor"
+          description="Connect with experienced founders and operators"
+          action={
+            <Link
+              to="/mentors/apply"
+              className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-ink text-paper-light font-semibold hover:bg-[#304258] transition-colors whitespace-nowrap"
+            >
+              <UserPlus className="w-5 h-5" />
+              Become a Mentor
+            </Link>
+          }
+        />
 
         {/* Search Bar */}
         <div className="mb-6">
