@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AppLayout } from '@/components/AppLayout';
+import { ProfilePhotoUpload } from '@/components/profile/ProfilePhotoUpload';
 import { mentorsApi, MentorApplicationRequest } from '@/api/endpoints/mentors';
 import { parseApiError } from '@/utils/errorHandling';
 import { CheckCircle, User, Briefcase, Mail, Link as LinkIcon, Calendar } from 'lucide-react';
@@ -31,7 +32,6 @@ const applicationSchema = z.object({
   calcomUrl: z.string().url('Must be a valid Cal.com URL').includes('cal.com', {
     message: 'Must be a Cal.com URL',
   }),
-  photoUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
   linkedInUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
   expertise: z.array(z.string()).min(1, 'Select at least one area of expertise'),
 });
@@ -44,6 +44,7 @@ export default function MentorApplicationPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [selectedExpertise, setSelectedExpertise] = useState<string[]>([]);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
 
   const {
     register,
@@ -78,7 +79,7 @@ export default function MentorApplicationPage() {
         bio: data.bio,
         calcomUrl: data.calcomUrl,
         expertise: data.expertise,
-        photoUrl: data.photoUrl || undefined,
+        photoUrl: photoUrl || undefined,  // Use uploaded photo URL from state
         linkedInUrl: data.linkedInUrl || undefined,
       };
 
@@ -304,25 +305,13 @@ export default function MentorApplicationPage() {
             </p>
           </div>
 
-          {/* Photo URL (Optional) */}
-          <div>
-            <label htmlFor="photoUrl" className="block text-sm font-medium text-ink mb-2">
-              <div className="flex items-center gap-2">
-                <LinkIcon className="w-4 h-4" />
-                Photo URL (Optional)
-              </div>
-            </label>
-            <input
-              {...register('photoUrl')}
-              type="url"
-              id="photoUrl"
-              className="w-full px-4 py-2 border border-line focus:outline-none focus:ring-2 focus:ring-ink"
-              placeholder="https://example.com/your-photo.jpg"
-            />
-            {errors.photoUrl && (
-              <p className="text-sm text-red-600 mt-1">{errors.photoUrl.message}</p>
-            )}
-          </div>
+          {/* Profile Photo Upload */}
+          <ProfilePhotoUpload
+            currentPhotoUrl={photoUrl || undefined}
+            onPhotoChange={setPhotoUrl}
+            label="Profile Photo"
+            required={false}
+          />
 
           {/* LinkedIn URL (Optional) */}
           <div>
