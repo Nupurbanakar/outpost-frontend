@@ -71,6 +71,12 @@ export interface User {
   founderName: string;
   startupName: string;
   city: string;
+  // Backend returns flat fields instead of nested objects
+  stageId?: string;
+  stageName?: string;
+  sectorId?: string;
+  sectorName?: string;
+  // Keep these for backward compatibility
   stage?: Stage;
   sector?: Sector;
   bio?: string;

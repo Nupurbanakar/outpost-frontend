@@ -26,8 +26,8 @@ export default function ProfilePage() {
     founderName: user?.founderName || '',
     startupName: user?.startupName || '',
     city: user?.city || '',
-    stageId: user?.stage?.id || '',
-    sectorId: user?.sector?.id || '',
+    stageId: user?.stageId || user?.stage?.id || '',
+    sectorId: user?.sectorId || user?.sector?.id || '',
     bio: user?.profile?.bio || user?.bio || '',
     website: user?.profile?.links?.find(l => l.type === 'OTHER')?.url || user?.website || '',
     linkedInUrl: user?.profile?.links?.find(l => l.type === 'LINKEDIN')?.url || user?.linkedInUrl || '',
@@ -37,15 +37,15 @@ export default function ProfilePage() {
   useEffect(() => {
     if (user) {
       console.log('ProfilePage - User data:', user);
-      console.log('Stage:', user.stage);
-      console.log('Sector:', user.sector);
+      console.log('Stage:', user.stage, 'stageId:', user.stageId, 'stageName:', user.stageName);
+      console.log('Sector:', user.sector, 'sectorId:', user.sectorId, 'sectorName:', user.sectorName);
       
       setFormData({
         founderName: user.founderName,
         startupName: user.startupName,
         city: user.city,
-        stageId: user.stage?.id || '',
-        sectorId: user.sector?.id || '',
+        stageId: user.stageId || user.stage?.id || '',
+        sectorId: user.sectorId || user.sector?.id || '',
         bio: user.profile?.bio || user.bio || '',
         website: user.profile?.links?.find(l => l.type === 'OTHER')?.url || user.website || '',
         linkedInUrl: user.profile?.links?.find(l => l.type === 'LINKEDIN')?.url || user.linkedInUrl || '',
@@ -361,7 +361,7 @@ export default function ProfilePage() {
                     ))}
                   </select>
                 ) : (
-                  <p className="text-lg text-ink">{user.stage?.name || 'Not specified'}</p>
+                  <p className="text-lg text-ink">{user.stageName || user.stage?.name || 'Not specified'}</p>
                 )}
               </div>
             </div>
@@ -392,7 +392,7 @@ export default function ProfilePage() {
                     ))}
                   </select>
                 ) : (
-                  <p className="text-lg text-ink">{user.sector?.name || 'Not specified'}</p>
+                  <p className="text-lg text-ink">{user.sectorName || user.sector?.name || 'Not specified'}</p>
                 )}
               </div>
             </div>
