@@ -17,6 +17,8 @@ export function MentorCard({ mentor, variant = 'dark', showAiReason = false }: M
   const tagBg = darkMode ? 'bg-[#2d3d35]' : 'bg-[#f5f3ed]';
   const tagText = darkMode ? 'text-[#a8b5af]' : 'text-muted-text';
 
+  console.log('🖼️ MentorCard render:', { name: mentor.name, photoUrl: mentor.photoUrl, hasPhoto: !!mentor.photoUrl });
+
   return (
     <Link
       to={`/mentors/${mentor.id}`}
