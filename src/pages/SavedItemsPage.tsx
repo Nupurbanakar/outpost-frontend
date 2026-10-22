@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Bookmark } from 'lucide-react';
+import { Bookmark, Calendar, Building2, Trash2, ExternalLink, IndianRupee } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { AppLayout } from '../components/AppLayout';
-import { OpportunityCard } from '../components/OpportunityCard';
 import { EmptyState } from '../components/common/EmptyState';
-import { getBookmarks, BookmarkedItem } from '../utils/bookmarks';
+import { getBookmarks, BookmarkedItem, removeBookmark } from '../utils/bookmarks';
+import { formatDate } from '@/utils/dateUtils';
 import api from '../api/client';
 
 interface Grant {
@@ -13,6 +14,8 @@ interface Grant {
   summary: string;
   deadline?: string;
   status: string;
+  amountMin?: number;
+  amountMax?: number;
 }
 
 interface Challenge {
@@ -20,13 +23,18 @@ interface Challenge {
   title: string;
   corporateName: string;
   sector?: { id: string; name: string };
-  deadline: string;
+  deadline?: string;
   status: string;
+  theme?: string;
 }
 
+type SavedItem = (Grant | Challenge) & { 
+  type: 'GRANT' | 'CHALLENGE';
+  bookmarkedAt: number;
+};
+
 export default function SavedItemsPage() {
-  const [grants, setGrants] = useState<Grant[]>([]);
-  const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [savedItems, setSavedItems] = useState<SavedItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -37,22 +45,30 @@ export default function SavedItemsPage() {
     setIsLoading(true);
     const bookmarks = getBookmarks();
 
-    // Fetch full details for each bookmarked item
-    const grantIds = bookmarks.filter(b => b.type === 'grant').map(b => b.id);
-    const challengeIds = bookmarks.filter(b => b.type === 'challenge').map(b => b.id);
-
     try {
-      const [grantResults, challengeResults] = await Promise.allSettled([
-        Promise.all(grantIds.map(id => api.get(`/grants/${id}`).catch(() => null))),
-        Promise.all(challengeIds.map(id => api.get(`/challenges/${id}`).catch(() => null)))
-      ]);
+      // Fetch all items
+      const itemPromises = bookmarks.map(async (bookmark) => {
+        try {
+          const endpoint = bookmark.type === 'grant' ? '/grants' : '/challenges';
+          const response = await api.get(`${endpoint}/${bookmark.id}`);
+          return {
+            ...response.data,
+            type: bookmark.type === 'grant' ? 'GRANT' as const : 'CHALLENGE' as const,
+            bookmarkedAt: bookmark.timestamp,
+          };
+        } catch (error) {
+          console.error(`Failed to load ${bookmark.type} ${bookmark.id}:`, error);
+          return null;
+        }
+      });
 
-      if (grantResults.status === 'fulfilled') {
-        setGrants(grantResults.value.filter(r => r !== null).map(r => r!.data));
-      }
-      if (challengeResults.status === 'fulfilled') {
-        setChallenges(challengeResults.value.filter(r => r !== null).map(r => r!.data));
-      }
+      const results = await Promise.all(itemPromises);
+      const validItems = results.filter((item): item is SavedItem => item !== null);
+      
+      // Sort by most recently bookmarked
+      validItems.sort((a, b) => b.bookmarkedAt - a.bookmarkedAt);
+      
+      setSavedItems(validItems);
     } catch (error) {
       console.error('Failed to load bookmarked items:', error);
     } finally {
@@ -60,12 +76,30 @@ export default function SavedItemsPage() {
     }
   };
 
-  const handleBookmarkRemoved = () => {
-    // Reload bookmarks when one is removed
-    loadBookmarkedItems();
+  const handleRemoveBookmark = (id: string) => {
+    removeBookmark(id);
+    setSavedItems(items => items.filter(item => item.id !== id));
   };
 
-  const totalSaved = grants.length + challenges.length;
+  const isGrant = (item: SavedItem): item is SavedItem & Grant => {
+    return item.type === 'GRANT';
+  };
+
+  const getStatusBadge = (status: string) => {
+    const styles: Record<string, string> = {
+      'PUBLISHED': 'bg-green-100 text-green-800 border-green-200',
+      'OPEN': 'bg-green-100 text-green-800 border-green-200',
+      'EXPIRED': 'bg-gray-100 text-gray-600 border-gray-200',
+      'CLOSED': 'bg-gray-100 text-gray-600 border-gray-200',
+      'DRAFT': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+    };
+    
+    return (
+      <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium border ${styles[status] || 'bg-gray-100 text-gray-600'}`}>
+        {status}
+      </span>
+    );
+  };
 
   return (
     <AppLayout>
@@ -77,81 +111,153 @@ export default function SavedItemsPage() {
             <h1 className="text-4xl font-serif font-bold text-ink">Saved Items</h1>
           </div>
           <p className="mt-2 text-muted-text">
-            Your bookmarked grants and challenges
+            {savedItems.length > 0 
+              ? `${savedItems.length} ${savedItems.length === 1 ? 'item' : 'items'} saved`
+              : 'Your bookmarked grants and challenges'}
           </p>
         </div>
 
         {/* Loading State */}
         {isLoading && (
-          <div className="flex items-center justify-center py-12 text-gray-600">
+          <div className="flex items-center justify-center py-12 text-muted-text">
             Loading saved items...
           </div>
         )}
 
         {/* Empty State */}
-        {!isLoading && totalSaved === 0 && (
+        {!isLoading && savedItems.length === 0 && (
           <EmptyState
             title="No saved items yet"
             description="Bookmark grants and challenges to view them here"
           />
         )}
 
-        {/* Saved Items */}
-        {!isLoading && totalSaved > 0 && (
-          <div className="space-y-8">
-            {/* Grants Section */}
-            {grants.length > 0 && (
-              <section>
-                <h2 className="mb-4 text-2xl font-semibold text-ink">
-                  Grants
-                  <span className="ml-2 text-sm font-normal text-gray-600">
-                    ({grants.length})
-                  </span>
-                </h2>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {grants.map((grant) => (
-                    <OpportunityCard
-                      key={grant.id}
-                      type="GRANT"
-                      id={grant.id}
-                      title={grant.title}
-                      organization={grant.issuingBody}
-                      description={grant.summary}
-                      deadline={grant.deadline}
-                      status={grant.status}
-                      onBookmark={handleBookmarkRemoved}
-                    />
-                  ))}
-                </div>
-              </section>
-            )}
+        {/* Saved Items List */}
+        {!isLoading && savedItems.length > 0 && (
+          <div className="bg-paper-light border border-line overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-line">
+                <thead className="bg-[#f5f3ed]">
+                  <tr>
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-ink uppercase tracking-wider">
+                      Type
+                    </th>
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-ink uppercase tracking-wider">
+                      Opportunity
+                    </th>
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-ink uppercase tracking-wider">
+                      Organization
+                    </th>
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-ink uppercase tracking-wider">
+                      Details
+                    </th>
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-ink uppercase tracking-wider">
+                      Deadline
+                    </th>
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-ink uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-ink uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-paper-light divide-y divide-line">
+                  {savedItems.map((item) => {
+                    const itemIsGrant = isGrant(item);
+                    const link = itemIsGrant ? `/grants/${item.id}` : `/challenges/${item.id}`;
+                    
+                    return (
+                      <tr key={item.id} className="hover:bg-[#f5f3ed] transition-colors">
+                        {/* Type Badge */}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex items-center px-2.5 py-1 text-xs font-semibold uppercase tracking-wide border ${
+                            itemIsGrant
+                              ? 'bg-[#f0f9f4] text-[#2d6a4f] border-[#95d5b2]'
+                              : 'bg-[#fef3e2] text-[#b58c4f] border-[#f4d8a8]'
+                          }`}>
+                            {itemIsGrant ? 'Grant' : 'Challenge'}
+                          </span>
+                        </td>
 
-            {/* Challenges Section */}
-            {challenges.length > 0 && (
-              <section>
-                <h2 className="mb-4 text-2xl font-semibold text-ink">
-                  Challenges
-                  <span className="ml-2 text-sm font-normal text-gray-600">
-                    ({challenges.length})
-                  </span>
-                </h2>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {challenges.map((challenge) => (
-                    <OpportunityCard
-                      key={challenge.id}
-                      type="CHALLENGE"
-                      id={challenge.id}
-                      title={challenge.title}
-                      organization={challenge.corporateName}
-                      sector={challenge.sector?.name}
-                      deadline={challenge.deadline}
-                      status={challenge.status}
-                      onBookmark={handleBookmarkRemoved}
-                    />
-                  ))}
-                </div>
-              </section>
-            )}
+                        {/* Title */}
+                        <td className="px-6 py-4">
+                          <Link 
+                            to={link}
+                            className="text-sm font-semibold text-ink hover:text-[#b58c4f] line-clamp-2 max-w-xs"
+                          >
+                            {item.title}
+                          </Link>
+                        </td>
+
+                        {/* Organization */}
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <Building2 className="w-4 h-4 text-muted-text flex-shrink-0" />
+                            <span className="text-sm text-muted-text">
+                              {itemIsGrant ? item.issuingBody : (item as Challenge).corporateName}
+                            </span>
+                          </div>
+                        </td>
+
+                        {/* Details (Amount for grants, Sector/Theme for challenges) */}
+                        <td className="px-6 py-4">
+                          {itemIsGrant ? (
+                            <div className="flex items-center gap-1.5 text-sm text-ink">
+                              <IndianRupee className="w-4 h-4 text-[#b58c4f]" />
+                              <span>
+                                {item.amountMin || item.amountMax
+                                  ? `${item.amountMin ? '₹' + (item.amountMin / 100000).toFixed(0) + 'L' : ''} ${item.amountMin && item.amountMax ? '-' : ''} ${item.amountMax ? '₹' + (item.amountMax / 100000).toFixed(0) + 'L' : ''}`
+                                  : 'See details'}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-sm text-muted-text">
+                              {(item as Challenge).sector?.name || (item as Challenge).theme || '—'}
+                            </span>
+                          )}
+                        </td>
+
+                        {/* Deadline */}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center gap-1.5 text-sm text-muted-text">
+                            <Calendar className="w-4 h-4" />
+                            <span>
+                              {item.deadline ? formatDate(item.deadline) : 'Rolling'}
+                            </span>
+                          </div>
+                        </td>
+
+                        {/* Status */}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {getStatusBadge(item.status)}
+                        </td>
+
+                        {/* Actions */}
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <div className="flex items-center justify-end gap-2">
+                            <Link
+                              to={link}
+                              className="p-2 text-ink hover:bg-[#f5f3ed] rounded transition-colors"
+                              title="View details"
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                            </Link>
+                            <button
+                              onClick={() => handleRemoveBookmark(item.id)}
+                              className="p-2 text-rose-600 hover:bg-rose-50 rounded transition-colors"
+                              title="Remove bookmark"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
