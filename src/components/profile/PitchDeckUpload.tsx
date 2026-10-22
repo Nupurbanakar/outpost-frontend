@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { Upload, FileText, Trash2, Download, AlertCircle, CheckCircle } from 'lucide-react';
 import { foundersApi } from '@/api/endpoints/founders';
+import apiClient from '@/api/client';
 
 interface PitchDeckUploadProps {
   currentDeckUrl?: string;
@@ -129,19 +130,13 @@ export function PitchDeckUpload({ currentDeckUrl, onUploadSuccess, onDeleteSucce
     if (!currentDeckUrl) return;
     
     try {
-      const token = localStorage.getItem('accessToken');
-      const response = await fetch(currentDeckUrl, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+      // Use axios which automatically includes auth token and follows redirects
+      const response = await apiClient.get('/me/pitch-deck', {
+        responseType: 'blob',
       });
       
-      if (!response.ok) {
-        throw new Error('Failed to download');
-      }
-      
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
+      // Create download link
+      const url = window.URL.createObjectURL(response.data);
       const a = document.createElement('a');
       a.href = url;
       a.download = 'pitch-deck.pdf';
@@ -150,6 +145,7 @@ export function PitchDeckUpload({ currentDeckUrl, onUploadSuccess, onDeleteSucce
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (err) {
+      console.error('Download error:', err);
       setError('Failed to download pitch deck');
     }
   };
