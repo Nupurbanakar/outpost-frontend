@@ -57,48 +57,82 @@ export default function AdminChallengesPage() {
   };
 
   const handleOpen = async (id: string) => {
+    console.log('🟢 [handleOpen] Starting - Challenge ID:', id);
     try {
-      console.log('Opening challenge:', id);
+      console.log('🟢 [handleOpen] Calling API to open challenge...');
       await adminChallengesApi.openChallenge(id);
-      console.log('Challenge opened successfully');
+      console.log('🟢 [handleOpen] ✅ API call successful');
       toast.success('Challenge opened successfully');
+      console.log('🟢 [handleOpen] Refreshing challenges list...');
       await fetchChallenges();
+      console.log('🟢 [handleOpen] ✅ Complete');
     } catch (error: any) {
-      console.error('Failed to open challenge:', error);
-      toast.error('Failed to open challenge');
+      console.error('🟢 [handleOpen] ❌ Failed:', error);
+      console.error('🟢 [handleOpen] Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+      const errorMsg = error.response?.data?.message || 'Failed to open challenge';
+      toast.error(errorMsg);
     }
   };
 
   const handleClose = async (id: string) => {
+    console.log('🔴 [handleClose] Starting - Challenge ID:', id);
     try {
-      console.log('Closing challenge:', id);
+      console.log('🔴 [handleClose] Calling API to close challenge...');
       await adminChallengesApi.closeChallenge(id);
-      console.log('Challenge closed successfully');
+      console.log('🔴 [handleClose] ✅ API call successful');
       toast.success('Challenge closed');
+      console.log('🔴 [handleClose] Refreshing challenges list...');
       await fetchChallenges();
+      console.log('🔴 [handleClose] ✅ Complete');
     } catch (error: any) {
-      console.error('Failed to close challenge:', error);
-      toast.error('Failed to close challenge');
+      console.error('🔴 [handleClose] ❌ Failed:', error);
+      console.error('🔴 [handleClose] Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+      const errorMsg = error.response?.data?.message || 'Failed to close challenge';
+      toast.error(errorMsg);
     }
   };
 
   const handleDelete = async (id: string) => {
+    console.log('🗑️ [handleDelete] Starting - Challenge ID:', id);
+    
     if (!confirm('Are you sure you want to delete this challenge? This action cannot be undone.')) {
+      console.log('🗑️ [handleDelete] User cancelled deletion');
       return;
     }
 
     try {
+      console.log('🗑️ [handleDelete] Calling API to delete challenge...');
       await adminChallengesApi.deleteChallenge(id);
+      console.log('🗑️ [handleDelete] ✅ API call successful');
       toast.success('Challenge deleted');
-      fetchChallenges();
-    } catch (error) {
-      toast.error('Failed to delete challenge');
+      console.log('🗑️ [handleDelete] Refreshing challenges list...');
+      await fetchChallenges();
+      console.log('🗑️ [handleDelete] ✅ Complete');
+    } catch (error: any) {
+      console.error('🗑️ [handleDelete] ❌ Failed:', error);
+      console.error('🗑️ [handleDelete] Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+      const errorMsg = error.response?.data?.message || 'Failed to delete challenge';
+      toast.error(errorMsg);
     }
   };
 
   const handleCreateNew = () => {
+    console.log('➕ [handleCreateNew] Creating new challenge template');
+    
     // Create empty challenge template
-    setEditingChallenge({
+    const newChallenge: Challenge = {
       id: '',
       title: '',
       corporateName: '',
@@ -111,25 +145,56 @@ export default function AdminChallengesPage() {
       timeline: '',
       offerType: undefined,
       applyUrl: '',
-      status: 'CLOSED',
+      status: 'CLOSED' as const,
       hasDetail: false,
-    });
+    };
+    
+    console.log('➕ [handleCreateNew] New challenge template:', newChallenge);
+    
+    setEditingChallenge(newChallenge);
+    console.log('➕ [handleCreateNew] editingChallenge state updated');
+    
     setIsCreateMode(true);
+    console.log('➕ [handleCreateNew] isCreateMode set to true');
+    
     setIsEditModalOpen(true);
+    console.log('➕ [handleCreateNew] ✅ Modal opened - ready to create challenge');
   };
 
-  const handleEdit = async (challenge: Challenge) => {
+  const handleEdit = (challenge: Challenge) => {
+    console.log('✏️ [handleEdit] Starting edit for challenge:', {
+      id: challenge.id,
+      title: challenge.title,
+      status: challenge.status,
+      fullChallenge: challenge,
+    });
+    
     setEditingChallenge(challenge);
+    console.log('✏️ [handleEdit] editingChallenge state updated');
+    
     setIsCreateMode(false);
+    console.log('✏️ [handleEdit] isCreateMode set to false');
+    
     setIsEditModalOpen(true);
+    console.log('✏️ [handleEdit] Modal opened - isEditModalOpen set to true');
+    console.log('✏️ [handleEdit] ✅ Complete - Modal should now be visible');
   };
 
   const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingChallenge) return;
+    
+    console.log('💾 [handleSaveEdit] Form submitted');
+    console.log('💾 [handleSaveEdit] isCreateMode:', isCreateMode);
+    console.log('💾 [handleSaveEdit] editingChallenge:', editingChallenge);
+    
+    if (!editingChallenge) {
+      console.error('💾 [handleSaveEdit] ❌ No editingChallenge found - aborting');
+      return;
+    }
 
     try {
       setIsSaving(true);
+      console.log('💾 [handleSaveEdit] isSaving set to true');
       
       const requestData = {
         title: editingChallenge.title,
@@ -146,44 +211,70 @@ export default function AdminChallengesPage() {
         applyUrl: editingChallenge.applyUrl,
       };
       
+      console.log('💾 [handleSaveEdit] Request data prepared:', requestData);
+      
       if (isCreateMode) {
-        console.log('Creating challenge with data:', requestData);
+        console.log('💾 [handleSaveEdit] CREATE MODE - Calling createChallenge API');
         const response = await adminChallengesApi.createChallenge(requestData);
-        console.log('Challenge created successfully. Response:', response);
+        console.log('💾 [handleSaveEdit] ✅ Create successful - Response:', response);
         toast.success('Challenge created successfully');
       } else {
-        console.log('Updating challenge ID:', editingChallenge.id);
-        console.log('Updating challenge with data:', requestData);
+        console.log('💾 [handleSaveEdit] EDIT MODE - Calling updateChallenge API');
+        console.log('💾 [handleSaveEdit] Challenge ID:', editingChallenge.id);
         const response = await adminChallengesApi.updateChallenge(editingChallenge.id, requestData);
-        console.log('Challenge updated successfully. Response:', response);
+        console.log('💾 [handleSaveEdit] ✅ Update successful - Response:', response);
         toast.success('Challenge updated successfully');
       }
       
+      console.log('💾 [handleSaveEdit] Closing modal and resetting state...');
       setIsEditModalOpen(false);
       setEditingChallenge(null);
       setIsCreateMode(false);
       
       // Reset to first page if we created a new challenge
       if (isCreateMode) {
+        console.log('💾 [handleSaveEdit] Resetting to page 1 (new challenge created)');
         setCurrentPage(1);
       }
       
+      console.log('💾 [handleSaveEdit] Refreshing challenges list...');
       await fetchChallenges();
+      console.log('💾 [handleSaveEdit] ✅ Complete - all state updated and list refreshed');
     } catch (error: any) {
-      console.error(`Failed to ${isCreateMode ? 'create' : 'update'} challenge:`, error);
-      console.error('Error response:', error.response?.data);
-      console.error('Error status:', error.response?.status);
-      toast.error(error.response?.data?.message || `Failed to ${isCreateMode ? 'create' : 'update'} challenge`);
+      console.error(`💾 [handleSaveEdit] ❌ Failed to ${isCreateMode ? 'create' : 'update'} challenge:`, error);
+      console.error('💾 [handleSaveEdit] Error message:', error.message);
+      console.error('💾 [handleSaveEdit] Error response data:', error.response?.data);
+      console.error('💾 [handleSaveEdit] Error status:', error.response?.status);
+      console.error('💾 [handleSaveEdit] Error headers:', error.response?.headers);
+      
+      // Log validation errors if present
+      if (error.response?.data?.errors && Array.isArray(error.response.data.errors)) {
+        console.error('🚨 VALIDATION ERRORS:');
+        error.response.data.errors.forEach((err: any, index: number) => {
+          console.error(`   ${index + 1}. Field: "${err.field}", Message: "${err.message}", Rejected Value: "${err.rejectedValue}"`);
+        });
+      }
+      
+      const errorMsg = error.response?.data?.message || `Failed to ${isCreateMode ? 'create' : 'update'} challenge`;
+      toast.error(errorMsg);
     } finally {
       setIsSaving(false);
+      console.log('💾 [handleSaveEdit] isSaving set to false');
     }
   };
 
   const handleCloseModal = () => {
+    console.log('❌ [handleCloseModal] Attempting to close modal');
+    console.log('❌ [handleCloseModal] isSaving:', isSaving);
+    
     if (!isSaving) {
+      console.log('❌ [handleCloseModal] Not saving - closing modal and resetting state');
       setIsEditModalOpen(false);
       setEditingChallenge(null);
       setIsCreateMode(false);
+      console.log('❌ [handleCloseModal] ✅ Modal closed and state reset');
+    } else {
+      console.log('❌ [handleCloseModal] ⚠️ Cannot close - save in progress');
     }
   };
 
@@ -384,7 +475,10 @@ export default function AdminChallengesPage() {
                     type="text"
                     required
                     value={editingChallenge.title}
-                    onChange={(e) => setEditingChallenge({ ...editingChallenge, title: e.target.value })}
+                    onChange={(e) => {
+                      console.log('📝 [Form Input] Title changed:', e.target.value);
+                      setEditingChallenge({ ...editingChallenge, title: e.target.value });
+                    }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>
@@ -424,7 +518,9 @@ export default function AdminChallengesPage() {
                   <select
                     value={editingChallenge.sector?.id || ''}
                     onChange={(e) => {
+                      console.log('📝 [Form Input] Sector changed:', e.target.value);
                       const selectedSector = sectors.find(s => s.id === e.target.value);
+                      console.log('📝 [Form Input] Selected sector object:', selectedSector);
                       setEditingChallenge({ 
                         ...editingChallenge, 
                         sector: selectedSector ? { id: selectedSector.id, name: selectedSector.name } : undefined
