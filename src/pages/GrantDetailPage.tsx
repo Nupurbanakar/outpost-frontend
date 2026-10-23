@@ -24,12 +24,29 @@ export default function GrantDetailPage() {
       try {
         setIsLoading(true);
         setError(null);
+        
+        console.log('🔍 Fetching grant detail for ID:', id);
+        console.log('📅 Request timestamp:', new Date().toISOString());
+        
         // Add timestamp to bust cache
         const data = await grantsApi.getGrantById(id);
-        console.log('Fetched grant details:', data);
+        
+        console.log('✅ Fetched grant details:', {
+          id: data.id,
+          title: data.title,
+          amount: data.amountMin,
+          amountMax: data.amountMax,
+          amountBand: data.amountBand,
+          updatedAt: data.updatedAt,
+          fullData: data
+        });
+        
         setGrant(data);
       } catch (err: any) {
-        console.error('Failed to fetch grant:', err);
+        console.error('❌ Failed to fetch grant:', err);
+        console.error('Error response:', err.response?.data);
+        console.error('Error status:', err.response?.status);
+        
         if (err.response?.status === 404) {
           setError('Grant not found');
         } else {
