@@ -23,38 +23,49 @@ export default function AdminChallengesPage() {
 
   const { sectors } = useSectors();
 
-  useEffect(() => {
-    fetchChallenges();
-  }, [statusFilter, currentPage]);
-
   const fetchChallenges = async () => {
     try {
       setIsLoading(true);
       
+      // Determine the status to send
+      const statusToSend = statusFilter === 'ALL' ? undefined : statusFilter;
+      
       console.log('📋 [AdminChallengesPage] Fetching challenges with filters:', {
         statusFilter,
-        statusToSend: statusFilter === 'ALL' ? undefined : statusFilter,
+        statusToSend,
         page: currentPage - 1,
         size: pageSize,
       });
       
+      // Force fresh data by adding timestamp (cache busting is in axios interceptor)
       const response = await adminChallengesApi.listChallenges({
-        status: statusFilter === 'ALL' ? undefined : statusFilter,
+        status: statusToSend,
         page: currentPage - 1, // Backend uses 0-indexed pages
         size: pageSize,
       });
       
       console.log('📋 [AdminChallengesPage] Challenges response:', response);
+      console.log('📋 [AdminChallengesPage] Content:', response.content);
+      console.log('📋 [AdminChallengesPage] Total elements:', response.totalElements);
       
       setChallenges(response.content || []);
       setTotalElements(response.totalElements || 0);
     } catch (error) {
-      console.error('Failed to fetch challenges:', error);
+      console.error('❌ [AdminChallengesPage] Failed to fetch challenges:', error);
       toast.error('Failed to load challenges');
+      // Set empty state on error
+      setChallenges([]);
+      setTotalElements(0);
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    console.log('🔄 [useEffect] Triggered - statusFilter:', statusFilter, 'currentPage:', currentPage);
+    fetchChallenges();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statusFilter, currentPage]);
 
   const handleOpen = async (id: string) => {
     console.log('🟢 [handleOpen] Starting - Challenge ID:', id);
@@ -336,7 +347,13 @@ export default function AdminChallengesPage() {
           </div>
         ) : challenges.length === 0 ? (
           <div className="rounded-lg bg-white p-12 shadow text-center">
-            <p className="text-gray-600">No challenges found. Create your first challenge to get started.</p>
+            <p className="text-gray-600">
+              {statusFilter === 'ALL' 
+                ? 'No challenges found. Create your first challenge to get started.'
+                : statusFilter === 'OPEN'
+                ? 'No open challenges found.'
+                : 'No closed challenges found.'}
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
