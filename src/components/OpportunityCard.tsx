@@ -40,6 +40,14 @@ export function OpportunityCard({
   const expired = status === 'EXPIRED' || status === 'CLOSED';
   const link = isGrant ? `/grants/${id}` : `/challenges/${id}`;
   
+  // Check if deadline is within 7 days
+  const isClosingSoon = deadline && !expired ? (() => {
+    const deadlineDate = new Date(deadline);
+    const today = new Date();
+    const daysUntilDeadline = Math.ceil((deadlineDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    return daysUntilDeadline <= 7 && daysUntilDeadline > 0;
+  })() : false;
+  
   // Use bookmark hook
   const bookmarkType = isGrant ? 'grant' : 'challenge';
   const { bookmarked, toggle: toggleBookmark } = useBookmark(id, bookmarkType);
@@ -57,16 +65,25 @@ export function OpportunityCard({
       {/* Header */}
       <div className="p-6 pb-0">
         <div className="flex items-start justify-between mb-4">
-          {/* Category Badge */}
-          <span
-            className={`inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wide border ${
-              isGrant
-                ? 'bg-[#f0f9f4] text-[#2d6a4f] border-[#95d5b2]'
-                : 'bg-[#fef3e2] text-[#b58c4f] border-[#f4d8a8]'
-            }`}
-          >
-            {isGrant ? 'Grant' : 'Challenge'}
-          </span>
+          {/* Category Badge and Closing Soon Badge */}
+          <div className="flex items-center gap-2">
+            <span
+              className={`inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wide border ${
+                isGrant
+                  ? 'bg-[#f0f9f4] text-[#2d6a4f] border-[#95d5b2]'
+                  : 'bg-[#fef3e2] text-[#b58c4f] border-[#f4d8a8]'
+              }`}
+            >
+              {isGrant ? 'Grant' : 'Challenge'}
+            </span>
+            
+            {/* Closing Soon Badge */}
+            {isClosingSoon && (
+              <span className="inline-block px-2 py-1 text-xs font-semibold uppercase tracking-wide bg-orange-100 text-orange-700 border border-orange-300 animate-pulse">
+                Closing Soon
+              </span>
+            )}
+          </div>
 
           {/* Bookmark Button */}
           <button
