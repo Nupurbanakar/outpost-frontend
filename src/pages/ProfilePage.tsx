@@ -531,7 +531,7 @@ export default function ProfilePage() {
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="flex items-center gap-2 px-6 py-2.5 bg-ink text-paper-light font-semibold hover:bg-[#304258] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-2 px-6 py-2.5 bg-ink text-paper-light font-semibold rounded-lg hover:bg-[#304258] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
             >
               <Save className="w-4 h-4" />
               {isSaving ? 'Saving...' : 'Save Changes'}
@@ -539,7 +539,7 @@ export default function ProfilePage() {
             <button
               onClick={handleCancel}
               disabled={isSaving}
-              className="flex items-center gap-2 px-6 py-2.5 bg-transparent border-2 border-ink text-ink font-semibold hover:bg-[#f5f3ed] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-2 px-6 py-2.5 bg-transparent border-2 border-ink text-ink font-semibold rounded-lg hover:bg-[#f5f3ed] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <X className="w-4 h-4" />
               Cancel
