@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { ProtectedRoute, PublicRoute } from './components';
 import { AdminRoute } from './components/AdminRoute';
 import { useGlobalSearch } from './hooks/useGlobalSearch';
@@ -293,9 +293,9 @@ function App() {
       <Route
         path="/admin/challenges"
         element={
-          <ProtectedRoute>
+          <AdminRoute>
             <AdminChallengesPage />
-          </ProtectedRoute>
+          </AdminRoute>
         }
       />
       <Route

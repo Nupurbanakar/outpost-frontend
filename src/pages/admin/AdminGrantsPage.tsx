@@ -15,9 +15,10 @@ export default function AdminGrantsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 20;
 
-  // Edit modal state
+  // Edit/Create modal state
   const [editingGrant, setEditingGrant] = useState<Grant | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCreateMode, setIsCreateMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   const { stages } = useStages();
@@ -101,8 +102,27 @@ export default function AdminGrantsPage() {
     }
   };
 
+  const handleCreateNew = () => {
+    // Create empty grant template
+    setEditingGrant({
+      id: '',
+      title: '',
+      summary: '',
+      issuingBody: '',
+      issuingBodyType: 'CENTRAL',
+      type: 'GRANT',
+      sourceUrl: '',
+      status: 'DRAFT',
+      eligibleStages: [],
+      eligibleSectors: [],
+    });
+    setIsCreateMode(true);
+    setIsEditModalOpen(true);
+  };
+
   const handleEdit = async (grant: Grant) => {
     setEditingGrant(grant);
+    setIsCreateMode(false);
     setIsEditModalOpen(true);
   };
 
@@ -113,8 +133,8 @@ export default function AdminGrantsPage() {
     try {
       setIsSaving(true);
       
-      // Map Grant fields to AdminGrantUpdateRequest format
-      const updateData = {
+      // Map Grant fields to AdminGrantCreateRequest/UpdateRequest format
+      const requestData = {
         name: editingGrant.title,
         issuingBody: editingGrant.issuingBody,
         issuingBodyType: editingGrant.issuingBodyType,
@@ -122,27 +142,39 @@ export default function AdminGrantsPage() {
         summary: editingGrant.summary,
         deadline: editingGrant.deadline || undefined,
         sourceUrl: editingGrant.sourceUrl,
-        amountMin: editingGrant.amount,
-        amountMax: editingGrant.amount,
+        amountMin: editingGrant.amountMin,
+        amountMax: editingGrant.amountMax,
       };
       
-      console.log('Updating grant ID:', editingGrant.id);
-      console.log('Updating grant with data:', updateData);
+      if (isCreateMode) {
+        console.log('Creating grant with data:', requestData);
+        const response = await adminGrantsApi.createGrant(requestData);
+        console.log('Grant created successfully. Response:', response);
+        toast.success('Grant created successfully');
+      } else {
+        console.log('Updating grant ID:', editingGrant.id);
+        console.log('Updating grant with data:', requestData);
+        const response = await adminGrantsApi.updateGrant(editingGrant.id, requestData);
+        console.log('Grant updated successfully. Response:', response);
+        toast.success('Grant updated successfully');
+      }
       
-      const response = await adminGrantsApi.updateGrant(editingGrant.id, updateData);
-      console.log('Grant updated successfully. Response:', response);
-      
-      toast.success('Grant updated successfully');
       setIsEditModalOpen(false);
       setEditingGrant(null);
+      setIsCreateMode(false);
+      
+      // Reset to first page if we created a new grant
+      if (isCreateMode) {
+        setCurrentPage(1);
+      }
       
       // Force refresh the list
       await fetchGrants();
     } catch (error: any) {
-      console.error('Failed to update grant:', error);
+      console.error(`Failed to ${isCreateMode ? 'create' : 'update'} grant:`, error);
       console.error('Error response:', error.response?.data);
       console.error('Error status:', error.response?.status);
-      toast.error(error.response?.data?.message || 'Failed to update grant');
+      toast.error(error.response?.data?.message || `Failed to ${isCreateMode ? 'create' : 'update'} grant`);
     } finally {
       setIsSaving(false);
     }
@@ -152,6 +184,7 @@ export default function AdminGrantsPage() {
     if (!isSaving) {
       setIsEditModalOpen(false);
       setEditingGrant(null);
+      setIsCreateMode(false);
     }
   };
 
@@ -179,7 +212,7 @@ export default function AdminGrantsPage() {
             </p>
           </div>
           <button 
-            onClick={() => toast.info('Create grant form coming soon')}
+            onClick={handleCreateNew}
             className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
           >
             <Plus className="h-5 w-5" />
@@ -345,7 +378,9 @@ export default function AdminGrantsPage() {
             <div className="p-6">
               {/* Modal Header */}
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Edit Grant</h2>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {isCreateMode ? 'Create Grant' : 'Edit Grant'}
+                </h2>
                 <button
                   onClick={handleCloseModal}
                   disabled={isSaving}
@@ -407,10 +442,10 @@ export default function AdminGrantsPage() {
                     </label>
                     <input
                       type="number"
-                      value={editingGrant.amount || ''}
+                      value={editingGrant.amountMin || ''}
                       onChange={(e) => setEditingGrant({ 
                         ...editingGrant, 
-                        amount: e.target.value ? parseInt(e.target.value) : undefined 
+                        amountMin: e.target.value ? parseInt(e.target.value) : undefined 
                       })}
                       placeholder="1000000"
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -418,13 +453,16 @@ export default function AdminGrantsPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Display Text
+                      Amount Max (₹)
                     </label>
                     <input
-                      type="text"
-                      value={editingGrant.amountBand || ''}
-                      onChange={(e) => setEditingGrant({ ...editingGrant, amountBand: e.target.value })}
-                      placeholder="Up to ₹10L"
+                      type="number"
+                      value={editingGrant.amountMax || ''}
+                      onChange={(e) => setEditingGrant({ 
+                        ...editingGrant, 
+                        amountMax: e.target.value ? parseInt(e.target.value) : undefined 
+                      })}
+                      placeholder="5000000"
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                   </div>
@@ -472,7 +510,10 @@ export default function AdminGrantsPage() {
                     disabled={isSaving}
                     className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
                   >
-                    {isSaving ? 'Saving...' : 'Save Changes'}
+                    {isSaving 
+                      ? (isCreateMode ? 'Creating...' : 'Saving...') 
+                      : (isCreateMode ? 'Create' : 'Save Changes')
+                    }
                   </button>
                 </div>
               </form>

@@ -66,15 +66,13 @@ const transformAdminGrant = (adminGrant: AdminGrantResponse): Grant => {
     issuingBody: adminGrant.issuingBody,
     issuingBodyType: adminGrant.issuingBodyType as any,
     type: adminGrant.type as any,
-    amount: adminGrant.amountMin,
-    amountBand: adminGrant.amountDisplay,
+    amountMin: adminGrant.amountMin,
+    amountMax: adminGrant.amountMax,
     deadline: adminGrant.deadline,
     sourceUrl: adminGrant.sourceUrl,
     eligibleStages: adminGrant.stages || [],
     eligibleSectors: adminGrant.sectors || [],
     status,
-    createdAt: adminGrant.createdAt,
-    updatedAt: adminGrant.updatedAt,
   };
 };
 
