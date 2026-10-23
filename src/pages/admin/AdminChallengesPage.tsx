@@ -199,7 +199,7 @@ export default function AdminChallengesPage() {
       const requestData = {
         title: editingChallenge.title,
         corporateName: editingChallenge.corporateName,
-        corporateLogo: editingChallenge.corporateLogo,
+        corporateLogoUrl: editingChallenge.corporateLogo || '', // Backend expects corporateLogoUrl and it's required
         sectorId: editingChallenge.sector?.id,
         theme: editingChallenge.theme,
         deadline: editingChallenge.deadline,

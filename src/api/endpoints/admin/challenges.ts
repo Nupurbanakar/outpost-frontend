@@ -5,7 +5,7 @@ import type { PaginatedResponse } from '@/types';
 export interface AdminChallengeCreateRequest {
   title: string;
   corporateName: string;
-  corporateLogo?: string;
+  corporateLogoUrl?: string;
   sectorId?: string;
   theme?: string;
   deadline?: string;
