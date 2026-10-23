@@ -55,6 +55,17 @@ apiClient.interceptors.request.use(
       }
     }
     
+    // Debug logging for admin challenges endpoint
+    if (config.url?.includes('/admin/challenges')) {
+      console.log('🌐 [API Client] Outgoing request:', {
+        url: config.url,
+        method: config.method,
+        params: config.params,
+        paramsAsString: config.params instanceof URLSearchParams ? config.params.toString() : JSON.stringify(config.params),
+        fullURL: `${config.baseURL}${config.url}?${config.params instanceof URLSearchParams ? config.params.toString() : new URLSearchParams(config.params).toString()}`
+      });
+    }
+    
     return config;
   },
   (error) => {

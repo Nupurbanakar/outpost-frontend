@@ -177,6 +177,10 @@ function OpportunitiesSection() {
           challengesApi.getChallenges({ status: 'OPEN', size: 6 }),
         ]);
 
+        // Debug: Log the actual grant data structure
+        console.log('Grant data structure:', grantsResponse.content[0]);
+        console.log('Challenge data structure:', challengesResponse.content[0]);
+
         // Combine and sort by deadline
         const combined = [
           ...grantsResponse.content.map((g: any) => ({ ...g, opportunityType: 'GRANT' as const })),
@@ -257,25 +261,42 @@ function OpportunitiesSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {filteredOpportunities.map((opp) => {
             const isGrant = opp.opportunityType === 'GRANT';
+            
+            // Debug log for each opportunity
+            console.log('Rendering opportunity:', {
+              id: opp.id,
+              title: opp.title,
+              issuingBody: opp.issuingBody,
+              amountMin: opp.amountMin,
+              amountMax: opp.amountMax,
+            });
+            
+            // Format amount for grants
+            let formattedAmount = 'See details';
+            if (isGrant) {
+              if (opp.amountMin !== undefined && opp.amountMin !== null && 
+                  opp.amountMax !== undefined && opp.amountMax !== null) {
+                formattedAmount = `₹${formatAmount(opp.amountMin)} - ₹${formatAmount(opp.amountMax)}`;
+              } else if (opp.amountMin !== undefined && opp.amountMin !== null) {
+                formattedAmount = `Up to ₹${formatAmount(opp.amountMin)}`;
+              } else if (opp.amountMax !== undefined && opp.amountMax !== null) {
+                formattedAmount = `Up to ₹${formatAmount(opp.amountMax)}`;
+              } else {
+                formattedAmount = 'Undisclosed';
+              }
+            }
+            
             return (
               <OpportunityCard
                 key={opp.id}
                 type={opp.opportunityType}
                 id={opp.id}
-                title={opp.title}
-                organization={isGrant ? opp.issuingBody : opp.corporateName}
+                title={opp.title || 'Untitled'}
+                organization={isGrant ? (opp.issuingBody || 'Unknown') : (opp.corporateName || 'Unknown')}
                 logo={isGrant ? undefined : opp.corporateLogo}
                 description={isGrant ? opp.summary : opp.theme}
                 sector={isGrant ? opp.eligibleSectors?.[0]?.name : opp.sector?.name}
-                amount={
-                  isGrant
-                    ? opp.amountMin && opp.amountMax
-                      ? `₹${formatAmount(opp.amountMin)} - ₹${formatAmount(opp.amountMax)}`
-                      : opp.amountMin
-                      ? `Up to ₹${formatAmount(opp.amountMin)}`
-                      : 'Undisclosed'
-                    : 'See details'
-                }
+                amount={formattedAmount}
                 deadline={opp.deadline}
                 status={opp.status}
               />

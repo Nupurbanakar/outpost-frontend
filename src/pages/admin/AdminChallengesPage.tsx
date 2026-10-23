@@ -15,9 +15,10 @@ export default function AdminChallengesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 20;
 
-  // Edit modal state
+  // Edit/Create modal state
   const [editingChallenge, setEditingChallenge] = useState<Challenge | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCreateMode, setIsCreateMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   const { sectors } = useSectors();
@@ -29,13 +30,21 @@ export default function AdminChallengesPage() {
   const fetchChallenges = async () => {
     try {
       setIsLoading(true);
+      
+      console.log('📋 [AdminChallengesPage] Fetching challenges with filters:', {
+        statusFilter,
+        statusToSend: statusFilter === 'ALL' ? undefined : statusFilter,
+        page: currentPage - 1,
+        size: pageSize,
+      });
+      
       const response = await adminChallengesApi.listChallenges({
         status: statusFilter === 'ALL' ? undefined : statusFilter,
         page: currentPage - 1, // Backend uses 0-indexed pages
         size: pageSize,
       });
       
-      console.log('Challenges response:', response);
+      console.log('📋 [AdminChallengesPage] Challenges response:', response);
       
       setChallenges(response.content || []);
       setTotalElements(response.totalElements || 0);
@@ -87,8 +96,31 @@ export default function AdminChallengesPage() {
     }
   };
 
+  const handleCreateNew = () => {
+    // Create empty challenge template
+    setEditingChallenge({
+      id: '',
+      title: '',
+      corporateName: '',
+      corporateLogo: '',
+      theme: '',
+      deadline: '',
+      problemStatement: '',
+      whatTheyAreLookingFor: '',
+      eligibilityCriteria: '',
+      timeline: '',
+      offerType: undefined,
+      applyUrl: '',
+      status: 'CLOSED',
+      hasDetail: false,
+    });
+    setIsCreateMode(true);
+    setIsEditModalOpen(true);
+  };
+
   const handleEdit = async (challenge: Challenge) => {
     setEditingChallenge(challenge);
+    setIsCreateMode(false);
     setIsEditModalOpen(true);
   };
 
@@ -99,7 +131,7 @@ export default function AdminChallengesPage() {
     try {
       setIsSaving(true);
       
-      const updateData = {
+      const requestData = {
         title: editingChallenge.title,
         corporateName: editingChallenge.corporateName,
         corporateLogo: editingChallenge.corporateLogo,
@@ -114,22 +146,34 @@ export default function AdminChallengesPage() {
         applyUrl: editingChallenge.applyUrl,
       };
       
-      console.log('Updating challenge ID:', editingChallenge.id);
-      console.log('Updating challenge with data:', updateData);
+      if (isCreateMode) {
+        console.log('Creating challenge with data:', requestData);
+        const response = await adminChallengesApi.createChallenge(requestData);
+        console.log('Challenge created successfully. Response:', response);
+        toast.success('Challenge created successfully');
+      } else {
+        console.log('Updating challenge ID:', editingChallenge.id);
+        console.log('Updating challenge with data:', requestData);
+        const response = await adminChallengesApi.updateChallenge(editingChallenge.id, requestData);
+        console.log('Challenge updated successfully. Response:', response);
+        toast.success('Challenge updated successfully');
+      }
       
-      const response = await adminChallengesApi.updateChallenge(editingChallenge.id, updateData);
-      console.log('Challenge updated successfully. Response:', response);
-      
-      toast.success('Challenge updated successfully');
       setIsEditModalOpen(false);
       setEditingChallenge(null);
+      setIsCreateMode(false);
+      
+      // Reset to first page if we created a new challenge
+      if (isCreateMode) {
+        setCurrentPage(1);
+      }
       
       await fetchChallenges();
     } catch (error: any) {
-      console.error('Failed to update challenge:', error);
+      console.error(`Failed to ${isCreateMode ? 'create' : 'update'} challenge:`, error);
       console.error('Error response:', error.response?.data);
       console.error('Error status:', error.response?.status);
-      toast.error(error.response?.data?.message || 'Failed to update challenge');
+      toast.error(error.response?.data?.message || `Failed to ${isCreateMode ? 'create' : 'update'} challenge`);
     } finally {
       setIsSaving(false);
     }
@@ -139,6 +183,7 @@ export default function AdminChallengesPage() {
     if (!isSaving) {
       setIsEditModalOpen(false);
       setEditingChallenge(null);
+      setIsCreateMode(false);
     }
   };
 
@@ -165,7 +210,7 @@ export default function AdminChallengesPage() {
             </p>
           </div>
           <button 
-            onClick={() => toast.info('Create challenge form coming soon')}
+            onClick={handleCreateNew}
             className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 font-medium text-white hover:bg-green-700"
           >
             <Plus className="h-5 w-5" />
@@ -316,7 +361,9 @@ export default function AdminChallengesPage() {
             <div className="p-6">
               {/* Modal Header */}
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Edit Challenge</h2>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {isCreateMode ? 'Create Challenge' : 'Edit Challenge'}
+                </h2>
                 <button
                   onClick={handleCloseModal}
                   disabled={isSaving}
@@ -522,7 +569,10 @@ export default function AdminChallengesPage() {
                     disabled={isSaving}
                     className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
                   >
-                    {isSaving ? 'Saving...' : 'Save Changes'}
+                    {isSaving 
+                      ? (isCreateMode ? 'Creating...' : 'Saving...') 
+                      : (isCreateMode ? 'Create' : 'Save Changes')
+                    }
                   </button>
                 </div>
               </form>

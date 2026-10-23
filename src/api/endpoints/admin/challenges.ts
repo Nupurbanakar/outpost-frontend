@@ -50,11 +50,17 @@ export const adminChallengesApi = {
       params.append('size', String(filters.size));
     }
 
-    console.log('🔍 Admin Challenges API call:', `/admin/challenges?${params.toString()}`);
+    console.log('🔍 [Challenges Filter Debug] Filters received:', filters);
+    console.log('🔍 [Challenges Filter Debug] URLSearchParams:', params.toString());
+    console.log('🔍 [Challenges Filter Debug] Full URL:', `/admin/challenges?${params.toString()}`);
 
     const response = await apiClient.get<PaginatedResponse<Challenge>>('/admin/challenges', { params });
     
-    console.log('✅ Admin Challenges response:', response.data);
+    console.log('✅ [Challenges Filter Debug] Response received:');
+    console.log('   - Total elements:', response.data.totalElements);
+    console.log('   - Page number:', response.data.number);
+    console.log('   - Content count:', response.data.content?.length);
+    console.log('   - Challenges statuses:', response.data.content?.map(c => ({ id: c.id, title: c.title, status: c.status })));
     
     return response.data;
   },
