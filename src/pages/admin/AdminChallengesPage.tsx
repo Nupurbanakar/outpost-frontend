@@ -227,10 +227,8 @@ export default function AdminChallengesPage() {
       const requestData = {
         title: editingChallenge.title,
         corporateName: editingChallenge.corporateName,
-        // Backend requires HTTPS URL or null/undefined (not empty string)
-        corporateLogoUrl: editingChallenge.corporateLogo && editingChallenge.corporateLogo.trim() !== '' 
-          ? editingChallenge.corporateLogo 
-          : undefined, // Send undefined instead of empty string
+        // Backend requires HTTPS URL (now required field with asterisk)
+        corporateLogoUrl: editingChallenge.corporateLogo || '',
         sectorId: editingChallenge.sector?.id,
         theme: editingChallenge.theme,
         deadline: editingChallenge.deadline,
@@ -543,13 +541,15 @@ export default function AdminChallengesPage() {
                 {/* Corporate Logo URL */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Corporate Logo URL
+                    Corporate Logo URL *
                   </label>
                   <input
                     type="url"
+                    required
                     value={editingChallenge.corporateLogo || ''}
                     onChange={(e) => setEditingChallenge({ ...editingChallenge, corporateLogo: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="https://example.com/logo.png"
                   />
                 </div>
 

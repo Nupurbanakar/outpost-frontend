@@ -62,6 +62,16 @@ export const adminChallengesApi = {
     console.log('   - Content count:', response.data.content?.length);
     console.log('   - Challenges statuses:', response.data.content?.map(c => ({ id: c.id, title: c.title, status: c.status })));
     
+    // Transform response: backend returns corporateLogoUrl but frontend uses corporateLogo
+    if (response.data.content) {
+      response.data.content = response.data.content.map((challenge: any) => {
+        if (challenge.corporateLogoUrl && !challenge.corporateLogo) {
+          challenge.corporateLogo = challenge.corporateLogoUrl;
+        }
+        return challenge;
+      });
+    }
+    
     return response.data;
   },
 
@@ -69,16 +79,26 @@ export const adminChallengesApi = {
    * Create a new challenge
    */
   createChallenge: async (data: AdminChallengeCreateRequest): Promise<Challenge> => {
-    const response = await apiClient.post<Challenge>('/admin/challenges', data);
-    return response.data;
+    const response = await apiClient.post<any>('/admin/challenges', data);
+    // Transform response: backend returns corporateLogoUrl but frontend uses corporateLogo
+    const challenge = response.data;
+    if (challenge.corporateLogoUrl && !challenge.corporateLogo) {
+      challenge.corporateLogo = challenge.corporateLogoUrl;
+    }
+    return challenge;
   },
 
   /**
    * Update challenge details
    */
   updateChallenge: async (id: string, data: AdminChallengeUpdateRequest): Promise<Challenge> => {
-    const response = await apiClient.put<Challenge>(`/admin/challenges/${id}`, data);
-    return response.data;
+    const response = await apiClient.put<any>(`/admin/challenges/${id}`, data);
+    // Transform response: backend returns corporateLogoUrl but frontend uses corporateLogo
+    const challenge = response.data;
+    if (challenge.corporateLogoUrl && !challenge.corporateLogo) {
+      challenge.corporateLogo = challenge.corporateLogoUrl;
+    }
+    return challenge;
   },
 
   /**
