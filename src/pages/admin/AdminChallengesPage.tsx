@@ -37,19 +37,36 @@ export default function AdminChallengesPage() {
         size: pageSize,
       });
       
-      // Force fresh data by adding timestamp (cache busting is in axios interceptor)
+      // Always fetch all challenges since backend doesn't filter properly
       const response = await adminChallengesApi.listChallenges({
         status: statusToSend,
-        page: currentPage - 1, // Backend uses 0-indexed pages
-        size: pageSize,
+        page: 0, // Get all from page 0
+        size: 1000, // Large size to get all challenges
       });
       
       console.log('📋 [AdminChallengesPage] Challenges response:', response);
       console.log('📋 [AdminChallengesPage] Content:', response.content);
       console.log('📋 [AdminChallengesPage] Total elements:', response.totalElements);
       
-      setChallenges(response.content || []);
-      setTotalElements(response.totalElements || 0);
+      // CLIENT-SIDE FILTERING (workaround for backend issue)
+      let filteredChallenges = response.content || [];
+      
+      if (statusFilter !== 'ALL') {
+        console.log('🔍 [CLIENT-SIDE FILTER] Filtering for status:', statusFilter);
+        filteredChallenges = filteredChallenges.filter(c => c.status === statusFilter);
+        console.log('🔍 [CLIENT-SIDE FILTER] Filtered count:', filteredChallenges.length);
+        console.log('🔍 [CLIENT-SIDE FILTER] Filtered challenges:', filteredChallenges.map(c => ({ id: c.id, title: c.title, status: c.status })));
+      }
+      
+      // Apply pagination client-side
+      const startIndex = (currentPage - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      const paginatedChallenges = filteredChallenges.slice(startIndex, endIndex);
+      
+      console.log('📋 [AdminChallengesPage] After client-side filter and pagination:', paginatedChallenges.length, 'challenges');
+      
+      setChallenges(paginatedChallenges);
+      setTotalElements(filteredChallenges.length); // Use filtered count for pagination
     } catch (error) {
       console.error('❌ [AdminChallengesPage] Failed to fetch challenges:', error);
       toast.error('Failed to load challenges');
