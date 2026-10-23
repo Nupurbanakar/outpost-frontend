@@ -79,8 +79,10 @@ export function OpportunityCard({
             
             {/* Closing Soon Badge */}
             {isClosingSoon && (
-              <span className="inline-block px-2 py-0.5 text-xs font-bold uppercase tracking-wider bg-red-500 text-white rounded">
-                Closing Soon
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-bold uppercase tracking-wider bg-red-500 text-white rounded">
+                {/* Simple pulsing dot - no outer ring */}
+                <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse"></span>
+                <span>Closing Soon</span>
               </span>
             )}
           </div>
