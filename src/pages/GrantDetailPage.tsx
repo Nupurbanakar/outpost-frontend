@@ -158,7 +158,7 @@ export default function GrantDetailPage() {
             href={grant.sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className={`inline-flex items-center justify-center gap-2 px-8 py-4 font-semibold transition-colors ${
+            className={`inline-flex items-center justify-center gap-2 px-8 py-4 font-semibold rounded-lg transition-colors ${
               isExpired
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : 'bg-ink text-paper-light hover:bg-[#304258]'
@@ -171,7 +171,7 @@ export default function GrantDetailPage() {
           
           <button
             onClick={() => navigate('/grants')}
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-transparent border-2 border-ink text-ink font-semibold hover:bg-[#f5f3ed] transition-colors"
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-transparent border-2 border-ink text-ink font-semibold rounded-lg hover:bg-[#f5f3ed] transition-colors"
           >
             Browse More Grants
           </button>

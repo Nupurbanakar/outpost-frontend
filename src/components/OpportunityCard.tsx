@@ -58,7 +58,7 @@ export function OpportunityCard({
 
   return (
     <div
-      className={`group relative bg-paper-light border border-line hover:shadow-lg transition-all duration-200 flex flex-col h-full ${
+      className={`group relative bg-paper-light border border-line rounded-2xl hover:shadow-lg transition-all duration-200 flex flex-col h-full ${
         expired ? 'opacity-60' : ''
       }`}
     >
@@ -68,7 +68,7 @@ export function OpportunityCard({
           {/* Category Badge and Closing Soon Badge */}
           <div className="flex items-center gap-2">
             <span
-              className={`inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wide border ${
+              className={`inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wide border rounded-lg ${
                 isGrant
                   ? 'bg-[#f0f9f4] text-[#2d6a4f] border-[#95d5b2]'
                   : 'bg-[#fef3e2] text-[#b58c4f] border-[#f4d8a8]'
@@ -156,7 +156,7 @@ export function OpportunityCard({
         {/* CTA Button */}
         <Link
           to={link}
-          className="block w-full text-center px-4 py-2.5 bg-ink text-paper-light text-sm font-semibold hover:bg-[#304258] transition-colors"
+          className="block w-full text-center px-4 py-2.5 bg-ink text-paper-light text-sm font-semibold rounded-lg hover:bg-[#304258] transition-colors"
         >
           View {isGrant ? 'opportunity' : 'challenge'}
         </Link>
@@ -164,7 +164,7 @@ export function OpportunityCard({
 
       {/* AI Reason (if present) */}
       {aiReason && (
-        <div className="mx-6 mb-6 mt-2 p-3 bg-[#f0f9f4] border border-[#95d5b2] rounded">
+        <div className="mx-6 mb-6 mt-2 p-3 bg-[#f0f9f4] border border-[#95d5b2] rounded-xl">
           <div className="flex items-start gap-2">
             <Sparkles className="w-4 h-4 text-[#2d6a4f] flex-shrink-0 mt-0.5" />
             <p className="text-xs text-[#2d6a4f]">
@@ -176,7 +176,7 @@ export function OpportunityCard({
 
       {/* Expired/Closed Banner */}
       {expired && (
-        <div className="absolute top-0 left-0 right-0 bg-rose-500 text-white text-xs font-semibold text-center py-1">
+        <div className="absolute top-0 left-0 right-0 bg-rose-500 text-white text-xs font-semibold text-center py-1 rounded-t-2xl">
           {status === 'CLOSED' ? 'CLOSED' : 'EXPIRED'}
         </div>
       )}

@@ -128,7 +128,7 @@ export default function MentorsPage() {
           action={
             <Link
               to="/mentors/apply"
-              className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-ink text-paper-light font-semibold hover:bg-[#304258] transition-colors whitespace-nowrap"
+              className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-ink text-paper-light font-semibold rounded-lg hover:bg-[#304258] transition-colors whitespace-nowrap"
             >
               <UserPlus className="w-5 h-5" />
               Become a Mentor

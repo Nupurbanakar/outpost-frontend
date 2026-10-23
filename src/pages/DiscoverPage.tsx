@@ -309,7 +309,7 @@ function OpportunitiesSection() {
       <div className="text-center">
         <Link
           to={filter === 'CHALLENGE' ? '/challenges' : filter === 'GRANT' ? '/grants' : '/grants'}
-          className="inline-block px-6 py-3 bg-transparent border-2 border-ink text-ink font-semibold hover:bg-ink hover:text-paper-light transition-colors"
+          className="inline-block px-6 py-3 bg-transparent border-2 border-ink text-ink font-semibold rounded-lg hover:bg-ink hover:text-paper-light transition-colors"
         >
           {filter === 'CHALLENGE' 
             ? 'Explore all challenges' 

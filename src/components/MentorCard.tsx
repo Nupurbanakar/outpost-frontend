@@ -25,7 +25,7 @@ export function MentorCard({ mentor, variant = 'dark', showAiReason = false }: M
   return (
     <Link
       to={`/mentors/${mentor.id}`}
-      className={`block group ${bgColor} border ${borderColor} p-6 hover:shadow-xl transition-all duration-200 relative`}
+      className={`block group ${bgColor} border ${borderColor} rounded-2xl p-6 hover:shadow-xl transition-all duration-200 relative`}
     >
       {/* Photo */}
       <div className="mb-4">
@@ -74,12 +74,12 @@ export function MentorCard({ mentor, variant = 'dark', showAiReason = false }: M
       {mentor.expertise && mentor.expertise.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-4">
           {mentor.expertise.slice(0, 3).map((tag, index) => (
-            <span key={index} className={`px-2 py-1 ${tagBg} ${tagText} text-xs font-medium`}>
+            <span key={index} className={`px-2 py-1 ${tagBg} ${tagText} text-xs font-medium rounded-lg`}>
               {tag}
             </span>
           ))}
           {mentor.expertise.length > 3 && (
-            <span className={`px-2 py-1 ${tagBg} ${tagText} text-xs font-medium`}>
+            <span className={`px-2 py-1 ${tagBg} ${tagText} text-xs font-medium rounded-lg`}>
               +{mentor.expertise.length - 3}
             </span>
           )}
@@ -88,7 +88,7 @@ export function MentorCard({ mentor, variant = 'dark', showAiReason = false }: M
 
       {/* AI Reason */}
       {showAiReason && mentor.aiReason && (
-        <div className="mb-4 p-3 bg-[#f0f9f4] border border-[#95d5b2] rounded">
+        <div className="mb-4 p-3 bg-[#f0f9f4] border border-[#95d5b2] rounded-xl">
           <div className="flex items-start gap-2">
             <Sparkles className="w-4 h-4 text-[#2d6a4f] flex-shrink-0 mt-0.5" />
             <p className="text-xs text-[#2d6a4f]">

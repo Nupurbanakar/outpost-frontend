@@ -212,7 +212,7 @@ export default function ChallengeDetailPage() {
               href={challenge.applyUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-ink text-paper-light font-semibold hover:bg-[#304258] transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-ink text-paper-light font-semibold rounded-lg hover:bg-[#304258] transition-colors"
             >
               <span>View Full Details</span>
               <ExternalLink className="w-5 h-5" />
@@ -226,7 +226,7 @@ export default function ChallengeDetailPage() {
             href={challenge.applyUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className={`inline-flex items-center justify-center gap-2 px-8 py-4 font-semibold transition-colors ${
+            className={`inline-flex items-center justify-center gap-2 px-8 py-4 font-semibold rounded-lg transition-colors ${
               isClosed
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : 'bg-ink text-paper-light hover:bg-[#304258]'
@@ -239,7 +239,7 @@ export default function ChallengeDetailPage() {
 
           <button
             onClick={() => navigate('/challenges')}
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-transparent border-2 border-ink text-ink font-semibold hover:bg-[#f5f3ed] transition-colors"
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-transparent border-2 border-ink text-ink font-semibold rounded-lg hover:bg-[#f5f3ed] transition-colors"
           >
             Browse More Challenges
           </button>
