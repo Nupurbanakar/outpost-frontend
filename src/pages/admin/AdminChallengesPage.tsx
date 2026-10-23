@@ -223,6 +223,12 @@ export default function AdminChallengesPage() {
       };
       
       console.log('💾 [handleSaveEdit] Request data prepared:', requestData);
+      console.log('💾 [handleSaveEdit] Request data details:');
+      console.log('   - title:', requestData.title, '(type:', typeof requestData.title, ')');
+      console.log('   - corporateName:', requestData.corporateName, '(type:', typeof requestData.corporateName, ')');
+      console.log('   - corporateLogoUrl:', requestData.corporateLogoUrl, '(type:', typeof requestData.corporateLogoUrl, ')');
+      console.log('   - sectorId:', requestData.sectorId, '(type:', typeof requestData.sectorId, ')');
+      console.log('   - applyUrl:', requestData.applyUrl, '(type:', typeof requestData.applyUrl, ')');
       
       if (isCreateMode) {
         console.log('💾 [handleSaveEdit] CREATE MODE - Calling createChallenge API');
