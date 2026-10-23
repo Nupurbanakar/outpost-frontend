@@ -227,7 +227,10 @@ export default function AdminChallengesPage() {
       const requestData = {
         title: editingChallenge.title,
         corporateName: editingChallenge.corporateName,
-        corporateLogoUrl: editingChallenge.corporateLogo || '', // Backend expects corporateLogoUrl and it's required
+        // Backend requires HTTPS URL or null/undefined (not empty string)
+        corporateLogoUrl: editingChallenge.corporateLogo && editingChallenge.corporateLogo.trim() !== '' 
+          ? editingChallenge.corporateLogo 
+          : undefined, // Send undefined instead of empty string
         sectorId: editingChallenge.sector?.id,
         theme: editingChallenge.theme,
         deadline: editingChallenge.deadline,
