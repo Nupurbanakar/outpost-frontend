@@ -1,9 +1,11 @@
 import { Routes, Route } from 'react-router-dom';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { ProtectedRoute, PublicRoute } from './components';
 import { AdminRoute } from './components/AdminRoute';
 import { useGlobalSearch } from './hooks/useGlobalSearch';
 import { GlobalSearchModal } from './components/search/GlobalSearchModal';
 import { SkipLink } from './components/SkipLink';
+import { queryClient } from './lib/queryClient';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -44,7 +46,7 @@ function App() {
   const { isOpen, close } = useGlobalSearch();
   
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <SkipLink />
       <GlobalSearchModal isOpen={isOpen} onClose={close} />
       <Routes>
@@ -318,7 +320,7 @@ function App() {
       {/* Catch all - 404 page */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
-    </>
+    </QueryClientProvider>
   );
 }
 
