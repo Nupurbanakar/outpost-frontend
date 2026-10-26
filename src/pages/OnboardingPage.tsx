@@ -111,13 +111,24 @@ export default function OnboardingPage() {
       console.log('Error response:', (error as any)?.response?.data);
       console.log('Error code:', (error as any)?.response?.data?.code);
       
-      // Log validation errors if present
+      // Extract validation errors from backend response
       const validationErrors = (error as any)?.response?.data?.errors;
       if (validationErrors && Array.isArray(validationErrors)) {
         console.error('🚨 VALIDATION ERRORS FROM BACKEND:');
+        const fieldErrors: Record<string, string> = {};
         validationErrors.forEach((err: any, index: number) => {
           console.error(`   ${index + 1}. Field: "${err.field}", Message: "${err.message}"`);
+          // Map backend field errors to frontend errors state
+          fieldErrors[err.field] = err.message;
         });
+        // Set field-level errors so they appear under each field
+        setErrors(fieldErrors);
+        // Don't show ApiErrorDisplay for validation errors, just field errors
+        if (validationErrors.length > 0) {
+          toast.error('Please check the form for errors');
+          setIsSubmitting(false);
+          return;
+        }
       }
       
       // If already onboarded, just redirect to discover
@@ -133,6 +144,7 @@ export default function OnboardingPage() {
         return;
       }
       
+      // Only set apiError for non-validation errors
       setApiError(error);
     } finally {
       setIsSubmitting(false);
