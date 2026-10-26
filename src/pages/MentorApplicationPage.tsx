@@ -306,12 +306,58 @@ export default function MentorApplicationPage() {
           </div>
 
           {/* Profile Photo Upload */}
-          <ProfilePhotoUpload
-            currentPhotoUrl={photoUrl || undefined}
-            onPhotoChange={setPhotoUrl}
-            label="Profile Photo"
-            required={false}
-          />
+          <div className="space-y-4">
+            <div>
+              <p className="block text-sm font-medium text-ink mb-2">Profile Photo (Optional)</p>
+              <p className="text-xs text-muted-text mb-3">
+                Upload a file or paste an image URL
+              </p>
+            </div>
+            
+            {/* File Upload Option */}
+            <ProfilePhotoUpload
+              currentPhotoUrl={photoUrl || undefined}
+              onPhotoChange={setPhotoUrl}
+              label="Option 1: Upload File"
+              required={false}
+            />
+            
+            {/* OR Divider */}
+            <div className="flex items-center gap-3">
+              <div className="flex-1 border-t border-line"></div>
+              <span className="text-xs text-muted-text font-medium">OR</span>
+              <div className="flex-1 border-t border-line"></div>
+            </div>
+            
+            {/* URL Input Option */}
+            <div>
+              <label htmlFor="photoUrlInput" className="block text-sm font-medium text-ink mb-2">
+                Option 2: Paste Image URL
+              </label>
+              <input
+                type="url"
+                id="photoUrlInput"
+                value={photoUrl || ''}
+                onChange={(e) => setPhotoUrl(e.target.value || null)}
+                className="w-full px-4 py-2 border border-line rounded-lg focus:outline-none focus:ring-2 focus:ring-ink"
+                placeholder="https://example.com/your-photo.jpg"
+              />
+              {photoUrl && (
+                <div className="mt-3 flex items-center gap-3">
+                  <img 
+                    src={photoUrl} 
+                    alt="Preview" 
+                    className="w-16 h-16 rounded-full object-cover border-2 border-line"
+                    onError={(e) => {
+                      e.currentTarget.src = '';
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                  <p className="text-xs text-green-600">✓ Photo URL set</p>
+                </div>
+              )}
+            </div>
+          </div>
 
           {/* LinkedIn URL (Optional) */}
           <div>
