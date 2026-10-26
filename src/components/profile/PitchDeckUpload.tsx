@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Upload, FileText, Trash2, Download, AlertCircle, CheckCircle, Eye } from 'lucide-react';
+import { Upload, FileText, Trash2, AlertCircle, CheckCircle } from 'lucide-react';
 import { foundersApi } from '@/api/endpoints/founders';
 import apiClient from '@/api/client';
 
@@ -126,75 +126,6 @@ export function PitchDeckUpload({ currentDeckUrl, onUploadSuccess, onDeleteSucce
     fileInputRef.current?.click();
   };
 
-  const handleDownload = async () => {
-    if (!currentDeckUrl) return;
-    
-    try {
-      setError(null);
-      
-      console.log('[PitchDeck] Attempting download from:', currentDeckUrl);
-      
-      // Fetch the file with authentication
-      const response = await apiClient.get(currentDeckUrl, {
-        responseType: 'blob', // Important: Get file as blob
-      });
-      
-      console.log('[PitchDeck] Download response:', {
-        status: response.status,
-        contentType: response.headers['content-type'],
-        size: response.data.size,
-      });
-      
-      // Create a blob URL from the response
-      const blob = new Blob([response.data], { type: 'application/pdf' });
-      const blobUrl = window.URL.createObjectURL(blob);
-      
-      // Create temporary download link
-      const link = document.createElement('a');
-      link.href = blobUrl;
-      link.download = 'pitch-deck.pdf'; // Default filename
-      document.body.appendChild(link);
-      link.click();
-      
-      // Cleanup
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(blobUrl);
-    } catch (err: any) {
-      console.error('[PitchDeck] Download error:', {
-        message: err.message,
-        status: err.response?.status,
-        statusText: err.response?.statusText,
-        data: err.response?.data,
-        config: {
-          url: err.config?.url,
-          method: err.config?.method,
-          headers: err.config?.headers,
-        }
-      });
-      
-      // Show helpful error message based on error type
-      if (err.response?.status === 302 || err.response?.status === 301) {
-        setError('Backend returned a redirect. Please use the "View" button instead, or contact support to enable direct downloads.');
-      } else if (err.response?.status === 404) {
-        setError('Pitch deck not found. It may have been deleted. Please re-upload.');
-      } else if (err.response?.status === 403 || err.response?.status === 401) {
-        setError('Access denied. Please try logging out and back in, then try again.');
-      } else if (err.message?.includes('ERR_UNSAFE_REDIRECT')) {
-        setError('Cannot download due to redirect. Please use the "View" button to open in a new tab instead.');
-      } else {
-        setError('Failed to download pitch deck. Please use the "View" button, or contact support.');
-      }
-    }
-  };
-
-  const handleView = () => {
-    if (!currentDeckUrl) return;
-    
-    // Open in new tab - browser will handle redirect naturally
-    // This works for viewing but may not work for downloading due to CORS
-    window.open(currentDeckUrl, '_blank');
-  };
-
   return (
     <div className="space-y-4">
       {/* Current Deck */}
@@ -205,24 +136,10 @@ export function PitchDeckUpload({ currentDeckUrl, onUploadSuccess, onDeleteSucce
               <FileText className="h-8 w-8 text-indigo-600" />
               <div>
                 <p className="font-medium text-gray-900">Current Pitch Deck</p>
-                <p className="text-sm text-gray-600">PDF document · Click "View" to open</p>
+                <p className="text-sm text-gray-600">PDF document uploaded successfully</p>
               </div>
             </div>
             <div className="flex gap-2">
-              <button
-                onClick={handleView}
-                className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-              >
-                <Eye className="h-4 w-4" />
-                View
-              </button>
-              <button
-                onClick={handleDownload}
-                className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-              >
-                <Download className="h-4 w-4" />
-                Download
-              </button>
               <button
                 onClick={handleDelete}
                 className="flex items-center gap-2 rounded-lg border border-red-300 bg-white px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50"
@@ -231,6 +148,18 @@ export function PitchDeckUpload({ currentDeckUrl, onUploadSuccess, onDeleteSucce
                 Delete
               </button>
             </div>
+          </div>
+          
+          {/* Backend Issue Notice */}
+          <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+            <p className="text-sm text-amber-800">
+              <strong>Note:</strong> View and download features are temporarily unavailable due to backend API limitations. 
+              Your pitch deck has been uploaded successfully and is stored securely. 
+              You can delete and re-upload if needed.
+            </p>
+            <p className="text-xs text-amber-700 mt-2">
+              See <code className="bg-amber-100 px-1 py-0.5 rounded">.docs/BACKEND-ISSUE-PITCH-DECK-DOWNLOAD.md</code> for technical details.
+            </p>
           </div>
         </div>
       )}
