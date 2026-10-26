@@ -149,18 +149,6 @@ export function PitchDeckUpload({ currentDeckUrl, onUploadSuccess, onDeleteSucce
               </button>
             </div>
           </div>
-          
-          {/* Backend Issue Notice */}
-          <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-            <p className="text-sm text-amber-800">
-              <strong>Note:</strong> View and download features are temporarily unavailable due to backend API limitations. 
-              Your pitch deck has been uploaded successfully and is stored securely. 
-              You can delete and re-upload if needed.
-            </p>
-            <p className="text-xs text-amber-700 mt-2">
-              See <code className="bg-amber-100 px-1 py-0.5 rounded">.docs/BACKEND-ISSUE-PITCH-DECK-DOWNLOAD.md</code> for technical details.
-            </p>
-          </div>
         </div>
       )}
 
