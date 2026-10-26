@@ -164,6 +164,7 @@ export default function OnboardingPage() {
                 onChange={(e) => {
                   setFounderName(e.target.value);
                   setErrors((prev) => ({ ...prev, founderName: '' }));
+                  setApiError(null);
                 }}
                 error={!!errors.founderName}
                 placeholder="John Doe"
@@ -185,6 +186,7 @@ export default function OnboardingPage() {
                 onChange={(e) => {
                   setStartupName(e.target.value);
                   setErrors((prev) => ({ ...prev, startupName: '' }));
+                  setApiError(null);
                 }}
                 error={!!errors.startupName}
                 placeholder="Acme Inc"
@@ -208,6 +210,7 @@ export default function OnboardingPage() {
                   onChange={(e) => {
                     setStageId(e.target.value);
                     setErrors((prev) => ({ ...prev, stageId: '' }));
+                    setApiError(null);
                   }}
                   className="input"
                   disabled={isSubmitting}
@@ -235,6 +238,7 @@ export default function OnboardingPage() {
                   onChange={(e) => {
                     setSectorId(e.target.value);
                     setErrors((prev) => ({ ...prev, sectorId: '' }));
+                    setApiError(null);
                   }}
                   className="input"
                   disabled={isSubmitting}
@@ -263,6 +267,7 @@ export default function OnboardingPage() {
                 onChange={(e) => {
                   setCity(e.target.value);
                   setErrors((prev) => ({ ...prev, city: '' }));
+                  setApiError(null);
                 }}
                 error={!!errors.city}
                 placeholder="Hyderabad"
@@ -285,9 +290,10 @@ export default function OnboardingPage() {
                 onChange={(e) => {
                   setWebsite(e.target.value);
                   setErrors((prev) => ({ ...prev, website: '' }));
+                  setApiError(null);
                 }}
                 error={!!errors.website}
-                placeholder="https://yourstartu p.com"
+                placeholder="https://yourstartup.com"
                 disabled={isSubmitting}
               />
               {errors.website && (
