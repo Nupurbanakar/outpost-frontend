@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Upload, FileText, Trash2, Download, AlertCircle, CheckCircle } from 'lucide-react';
+import { Upload, FileText, Trash2, Download, AlertCircle, CheckCircle, Eye } from 'lucide-react';
 import { foundersApi } from '@/api/endpoints/founders';
 import apiClient from '@/api/client';
 
@@ -126,15 +126,42 @@ export function PitchDeckUpload({ currentDeckUrl, onUploadSuccess, onDeleteSucce
     fileInputRef.current?.click();
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!currentDeckUrl) return;
     
-    // Note: Backend returns 302 redirect to S3, which causes CORS/ERR_UNSAFE_REDIRECT in XHR
-    // Workaround: Open in new tab - browser will follow redirect naturally
-    // Limitation: Can't send Authorization header, so backend must:
-    //   1. Accept token via cookie/session, OR
-    //   2. Return pre-signed S3 URL instead of redirect (recommended)
+    try {
+      setError(null);
+      
+      // Fetch the file with authentication
+      const response = await apiClient.get(currentDeckUrl, {
+        responseType: 'blob', // Important: Get file as blob
+      });
+      
+      // Create a blob URL from the response
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const blobUrl = window.URL.createObjectURL(blob);
+      
+      // Create temporary download link
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = 'pitch-deck.pdf'; // Default filename
+      document.body.appendChild(link);
+      link.click();
+      
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (err: any) {
+      console.error('Download error:', err);
+      setError('Failed to download pitch deck. Please try again.');
+    }
+  };
+
+  const handleView = () => {
+    if (!currentDeckUrl) return;
     
+    // Open in new tab - browser will handle redirect naturally
+    // This works for viewing but may not work for downloading due to CORS
     window.open(currentDeckUrl, '_blank');
   };
 
@@ -152,6 +179,13 @@ export function PitchDeckUpload({ currentDeckUrl, onUploadSuccess, onDeleteSucce
               </div>
             </div>
             <div className="flex gap-2">
+              <button
+                onClick={handleView}
+                className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                <Eye className="h-4 w-4" />
+                View
+              </button>
               <button
                 onClick={handleDownload}
                 className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
