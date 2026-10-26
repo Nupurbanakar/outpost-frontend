@@ -5,15 +5,19 @@ import { useAuth } from '@/contexts';
 import { foundersApi, UpdateProfileRequest } from '@/api/endpoints/founders';
 import { useStages } from '@/hooks/useStages';
 import { useSectors } from '@/hooks/useSectors';
+import { useInvalidateAIRankings } from '@/hooks';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { PitchDeckUpload } from '@/components/profile/PitchDeckUpload';
 import { parseApiError } from '@/utils/errorHandling';
+import { getAIPreference } from '@/utils/aiPreferences';
+import toast from 'react-hot-toast';
 import { MapPin, Mail, Edit, Save, X, Globe, Link as LinkIcon } from 'lucide-react';
 
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth();
   const { stages, isLoading: stagesLoading } = useStages();
   const { sectors, isLoading: sectorsLoading } = useSectors();
+  const invalidateAIRankings = useInvalidateAIRankings();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -159,6 +163,18 @@ export default function ProfilePage() {
       
       // Refresh user data from server
       await refreshUser();
+      
+      // Invalidate AI-ranked queries if user has AI ranking enabled
+      // This ensures personalized rankings refresh immediately
+      const hadAIEnabled = getAIPreference();
+      if (hadAIEnabled) {
+        console.log('[ProfilePage] AI ranking enabled - invalidating AI-ranked caches');
+        invalidateAIRankings();
+        toast.success('Profile updated! Your personalized rankings are being refreshed...', {
+          duration: 4000,
+          icon: '✨',
+        });
+      }
       
       // Wait a moment for context to update, then update form
       setTimeout(() => {
