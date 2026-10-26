@@ -76,15 +76,19 @@ export default function OnboardingPage() {
     setIsSubmitting(true);
 
     try {
-      console.log('Submitting onboarding data...');
-      await foundersApi.completeOnboarding({
-        founderName,
-        startupName,
+      const onboardingData = {
+        founderName: founderName.trim(),
+        startupName: startupName.trim(),
         stageId,
         sectorId,
-        city,
-        website: website || undefined,
-      });
+        city: city.trim(),
+        website: website.trim() || undefined,
+      };
+      
+      console.log('Submitting onboarding data:', onboardingData);
+      console.log('City value:', `"${onboardingData.city}"`, 'Length:', onboardingData.city.length);
+      
+      await foundersApi.completeOnboarding(onboardingData);
       console.log('Onboarding completed successfully');
       
       // Refresh user data to get updated isOnboarded status
@@ -106,6 +110,15 @@ export default function OnboardingPage() {
       console.log('Error type:', error);
       console.log('Error response:', (error as any)?.response?.data);
       console.log('Error code:', (error as any)?.response?.data?.code);
+      
+      // Log validation errors if present
+      const validationErrors = (error as any)?.response?.data?.errors;
+      if (validationErrors && Array.isArray(validationErrors)) {
+        console.error('🚨 VALIDATION ERRORS FROM BACKEND:');
+        validationErrors.forEach((err: any, index: number) => {
+          console.error(`   ${index + 1}. Field: "${err.field}", Message: "${err.message}"`);
+        });
+      }
       
       // If already onboarded, just redirect to discover
       const isAlreadyOnboarded = isErrorCode(error, 'ALREADY_ONBOARDED');
