@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
-import { Plus, Edit, Trash2, CheckCircle, XCircle, X } from 'lucide-react';
+import { Plus, Edit, Trash2, CheckCircle, XCircle, X, Sparkles } from 'lucide-react';
 import { adminChallengesApi } from '../../api/endpoints/admin/challenges';
 import type { Challenge } from '../../api/endpoints/challenges';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
@@ -11,6 +11,7 @@ export default function AdminChallengesPage() {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'OPEN' | 'CLOSED'>('ALL');
+  const [aiEnabled, setAiEnabled] = useState(false);
   const [totalElements, setTotalElements] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 20;
@@ -42,6 +43,7 @@ export default function AdminChallengesPage() {
         status: statusToSend,
         page: 0, // Get all from page 0
         size: 1000, // Large size to get all challenges
+        ai: aiEnabled || undefined, // Pass AI parameter
       });
       
       console.log('📋 [AdminChallengesPage] Challenges response:', response);
@@ -79,10 +81,10 @@ export default function AdminChallengesPage() {
   };
 
   useEffect(() => {
-    console.log('🔄 [useEffect] Triggered - statusFilter:', statusFilter, 'currentPage:', currentPage);
+    console.log('🔄 [useEffect] Triggered - statusFilter:', statusFilter, 'currentPage:', currentPage, 'aiEnabled:', aiEnabled);
     fetchChallenges();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFilter, currentPage]);
+  }, [statusFilter, currentPage, aiEnabled]);
 
   const handleOpen = async (id: string) => {
     console.log('🟢 [handleOpen] Starting - Challenge ID:', id);
@@ -345,23 +347,42 @@ export default function AdminChallengesPage() {
         </div>
 
         {/* Filters */}
-        <div className="mb-6 flex gap-2">
-          {(['ALL', 'OPEN', 'CLOSED'] as const).map((status) => (
+        <div className="mb-6 flex flex-wrap items-center gap-4">
+          {/* Status Filters */}
+          <div className="flex gap-2">
+            {(['ALL', 'OPEN', 'CLOSED'] as const).map((status) => (
+              <button
+                key={status}
+                onClick={() => {
+                  setStatusFilter(status);
+                  setCurrentPage(1);
+                }}
+                className={`px-4 py-2 rounded-lg font-medium ${
+                  statusFilter === status
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {status}
+              </button>
+            ))}
+          </div>
+
+          {/* AI Toggle */}
+          <div className="flex items-center gap-2 ml-auto">
+            <label className="text-sm text-gray-600">Test AI Ranking:</label>
             <button
-              key={status}
-              onClick={() => {
-                setStatusFilter(status);
-                setCurrentPage(1);
-              }}
-              className={`px-4 py-2 rounded-lg font-medium ${
-                statusFilter === status
-                  ? 'bg-green-600 text-white'
+              onClick={() => setAiEnabled(!aiEnabled)}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                aiEnabled
+                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              {status}
+              <Sparkles className="w-4 h-4" />
+              {aiEnabled ? 'AI Enabled' : 'Enable AI'}
             </button>
-          ))}
+          </div>
         </div>
 
         {/* Challenges List */}

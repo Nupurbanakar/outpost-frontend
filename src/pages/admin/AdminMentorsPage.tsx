@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
-import { UserCheck, UserX, Trash2, ExternalLink } from 'lucide-react';
+import { UserCheck, UserX, Trash2, ExternalLink, Sparkles } from 'lucide-react';
 import { adminMentorsApi } from '../../api/endpoints/admin/mentors';
 import type { Mentor } from '../../api/endpoints/mentors';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
@@ -12,13 +12,14 @@ export default function AdminMentorsPage() {
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<MentorStatus>('PENDING');
+  const [aiEnabled, setAiEnabled] = useState(false);
   const [totalElements, setTotalElements] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 20;
 
   useEffect(() => {
     fetchMentors();
-  }, [statusFilter, currentPage]);
+  }, [statusFilter, currentPage, aiEnabled]);
 
   const fetchMentors = async () => {
     try {
@@ -30,6 +31,7 @@ export default function AdminMentorsPage() {
         status: statusFilter,
         page: currentPage - 1, // Backend uses 0-indexed pages
         size: pageSize,
+        ai: aiEnabled || undefined, // Pass AI parameter
       });
       
       console.log('✅ Mentors response:', response);
@@ -114,23 +116,42 @@ export default function AdminMentorsPage() {
         </div>
 
         {/* Status Filter */}
-        <div className="mb-6 flex gap-2">
-          {(['PENDING', 'APPROVED', 'REJECTED'] as const).map((status) => (
+        <div className="mb-6 flex flex-wrap items-center gap-4">
+          {/* Status Filters */}
+          <div className="flex gap-2">
+            {(['PENDING', 'APPROVED', 'REJECTED'] as const).map((status) => (
+              <button
+                key={status}
+                onClick={() => {
+                  setStatusFilter(status);
+                  setCurrentPage(1);
+                }}
+                className={`px-4 py-2 rounded-lg font-medium ${
+                  statusFilter === status
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {status}
+              </button>
+            ))}
+          </div>
+
+          {/* AI Toggle */}
+          <div className="flex items-center gap-2 ml-auto">
+            <label className="text-sm text-gray-600">Test AI Ranking:</label>
             <button
-              key={status}
-              onClick={() => {
-                setStatusFilter(status);
-                setCurrentPage(1);
-              }}
-              className={`px-4 py-2 rounded-lg font-medium ${
-                statusFilter === status
-                  ? 'bg-indigo-600 text-white'
+              onClick={() => setAiEnabled(!aiEnabled)}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                aiEnabled
+                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              {status}
+              <Sparkles className="w-4 h-4" />
+              {aiEnabled ? 'AI Enabled' : 'Enable AI'}
             </button>
-          ))}
+          </div>
         </div>
 
         {/* Mentors List */}
