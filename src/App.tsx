@@ -41,6 +41,7 @@ import AdminGrantsPage from './pages/admin/AdminGrantsPage';
 import AdminChallengesPage from './pages/admin/AdminChallengesPage';
 import AdminMentorsPage from './pages/admin/AdminMentorsPage';
 import AdminSpotlightPage from './pages/admin/AdminSpotlightPage';
+import AdminSettingsPage from './pages/admin/AdminSettingsPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
@@ -324,6 +325,14 @@ function App() {
         element={
           <AdminRoute>
             <AdminSpotlightPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/settings"
+        element={
+          <AdminRoute>
+            <AdminSettingsPage />
           </AdminRoute>
         }
       />
