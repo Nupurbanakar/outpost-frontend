@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Compass, Briefcase, Users, Bookmark, LucideIcon } from 'lucide-react';
+import { Compass, Briefcase, Users, Gift, Bookmark, LucideIcon } from 'lucide-react';
 
 interface MobileNavItem {
   to: string;
@@ -11,6 +11,7 @@ const navItems: MobileNavItem[] = [
   { to: '/discover', icon: Compass, label: 'Discover' },
   { to: '/opportunities', icon: Briefcase, label: 'Opportunities' },
   { to: '/mentors', icon: Users, label: 'Mentors' },
+  { to: '/benefits', icon: Gift, label: 'Benefits' },
   { to: '/saved', icon: Bookmark, label: 'Saved' },
 ];
 
@@ -19,7 +20,7 @@ export function MobileNav() {
 
   return (
     <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-paper-light border-t border-line z-40">
-      <div className="grid grid-cols-4 gap-1 px-2 py-2">
+      <div className="grid grid-cols-5 gap-1 px-2 py-2">
         {navItems.map(({ to, icon: Icon, label }) => {
           const isActive = location.pathname === to || location.pathname.startsWith(to + '/');
 

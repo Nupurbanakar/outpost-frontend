@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Compass, Briefcase, Users, Bookmark, Shield } from 'lucide-react';
+import { Compass, Briefcase, Users, Bookmark, Shield, Gift } from 'lucide-react';
 import { NavItem } from './NavItem';
 import { UserMenu } from './UserMenu';
 import { useAuth } from '@/contexts';
@@ -24,6 +24,7 @@ export function Header() {
             <NavItem to="/discover" icon={Compass} label="Discover" />
             <NavItem to="/opportunities" icon={Briefcase} label="Opportunities" />
             <NavItem to="/mentors" icon={Users} label="Mentors" />
+            <NavItem to="/benefits" icon={Gift} label="Benefits" />
             <NavItem to="/saved" icon={Bookmark} label="Saved" />
             {user?.role === 'ADMIN' && (
               <NavItem to="/admin" icon={Shield} label="Admin" />

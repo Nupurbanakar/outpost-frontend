@@ -7,7 +7,8 @@ import { SpotlightSection } from '@/components/discover/SpotlightSection';
 import { grantsApi } from '@/api/endpoints/grants';
 import { challengesApi } from '@/api/endpoints/challenges';
 import { mentorsApi } from '@/api/endpoints/mentors';
-import { Sparkles, TrendingUp, Users, Clock } from 'lucide-react';
+import { getFeaturedBenefits, Benefit } from '@/api/endpoints/benefits';
+import { Sparkles, TrendingUp, Users, Clock, Gift, ArrowRight } from 'lucide-react';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { formatAmount } from '@/utils/formatters';
 
@@ -155,6 +156,9 @@ export default function DiscoverPage() {
 
         {/* Mentors Section (FE-018) */}
         <MentorsSection />
+
+        {/* Benefits Section */}
+        <BenefitsSection />
       </div>
     </AppLayout>
   );
@@ -392,6 +396,109 @@ function MentorsSection() {
             </svg>
           </Link>
         </div>
+      </div>
+    </section>
+  );
+}
+
+/* Benefits Section Component */
+function BenefitsSection() {
+  const [benefits, setBenefits] = useState<Benefit[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBenefits = async () => {
+      try {
+        setIsLoading(true);
+        const featured = await getFeaturedBenefits();
+        // Take first 3 featured benefits
+        setBenefits(featured.slice(0, 3));
+      } catch (error) {
+        console.error('Failed to fetch featured benefits:', error);
+        setBenefits([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBenefits();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <section className="mb-16">
+        <div className="flex items-center justify-center py-12">
+          <LoadingSpinner size="lg" />
+        </div>
+      </section>
+    );
+  }
+
+  if (benefits.length === 0) {
+    return null; // Don't show section if no benefits
+  }
+
+  return (
+    <section className="mb-16">
+      {/* Section Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <p className="text-xs font-semibold tracking-wide uppercase text-muted-text mb-1">
+            Partner Perks
+          </p>
+          <h2 className="text-3xl font-serif font-bold text-ink">
+            Exclusive Benefits for T-Hub Founders
+          </h2>
+        </div>
+      </div>
+
+      {/* Benefits Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {benefits.map((benefit) => (
+          <Link
+            key={benefit.id}
+            to={`/benefits/${benefit.id}`}
+            className="group bg-paper-light border border-line rounded-2xl p-6 hover:shadow-lg transition-all hover:border-ink"
+          >
+            {/* Partner Logo */}
+            {benefit.partnerLogoUrl && (
+              <div className="mb-4 h-12 flex items-center">
+                <img
+                  src={benefit.partnerLogoUrl}
+                  alt={benefit.partnerName}
+                  className="h-full w-auto object-contain"
+                />
+              </div>
+            )}
+
+            {/* Benefit Info */}
+            <div className="mb-3">
+              <h3 className="text-lg font-semibold text-ink mb-2 group-hover:text-green-700 transition-colors">
+                {benefit.headline}
+              </h3>
+              <p className="text-sm text-muted-text line-clamp-2">
+                {benefit.description}
+              </p>
+            </div>
+
+            {/* Category Badge */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#f0f9f4] text-[#2d6a4f] text-xs font-semibold rounded-lg uppercase tracking-wide">
+              <Gift className="w-3 h-3" />
+              {benefit.category}
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      {/* View All Link */}
+      <div className="text-center">
+        <Link
+          to="/benefits"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-ink text-paper-light font-semibold rounded-lg hover:bg-[#304258] transition-colors"
+        >
+          Explore all benefits
+          <ArrowRight className="w-5 h-5" />
+        </Link>
       </div>
     </section>
   );
