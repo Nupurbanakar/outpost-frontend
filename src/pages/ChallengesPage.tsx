@@ -1,24 +1,18 @@
-import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AppLayout } from '@/components/AppLayout';
 import { PageHeader } from '@/components/common/PageHeader';
 import { ResultsHeader } from '@/components/common/ResultsHeader';
-import { challengesApi, Challenge, ChallengesFilters } from '@/api/endpoints/challenges';
+import { ChallengesFilters } from '@/api/endpoints/challenges';
 import { OpportunityCard } from '@/components/OpportunityCard';
 import { SearchBar } from '@/components/grants/SearchBar';
 import { Pagination } from '@/components/common/Pagination';
 import { EmptyState } from '@/components/common/EmptyState';
 import { ChallengesFiltersPanel } from '@/components/challenges/ChallengesFilters';
 import { ChallengesLoadingSkeleton } from '@/components/challenges/ChallengesLoadingSkeleton';
-import { parseApiError } from '@/utils/errorHandling';
+import { useChallenges } from '@/hooks';
 
 export default function ChallengesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [challenges, setChallenges] = useState<Challenge[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalElements, setTotalElements] = useState(0);
 
   // Parse filters from URL
   const currentPage = parseInt(searchParams.get('page') || '1');
@@ -29,37 +23,24 @@ export default function ChallengesPage() {
   const status = searchParams.get('status') as 'OPEN' | 'CLOSED' | undefined;
   const aiEnabled = searchParams.get('ai') === 'true';
 
-  useEffect(() => {
-    const loadChallenges = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
+  // Build filters for React Query
+  const filters: ChallengesFilters = {
+    page: currentPage - 1,
+    size: 12,
+    q: keyword || undefined,
+    sectorId,
+    theme,
+    corporate,
+    status,
+    ai: aiEnabled || undefined,
+  };
 
-        const filters: ChallengesFilters = {
-          page: currentPage - 1,
-          size: 12,
-          q: keyword || undefined,
-          sectorId,
-          theme,
-          corporate,
-          status,
-          ai: aiEnabled || undefined,
-        };
+  // Use React Query hook - automatic caching, loading, and refetching
+  const { data, isLoading, error } = useChallenges(filters);
 
-        const response = await challengesApi.getChallenges(filters);
-        setChallenges(response.content);
-        setTotalPages(response.totalPages);
-        setTotalElements(response.totalElements);
-      } catch (err: any) {
-        console.error('Failed to load challenges:', err);
-        setError(parseApiError(err));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadChallenges();
-  }, [currentPage, keyword, sectorId, theme, corporate, status, aiEnabled]);
+  const challenges = data?.content || [];
+  const totalPages = data?.totalPages || 0;
+  const totalElements = data?.totalElements || 0;
 
   const handleSearch = (query: string) => {
     const newParams = new URLSearchParams(searchParams);

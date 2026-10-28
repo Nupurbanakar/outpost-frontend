@@ -1,25 +1,19 @@
-import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { UserPlus } from 'lucide-react';
 import { AppLayout } from '@/components/AppLayout';
 import { PageHeader } from '@/components/common/PageHeader';
 import { ResultsHeader } from '@/components/common/ResultsHeader';
-import { mentorsApi, Mentor, MentorsFilters } from '@/api/endpoints/mentors';
+import { MentorsFilters } from '@/api/endpoints/mentors';
 import { MentorCard } from '@/components/MentorCard';
 import { SearchBar } from '@/components/grants/SearchBar';
 import { Pagination } from '@/components/common/Pagination';
 import { EmptyState } from '@/components/common/EmptyState';
 import { MentorsFiltersPanel } from '@/components/mentors/MentorsFilters';
 import { MentorsLoadingSkeleton } from '@/components/mentors/MentorsLoadingSkeleton';
-import { parseApiError } from '@/utils/errorHandling';
+import { useMentors } from '@/hooks';
 
 export default function MentorsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [mentors, setMentors] = useState<Mentor[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalElements, setTotalElements] = useState(0);
 
   // Parse filters from URL
   const currentPage = parseInt(searchParams.get('page') || '1');
@@ -29,48 +23,35 @@ export default function MentorsPage() {
   const expertise = searchParams.getAll('expertise');
   const aiEnabled = searchParams.get('ai') === 'true';
 
-  useEffect(() => {
-    const loadMentors = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
+  // Build filters for React Query
+  const filters: MentorsFilters = {
+    page: currentPage - 1,
+    size: 12,
+    q: keyword || undefined,
+    stageId,
+    sectorId,
+    expertise: expertise.length > 0 ? expertise : undefined,
+    ai: aiEnabled || undefined,
+  };
 
-        const filters: MentorsFilters = {
-          page: currentPage - 1,
-          size: 12,
-          q: keyword || undefined,
-          stageId,
-          sectorId,
-          expertise: expertise.length > 0 ? expertise : undefined,
-          ai: aiEnabled || undefined,
-        };
+  console.log('🔍 Mentors filters being sent:', filters);
+  console.log('📋 URL params:', {
+    page: currentPage,
+    keyword,
+    stageId,
+    sectorId,
+    expertise,
+    aiEnabled,
+  });
 
-        console.log('🔍 Mentors filters being sent:', filters);
-        console.log('📋 URL params:', {
-          page: currentPage,
-          keyword,
-          stageId,
-          sectorId,
-          expertise,
-          aiEnabled,
-        });
+  // Use React Query hook - automatic caching, loading, and refetching
+  const { data, isLoading, error } = useMentors(filters);
 
-        const response = await mentorsApi.getMentors(filters);
-        console.log('✅ Mentors response:', response);
-        
-        setMentors(response.content);
-        setTotalPages(response.totalPages);
-        setTotalElements(response.totalElements);
-      } catch (err: any) {
-        console.error('❌ Failed to load mentors:', err);
-        setError(parseApiError(err));
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  console.log('✅ Mentors response:', data);
 
-    loadMentors();
-  }, [currentPage, keyword, stageId, sectorId, expertise.join(','), aiEnabled]);
+  const mentors = data?.content || [];
+  const totalPages = data?.totalPages || 0;
+  const totalElements = data?.totalElements || 0;
 
   const handleSearch = (query: string) => {
     const newParams = new URLSearchParams(searchParams);

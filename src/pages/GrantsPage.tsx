@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AppLayout } from '@/components/AppLayout';
 import { PageHeader } from '@/components/common/PageHeader';
@@ -9,9 +8,8 @@ import { GrantsFilters } from '@/components/grants/GrantsFilters';
 import { GrantsLoadingSkeleton } from '@/components/grants/GrantsLoadingSkeleton';
 import { Pagination } from '@/components/common/Pagination';
 import { EmptyState } from '@/components/common/EmptyState';
-import { useStages, useSectors } from '@/hooks';
+import { useStages, useSectors, useGrants } from '@/hooks';
 import { useAuth } from '@/contexts';
-import { grantsApi, Grant } from '@/api/endpoints/grants';
 import {
   buildGrantsFilters,
   hasActiveFilters,
@@ -23,11 +21,6 @@ import {
 export default function GrantsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
-  
-  const [grants, setGrants] = useState<Grant[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalElements, setTotalElements] = useState(0);
   
   const { stages } = useStages();
   const { sectors } = useSectors();
@@ -47,31 +40,20 @@ export default function GrantsPage() {
   const canUseAI = Boolean(user?.startupName && user?.stage && user?.sector);
   const hasFilters = hasActiveFilters(searchParams);
 
-  useEffect(() => {
-    fetchGrants();
-  }, [searchParams]);
+  // Build filters and fetch grants using React Query
+  const filters = buildGrantsFilters(searchParams, currentPage);
+  
+  // Only add AI if user can use it
+  if (aiEnabled && !canUseAI) {
+    filters.ai = false;
+  }
 
-  const fetchGrants = async () => {
-    try {
-      setIsLoading(true);
-      const filters = buildGrantsFilters(searchParams, currentPage);
-      
-      // Only add AI if user can use it
-      if (aiEnabled && !canUseAI) {
-        filters.ai = false;
-      }
-
-      const response = await grantsApi.getGrants(filters);
-      setGrants(response.content);
-      setTotalPages(response.totalPages);
-      setTotalElements(response.totalElements);
-    } catch (error) {
-      console.error('Failed to fetch grants:', error);
-      setGrants([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Use React Query hook - automatic caching, loading, and refetching
+  const { data, isLoading, error } = useGrants(filters);
+  
+  const grants = data?.content || [];
+  const totalPages = data?.totalPages || 0;
+  const totalElements = data?.totalElements || 0;
 
   const handleFilterChange = (key: string, value: string) => {
     setSearchParams(updateFilterParam(searchParams, key, value));
@@ -138,6 +120,13 @@ export default function GrantsPage() {
         {/* Content */}
         {isLoading ? (
           <GrantsLoadingSkeleton count={6} />
+        ) : error ? (
+          <EmptyState
+            title="Failed to load grants"
+            description="There was an error loading grants. Please try again."
+            actionLabel="Retry"
+            onAction={() => window.location.reload()}
+          />
         ) : grants.length === 0 ? (
           <EmptyState
             title="No grants found matching your criteria"
